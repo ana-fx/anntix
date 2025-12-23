@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Roboto+Mono:wght@100..700&family=Outfit:wght@300..900&display=swap');
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-heading: 'Montserrat';
+    --font-sans: 'Montserrat';
+    --font-mono: 'Roboto Mono';
+
+    --color-primary: #3b82f6;
+    --color-secondary: #64748b;
+    --color-accent: #06b6d4;
+    --color-dark: #0f172a;
+
+}
+
+@layer utilities {
+    .theme-event {
+        --font-heading: 'Outfit';
+        --font-sans: 'Outfit';
+        --font-mono: 'Roboto Mono';
+
+        --color-primary: #7c3aed;
+        --color-secondary: #4b5563;
+        --color-accent: #f43f5e;
+        --color-dark: #2e1065;
+
+        font-family: var(--font-sans);
+    }
+}
