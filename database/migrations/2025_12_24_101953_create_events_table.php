@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -35,8 +34,7 @@ return new class extends Migration
             $table->string('province')->nullable();
             $table->string('city')->nullable();
             $table->string('zip')->nullable();
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
+            $table->text('google_map_embed')->nullable();
 
             // SEO
             $table->string('seo_title')->nullable();
@@ -44,8 +42,9 @@ return new class extends Migration
 
             // Organizer
             $table->string('organizer_name')->nullable();
-            $table->string('organizer_photo_path')->nullable();
+            $table->string('organizer_logo_path')->nullable();
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

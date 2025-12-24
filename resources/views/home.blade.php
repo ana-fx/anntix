@@ -1,178 +1,187 @@
 <x-layouts.app>
-    <!-- Hero Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="relative bg-black rounded-[2.5rem] overflow-hidden min-h-[500px] flex items-center">
-            <!-- Background Image Overlay -->
-            <img src="https://images.unsplash.com/photo-1459749411177-0473ef71607b?q=80&w=2070&auto=format&fit=crop"
-                 class="absolute inset-0 w-full h-full object-cover opacity-60"
-                 alt="Concert Crowd">
+    <div class="bg-white min-h-screen pb-20">
 
-            <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Main Banner Carousel -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div x-data="{ 
+                    activeSlide: 0, 
+                    slides: [
+                        { img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop', title: 'Grand Music Festival', discount: '30% OFF' },
+                        { img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop', title: 'Electronic Dreams', discount: 'Early Bird' },
+                        { img: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1000&auto=format&fit=crop', title: 'Night Life 2025', discount: 'Buy 1 Get 1' }
+                    ],
+                    next() { this.activeSlide = (this.activeSlide + 1) % this.slides.length },
+                    prev() { this.activeSlide = (this.activeSlide - 1 + this.slides.length) % this.slides.length },
+                    timer: null
+                }" x-init="timer = setInterval(() => next(), 5000)" @mouseenter="clearInterval(timer)"
+                @mouseleave="timer = setInterval(() => next(), 5000)"
+                class="relative group rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 aspect-[3/1] md:aspect-[3.5/1]">
 
-                <!-- Left Content -->
-                <div class="text-white space-y-6">
-                    <h1 class="text-5xl lg:text-7xl font-heading font-bold leading-tight">
-                        MADE FOR<br>
-                        THOSE<br>
-                        WHO DO
-                    </h1>
-                    <p class="text-gray-300 text-sm tracking-widest uppercase">Photos by Saepul Rohman</p>
-                </div>
+                <!-- Slides -->
+                <template x-for="(slide, index) in slides" :key="index">
+                    <div x-show="activeSlide === index" x-transition:enter="transition transform duration-500 ease-out"
+                        x-transition:enter-start="opacity-0 scale-105" x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition transform duration-500 ease-in"
+                        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute inset-0 w-full h-full bg-dark">
 
-                <!-- Right Content (Cards) -->
-                <div class="lg:flex lg:flex-col lg:items-end space-y-6 relative">
+                        <img :src="slide.img" class="w-full h-full object-cover opacity-60">
 
-                    <!-- Date & Time Card (Floating) -->
-                    <div class="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full relative z-20 lg:-mr-10 lg:mt-10">
-                        <div class="space-y-4">
-                            <h3 class="text-2xl font-bold font-heading">Date & Time</h3>
-                            <p class="text-gray-500">Saturday, Sep 14, 2019 at 20:30 PM</p>
-
-                            <button class="flex items-center text-primary font-bold text-sm hover:underline">
-                                <span class="text-xl mr-2">+</span> Add to Calendar
-                            </button>
-
-                            <button class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-violet-700 transition-colors">
-                                Book Now (Free)
-                            </button>
-
-                            <button class="w-full py-4 bg-gray-100 text-gray-900 font-bold rounded-xl hover:bg-gray-200 transition-colors">
-                                Promoter Program
-                            </button>
-
-                            <p class="text-center text-xs text-gray-400">No Refunds</p>
+                        <!-- Banner Content Overlay (Mocking the promo style) -->
+                        <div class="absolute inset-0 flex items-center justify-center text-center">
+                            <div class="max-w-3xl px-4 space-y-4">
+                                <span
+                                    class="inline-block px-4 py-1 rounded-full bg-accent text-black font-extrabold text-sm tracking-widest uppercase mb-2"
+                                    x-text="slide.discount"></span>
+                                <h2 class="text-4xl md:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight"
+                                    x-text="slide.title"></h2>
+                                <p class="text-xl text-gray-200">The biggest event of the year is here. Don't miss out.
+                                </p>
+                                <button
+                                    class="mt-6 px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+                                    Get Tickets
+                                </button>
+                            </div>
                         </div>
                     </div>
+                </template>
 
-                </div>
-            </div>
-
-            <!-- Search Bar Overlay at Bottom -->
-            <div class="absolute bottom-10 left-6 right-6 lg:left-12 lg:right-auto max-w-4xl bg-[#1e1b2e]/90 backdrop-blur-md p-2 rounded-2xl flex flex-col md:flex-row gap-2 border border-white/10">
-                 <div class="flex-1 px-6 py-4 border-b md:border-b-0 md:border-r border-white/10">
-                    <label class="block text-xs text-gray-400 mb-1">Looking for</label>
-                    <div class="text-white font-medium">UI UX Promotion</div>
-                 </div>
-                 <div class="flex-1 px-6 py-4 border-b md:border-b-0 md:border-r border-white/10">
-                    <label class="block text-xs text-gray-400 mb-1">In</label>
-                    <div class="text-white font-medium">Jakarta Selatan</div>
-                 </div>
-                 <div class="flex-1 px-6 py-4 flex justify-between items-center group cursor-pointer hover:bg-white/5 rounded-xl transition-colors">
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">When</label>
-                        <div class="text-white font-medium">Any date</div>
-                    </div>
-                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                 </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Upcoming Events Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-        <div class="flex items-center justify-between mb-10">
-            <h2 class="text-3xl font-bold font-heading">Upcoming Events</h2>
-
-            <div class="flex gap-3">
-                <button class="px-5 py-2 bg-gray-100 rounded-lg text-sm font-bold text-gray-700 flex items-center gap-2 hover:bg-gray-200">
-                    Weekdays <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                <!-- Navigation Arrows -->
+                <button @click="prev()"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
                 </button>
-                <button class="px-5 py-2 bg-gray-100 rounded-lg text-sm font-bold text-gray-700 flex items-center gap-2 hover:bg-gray-200">
-                    Event Type <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                <button @click="next()"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
                 </button>
-                <button class="px-5 py-2 bg-gray-100 rounded-lg text-sm font-bold text-gray-700 flex items-center gap-2 hover:bg-gray-200">
-                    Any Category <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </button>
+
+                <!-- Pagination Dots -->
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                    <template x-for="(slide, index) in slides" :key="index">
+                        <button @click="activeSlide = index"
+                            class="w-2.5 h-2.5 rounded-full transition-all duration-300"
+                            :class="activeSlide === index ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/80'">
+                        </button>
+                    </template>
+                </div>
             </div>
         </div>
 
-        <!-- Events Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            <!-- Event Card 1 -->
-            <div class="group bg-white rounded-3xl p-4 hover:shadow-xl transition-all duration-300 border border-gray-100">
-                <div class="relative rounded-2xl overflow-hidden h-48 mb-6">
-                    <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Event">
-                    <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">$10.00</div>
-                    <div class="absolute top-4 right-4 flex gap-2">
-                         <button class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white text-gray-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></button>
-                         <button class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white text-red-500"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="flex gap-4 px-2">
-                    <div class="text-center">
-                        <div class="text-xs font-bold text-primary uppercase tracking-wide">Sep</div>
-                        <div class="text-2xl font-bold text-gray-900">18</div>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1 group-hover:text-primary transition-colors">Indonesia - Korea Conference</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed mb-4">Soehanna, Daerah Khusus Ibukota Yogyakarta, Indonesia</p>
-                    </div>
-                </div>
+        <!-- Featured Events Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-heading font-bold text-dark">Featured Events</h2>
+                <a href="#" class="text-sm font-bold text-primary hover:text-primary/80">View All</a>
             </div>
 
-             <!-- Event Card 2 -->
-             <div class="group bg-white rounded-3xl p-4 hover:shadow-xl transition-all duration-300 border border-gray-100">
-                <div class="relative rounded-2xl overflow-hidden h-48 mb-6">
-                    <img src="https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Event">
-                    <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">FREE</div>
-                     <div class="absolute top-4 right-4 flex gap-2">
-                         <button class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white text-gray-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></button>
-                         <button class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white text-red-500"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
-                    </div>
-                </div>
+            <!-- Event List / Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @php
+                    // MOCK DATA for display purposes if DB is empty or for specific design layout
+                    $mockEvents = [
+                        [
+                            'title' => 'Sound of Java 2025',
+                            'date' => '31 Dec 2025',
+                            'location' => 'Istora Senayan, Jakarta',
+                            'image' => 'https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?q=80&w=1000&auto=format&fit=crop',
+                            'price' => 'Rp 150.000'
+                        ],
+                        [
+                            'title' => 'Jazz Goes to Campus',
+                            'date' => '15 Nov 2025',
+                            'location' => 'UI Depok',
+                            'image' => 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?q=80&w=1000&auto=format&fit=crop',
+                            'price' => 'Rp 250.000'
+                        ],
+                        [
+                            'title' => 'Indie Music Fest',
+                            'date' => '20 Oct 2025',
+                            'location' => 'Gambir Expo',
+                            'image' => 'https://images.unsplash.com/photo-1459749411177-0473ef71607b?q=80&w=1000&auto=format&fit=crop',
+                            'price' => 'Rp 75.000'
+                        ],
+                        [
+                            'title' => 'Rock in Solo',
+                            'date' => '05 Dec 2025',
+                            'location' => 'Benteng Vastenburg',
+                            'image' => 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=1000&auto=format&fit=crop',
+                            'price' => 'Starting at Rp 100k'
+                        ],
+                    ];
+                @endphp
 
-                <div class="flex gap-4 px-2">
-                    <div class="text-center">
-                        <div class="text-xs font-bold text-primary uppercase tracking-wide">Sep</div>
-                        <div class="text-2xl font-bold text-gray-900">17</div>
+                @foreach($mockEvents as $event)
+                    <div
+                        class="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                        <!-- Landscape Image -->
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="{{ $event['image'] }}" alt="{{ $event['title'] }}"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div
+                                class="absolute top-3 right-3 bg-accent text-dark px-2 py-1 rounded text-xs font-bold shadow-sm">
+                                New
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-4 space-y-3">
+                            <div class="flex items-center gap-2 text-xs font-medium text-primary">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                {{ $event['date'] }}
+                            </div>
+
+                            <h3
+                                class="font-bold text-dark leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                                {{ $event['title'] }}
+                            </h3>
+
+                            <div class="flex items-center gap-2 text-xs text-secondary">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {{ $event['location'] }}
+                            </div>
+
+                            <div class="pt-3 border-t border-gray-50 mt-1 flex items-center justify-between">
+                                <span class="text-xs text-secondary font-medium">Starts from</span>
+                                <span class="font-extrabold text-dark text-sm">{{ $event['price'] }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1 group-hover:text-primary transition-colors">Dream World Wide in Jakarta</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed mb-4">Soehanna, Daerah Khusus Ibukota Yogyakarta, Indonesia</p>
-                    </div>
-                </div>
+                @endforeach
             </div>
-
-            <!-- Event Card 3 -->
-            <div class="group bg-white rounded-3xl p-4 hover:shadow-xl transition-all duration-300 border border-gray-100">
-                <div class="relative rounded-2xl overflow-hidden h-48 mb-6">
-                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Event">
-                    <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">$12.00</div>
-                    <div class="absolute top-4 right-4 flex gap-2">
-                         <button class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white text-gray-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></button>
-                         <button class="w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-white text-red-500"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="flex gap-4 px-2">
-                    <div class="text-center">
-                        <div class="text-xs font-bold text-primary uppercase tracking-wide">Sep</div>
-                        <div class="text-2xl font-bold text-gray-900">16</div>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-1 group-hover:text-primary transition-colors">Pesta Kembang Api Terbesar</h3>
-                        <p class="text-xs text-gray-500 leading-relaxed mb-4">Soehanna, Daerah Khusus Ibukota Yogyakarta, Indonesia</p>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-    </div>
-
-    <!-- Floating Sticky Ad/Checkout (Left Side - Desktop) -->
-    <div class="hidden xl:block fixed bottom-10 left-10 w-72 z-40">
-        <div class="bg-primary rounded-2xl p-6 text-white shadow-2xl shadow-primary/40">
-            <h4 class="font-bold text-lg mb-2">General Admission</h4>
-            <p class="text-xs opacity-80 mb-4">Sales end on Nov 27, 2019</p>
-            <div class="text-2xl font-bold mb-4">$100 <span class="text-sm font-normal opacity-70 line-through">+$7.5 Free</span></div>
-            <button class="w-full py-3 bg-white text-primary font-bold rounded-lg hover:bg-gray-100 transition-colors">
-                Checkout Now
-            </button>
+        <!-- Secondary Section (Optional - to fill space like image) -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-12">
+            <div
+                class="bg-gray-50 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 border border-gray-100">
+                <div class="space-y-4 max-w-2xl">
+                    <h3 class="text-2xl font-bold font-heading text-dark">Become an Event Creator</h3>
+                    <p class="text-secondary">Join thousands of successful organizers. Create, manage, and sell tickets
+                        for your events easily with Anntix.</p>
+                </div>
+                <div class="flex gap-4">
+                    <button
+                        class="px-6 py-3 bg-white border border-gray-200 text-dark font-bold rounded-xl hover:bg-gray-50 transition-colors">Learn
+                        More</button>
+                    <button
+                        class="px-6 py-3 bg-dark text-white font-bold rounded-xl hover:bg-dark/90 transition-colors shadow-lg shadow-dark/10">Create
+                        Event</button>
+                </div>
+            </div>
         </div>
+
     </div>
 </x-layouts.app>

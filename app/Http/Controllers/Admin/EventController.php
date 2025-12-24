@@ -35,7 +35,7 @@ class EventController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
-            'status' => 'required|string|in:draft,published,ended',
+            'status' => 'required|string|in:draft,active,ended',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'required|string',
@@ -44,14 +44,13 @@ class EventController extends Controller
             'province' => 'required|string',
             'city' => 'required|string',
             'zip' => 'required|string',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'google_map_embed' => 'nullable|string',
             'seo_title' => 'nullable|string',
             'seo_description' => 'nullable|string',
             'organizer_name' => 'nullable|string',
             'banner' => 'nullable|image|max:2048',
             'thumbnail' => 'nullable|image|max:2048',
-            'organizer_photo' => 'nullable|image|max:1024',
+            'organizer_logo' => 'nullable|image|max:1024',
         ]);
 
         $slug = Str::slug($validated['name']);
@@ -69,13 +68,22 @@ class EventController extends Controller
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail_path'] = $request->file('thumbnail')->store('events/thumbnails', 'public');
         }
-        if ($request->hasFile('organizer_photo')) {
-            $validated['organizer_photo_path'] = $request->file('organizer_photo')->store('events/organizers', 'public');
+        if ($request->hasFile('organizer_logo')) {
+            $validated['organizer_logo_path'] = $request->file('organizer_logo')->store('events/organizers', 'public');
         }
 
-        Event::create($validated);
+        $event = Event::create($validated);
 
-        return redirect()->route('admin.events.index')->with('success', 'Event created successfully.');
+        return redirect()->route('admin.events.tickets.create', $event)->with('success', 'Event created successfully. Now please add tickets.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Event $event)
+    {
+        $event->load('ticket');
+        return view('admin.events.show', compact('event'));
     }
 
     /**
@@ -94,7 +102,7 @@ class EventController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
-            'status' => 'required|string|in:draft,published,ended',
+            'status' => 'required|string|in:draft,active,ended',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'required|string',
@@ -103,37 +111,39 @@ class EventController extends Controller
             'province' => 'required|string',
             'city' => 'required|string',
             'zip' => 'required|string',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'google_map_embed' => 'nullable|string',
             'seo_title' => 'nullable|string',
             'seo_description' => 'nullable|string',
             'organizer_name' => 'nullable|string',
             'banner' => 'nullable|image|max:2048',
             'thumbnail' => 'nullable|image|max:2048',
-            'organizer_photo' => 'nullable|image|max:1024',
+            'organizer_logo' => 'nullable|image|max:1024',
         ]);
 
         // Regenerate slug if name changed
         if ($event->name !== $validated['name']) {
-             $slug = Str::slug($validated['name']);
-             $count = Event::where('slug', 'LIKE', "{$slug}%")->where('id', '!=', $event->id)->count();
-             if ($count > 0) {
-                 $slug .= '-' . ($count + 1);
-             }
-             $validated['slug'] = $slug;
+            $slug = Str::slug($validated['name']);
+            $count = Event::where('slug', 'LIKE', "{$slug}%")->where('id', '!=', $event->id)->count();
+            if ($count > 0) {
+                $slug .= '-' . ($count + 1);
+            }
+            $validated['slug'] = $slug;
         }
 
         if ($request->hasFile('banner')) {
-            if ($event->banner_path) Storage::disk('public')->delete($event->banner_path);
+            if ($event->banner_path)
+                Storage::disk('public')->delete($event->banner_path);
             $validated['banner_path'] = $request->file('banner')->store('events/banners', 'public');
         }
         if ($request->hasFile('thumbnail')) {
-            if ($event->thumbnail_path) Storage::disk('public')->delete($event->thumbnail_path);
+            if ($event->thumbnail_path)
+                Storage::disk('public')->delete($event->thumbnail_path);
             $validated['thumbnail_path'] = $request->file('thumbnail')->store('events/thumbnails', 'public');
         }
-        if ($request->hasFile('organizer_photo')) {
-            if ($event->organizer_photo_path) Storage::disk('public')->delete($event->organizer_photo_path);
-            $validated['organizer_photo_path'] = $request->file('organizer_photo')->store('events/organizers', 'public');
+        if ($request->hasFile('organizer_logo')) {
+            if ($event->organizer_logo_path)
+                Storage::disk('public')->delete($event->organizer_logo_path);
+            $validated['organizer_logo_path'] = $request->file('organizer_logo')->store('events/organizers', 'public');
         }
 
         $event->update($validated);
@@ -146,9 +156,12 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        if ($event->banner_path) Storage::disk('public')->delete($event->banner_path);
-        if ($event->thumbnail_path) Storage::disk('public')->delete($event->thumbnail_path);
-        if ($event->organizer_photo_path) Storage::disk('public')->delete($event->organizer_photo_path);
+        if ($event->banner_path)
+            Storage::disk('public')->delete($event->banner_path);
+        if ($event->thumbnail_path)
+            Storage::disk('public')->delete($event->thumbnail_path);
+        if ($event->organizer_logo_path)
+            Storage::disk('public')->delete($event->organizer_logo_path);
 
         $event->delete();
 

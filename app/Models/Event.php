@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes; // Added this line
+use Illuminate\Database\Eloquent\Factories\HasFactory; // Added this line
 
 class Event extends Model
 {
+    use HasFactory, SoftDeletes; // Modified this line
+
     protected $fillable = [
         'name',
         'slug',
@@ -21,18 +25,19 @@ class Event extends Model
         'province',
         'city',
         'zip',
-        'latitude',
-        'longitude',
+        'google_map_embed',
         'seo_title',
         'seo_description',
         'organizer_name',
-        'organizer_photo_path',
+        'organizer_logo_path',
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'latitude' => 'float',
-        'longitude' => 'float',
     ];
+    public function ticket()
+    {
+        return $this->hasOne(Ticket::class);
+    }
 }
