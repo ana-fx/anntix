@@ -7,32 +7,37 @@
 
     <title>{{ config('app.name', 'Laravel') }} - Admin</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased">
-    <div class="min-h-screen bg-primary-50">
-        @include('partials.admin.navigation')
+<body class="font-sans antialiased text-gray-900 bg-gray-50 flex min-h-screen overflow-hidden" x-data="{ sidebarOpen: true }">
 
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header class="bg-white shadow border-b border-primary-100">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <div class="text-primary-900">
-                        {{ $header }}
-                    </div>
-                </div>
-            </header>
-        @endif
+    <!-- Sidebar -->
+    <div x-show="sidebarOpen"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="-translate-x-full"
+         x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="translate-x-0"
+         x-transition:leave-end="-translate-x-full"
+         class="relative z-30 transition-all duration-300 ease-in-out flex-shrink-0">
+        @include('partials.admin.sidebar')
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto h-screen">
+
+        <!-- Header -->
+        @include('partials.admin.header')
 
         <!-- Page Content -->
-        <main>
+        <main class="flex-1 p-8">
             {{ $slot }}
         </main>
+
+        <!-- Footer -->
+        @include('partials.admin.footer')
     </div>
+
 </body>
 </html>

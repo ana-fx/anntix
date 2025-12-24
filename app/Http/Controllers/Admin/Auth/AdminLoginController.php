@@ -27,6 +27,16 @@ class AdminLoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            if (!in_array($user->role, ['Admin', 'Super Admin'])) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'These credentials do not have administrative access.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             return redirect()->intended(route('admin.dashboard'));

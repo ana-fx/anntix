@@ -32,10 +32,10 @@
                     <span class="text-xl font-bold tracking-wider uppercase">ANNTIX</span>
                 </div>
 
-                <h1 class="text-5xl font-bold leading-tight mb-4">Anntix<br>Control Nexus</h1>
+                <h1 class="text-5xl font-bold leading-tight mb-4">Anntix<br>Event Management</h1>
 
                 <p class="text-blue-100 text-sm max-w-xs mt-8 opacity-90 leading-relaxed font-light">
-                    The central intelligence hub for your digital empire. Orchestrate your ecosystem with precision and insight.
+                    The central command center for your event platform. Effortlessly orchestrate schedules, speakers, and attendee experiences with precision.
                 </p>
             </div>
 
