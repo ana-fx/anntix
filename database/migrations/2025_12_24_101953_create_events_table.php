@@ -1,0 +1,60 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('events', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('category');
+            $table->string('status')->default('draft');
+
+            // Media
+            $table->string('banner_path')->nullable();
+            $table->string('thumbnail_path')->nullable();
+
+            // Dates
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
+
+            // Details
+            $table->longText('description');
+            $table->longText('terms')->nullable();
+
+            // Location
+            $table->string('location')->nullable(); // Venue Name
+            $table->string('province')->nullable();
+            $table->string('city')->nullable();
+            $table->string('zip')->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+
+            // SEO
+            $table->string('seo_title')->nullable();
+            $table->text('seo_description')->nullable();
+
+            // Organizer
+            $table->string('organizer_name')->nullable();
+            $table->string('organizer_photo_path')->nullable();
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('events');
+    }
+};

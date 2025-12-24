@@ -15,4 +15,5 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
     Route::put('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::get('settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings');
+    Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
 });

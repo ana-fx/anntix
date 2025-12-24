@@ -5,17 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+
 class ProfileController extends Controller
 {
     public function index()
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         return view('admin.profile', [
-            'user' => auth()->user(),
+            'user' => $user,
         ]);
     }
     public function update(Request $request)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         // Separate validation for basic info first
         $rules = [
