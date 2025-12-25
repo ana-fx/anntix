@@ -38,26 +38,28 @@
                 <!-- Simple Logo -->
                 <div class="shrink-0 flex items-center gap-3">
                     <div
-                        class="w-10 h-10 bg-black rounded-2xl flex items-center justify-center shadow-lg shadow-black/20">
+                        class="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
                         <div class="w-5 h-5 bg-white rounded-full"></div>
                     </div>
-                    <span class="font-heading font-extrabold text-3xl tracking-tighter">Anntix</span>
+                    <span class="font-heading font-extrabold text-3xl tracking-tighter text-dark">Anntix</span>
                 </div>
             </div>
 
             <!-- Central Nav -->
             <div class="hidden lg:flex items-center space-x-10">
-                <a href="#"
-                    class="text-sm font-bold text-gray-900 relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary">Home</a>
-                <a href="#" class="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">Events</a>
-                <a href="#" class="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">Speakers</a>
-                <a href="#" class="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">Schedule</a>
+                <a href="{{ route('home') }}"
+                    class="text-sm font-bold {{ request()->routeIs('home') ? 'text-dark relative after:content-[\'\'] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary' : 'text-secondary hover:text-dark' }} transition-colors">Home</a>
+                <a href="{{ route('events.index') }}"
+                    class="text-sm font-bold {{ request()->routeIs('events.index') ? 'text-dark relative after:content-[\'\'] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary' : 'text-secondary hover:text-dark' }} transition-colors">Events</a>
+
+                <a href="{{ route('schedule.index') }}"
+                    class="text-sm font-bold {{ request()->routeIs('schedule.index') ? 'text-dark relative after:content-[\'\'] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary' : 'text-secondary hover:text-dark' }} transition-colors">Schedule</a>
             </div>
 
             <!-- Action Button -->
             <div class="flex items-center">
-                <a href="#"
-                    class="px-8 py-3.5 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/25 hover:bg-violet-700 hover:-translate-y-0.5 transition-all active:scale-95 text-sm tracking-tight">
+                <a href="{{ route('contact.index') }}"
+                    class="px-8 py-3.5 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/25 hover:bg-primary/90 hover:-translate-y-0.5 transition-all active:scale-95 text-sm tracking-tight">
                     Contact Us
                 </a>
             </div>

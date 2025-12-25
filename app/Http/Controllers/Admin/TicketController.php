@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Ticket;
+use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
-
     public function list()
     {
         $tickets = Ticket::with('event')->latest()->paginate(10);
+
         return view('admin.tickets.index', compact('tickets'));
     }
 
@@ -21,6 +21,7 @@ class TicketController extends Controller
         // Get the single ticket for this event
         $ticket = $event->ticket;
         $tickets = $ticket ? collect([$ticket]) : collect();
+
         return view('admin.tickets.index', compact('event', 'tickets'));
     }
 
@@ -30,6 +31,7 @@ class TicketController extends Controller
             return redirect()->route('admin.events.index')
                 ->with('error', 'This event already has a ticket. Only 1 ticket per event is allowed.');
         }
+
         return view('admin.tickets.create', compact('event'));
     }
 
@@ -52,7 +54,7 @@ class TicketController extends Controller
 
         $event->ticket()->create($validated);
 
-        // Redirect back to event index or ticket index? 
+        // Redirect back to event index or ticket index?
         // "after create event can you update to create ticket" -> user flow continues.
         // Maybe redirect to the event index with success?
         // Or redirect to the ticket list for this event.
@@ -66,6 +68,7 @@ class TicketController extends Controller
     public function edit(Ticket $ticket)
     {
         $event = $ticket->event;
+
         return view('admin.tickets.edit', compact('ticket', 'event'));
     }
 
@@ -89,6 +92,7 @@ class TicketController extends Controller
     public function destroy(Ticket $ticket)
     {
         $ticket->delete();
+
         return back()->with('success', 'Ticket deleted successfully.');
     }
 }

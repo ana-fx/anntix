@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model; // Added this line
 use Illuminate\Database\Eloquent\SoftDeletes; // Added this line
-use Illuminate\Database\Eloquent\Factories\HasFactory; // Added this line
 
 class Event extends Model
 {
@@ -36,6 +36,7 @@ class Event extends Model
         'start_date' => 'datetime',
         'end_date' => 'datetime',
     ];
+
     public function ticket()
     {
         return $this->hasOne(Ticket::class);

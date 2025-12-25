@@ -37,10 +37,10 @@
                                     x-text="slide.title"></h2>
                                 <p class="text-xl text-gray-200">The biggest event of the year is here. Don't miss out.
                                 </p>
-                                <button
-                                    class="mt-6 px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+                                <a href="{{ route('events.index') }}"
+                                    class="inline-block mt-6 px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
                                     Get Tickets
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -76,56 +76,27 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-2xl font-heading font-bold text-dark">Featured Events</h2>
-                <a href="#" class="text-sm font-bold text-primary hover:text-primary/80">View All</a>
+                <a href="{{ route('events.index') }}" class="text-sm font-bold text-primary hover:text-primary/80">View
+                    All</a>
             </div>
 
             <!-- Event List / Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                @php
-                    // MOCK DATA for display purposes if DB is empty or for specific design layout
-                    $mockEvents = [
-                        [
-                            'title' => 'Sound of Java 2025',
-                            'date' => '31 Dec 2025',
-                            'location' => 'Istora Senayan, Jakarta',
-                            'image' => 'https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?q=80&w=1000&auto=format&fit=crop',
-                            'price' => 'Rp 150.000'
-                        ],
-                        [
-                            'title' => 'Jazz Goes to Campus',
-                            'date' => '15 Nov 2025',
-                            'location' => 'UI Depok',
-                            'image' => 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?q=80&w=1000&auto=format&fit=crop',
-                            'price' => 'Rp 250.000'
-                        ],
-                        [
-                            'title' => 'Indie Music Fest',
-                            'date' => '20 Oct 2025',
-                            'location' => 'Gambir Expo',
-                            'image' => 'https://images.unsplash.com/photo-1459749411177-0473ef71607b?q=80&w=1000&auto=format&fit=crop',
-                            'price' => 'Rp 75.000'
-                        ],
-                        [
-                            'title' => 'Rock in Solo',
-                            'date' => '05 Dec 2025',
-                            'location' => 'Benteng Vastenburg',
-                            'image' => 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=1000&auto=format&fit=crop',
-                            'price' => 'Starting at Rp 100k'
-                        ],
-                    ];
-                @endphp
-
-                @foreach($mockEvents as $event)
-                    <div
-                        class="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                @forelse($events as $event)
+                    <a href="{{ route('events.show', $event) }}"
+                        class="block group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Landscape Image -->
                         <div class="aspect-video relative overflow-hidden">
-                            <img src="{{ $event['image'] }}" alt="{{ $event['title'] }}"
+                            <img src="{{ $event->thumbnail_path ?? 'https://via.placeholder.com/640x360' }}"
+                                alt="{{ $event->name }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            <div
-                                class="absolute top-3 right-3 bg-accent text-dark px-2 py-1 rounded text-xs font-bold shadow-sm">
-                                New
-                            </div>
+
+                            @if($event->created_at->diffInDays(now()) < 7)
+                                <div
+                                    class="absolute top-3 right-3 bg-accent text-dark px-2 py-1 rounded text-xs font-bold shadow-sm">
+                                    New
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Content -->
@@ -135,12 +106,12 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                {{ $event['date'] }}
+                                {{ $event->start_date ? $event->start_date->format('d M Y') : 'TBA' }}
                             </div>
 
                             <h3
                                 class="font-bold text-dark leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                                {{ $event['title'] }}
+                                {{ $event->name }}
                             </h3>
 
                             <div class="flex items-center gap-2 text-xs text-secondary">
@@ -150,38 +121,30 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                {{ $event['location'] }}
+                                {{ $event->location ?? $event->city ?? 'Location TBA' }}
                             </div>
 
                             <div class="pt-3 border-t border-gray-50 mt-1 flex items-center justify-between">
                                 <span class="text-xs text-secondary font-medium">Starts from</span>
-                                <span class="font-extrabold text-dark text-sm">{{ $event['price'] }}</span>
+                                <span class="font-extrabold text-dark text-sm">
+                                    @if($event->ticket)
+                                        Rp. {{ number_format($event->ticket->price, 0, ',', '.') }}
+                                    @else
+                                        Free / TBA
+                                    @endif
+                                </span>
                             </div>
                         </div>
+                    </a>
+                @empty
+                    <div class="col-span-full py-12 text-center text-gray-500">
+                        <p>No upcoming events found. Check back soon!</p>
                     </div>
-                @endforeach
+                @endforelse
             </div>
         </div>
 
-        <!-- Secondary Section (Optional - to fill space like image) -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-12">
-            <div
-                class="bg-gray-50 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 border border-gray-100">
-                <div class="space-y-4 max-w-2xl">
-                    <h3 class="text-2xl font-bold font-heading text-dark">Become an Event Creator</h3>
-                    <p class="text-secondary">Join thousands of successful organizers. Create, manage, and sell tickets
-                        for your events easily with Anntix.</p>
-                </div>
-                <div class="flex gap-4">
-                    <button
-                        class="px-6 py-3 bg-white border border-gray-200 text-dark font-bold rounded-xl hover:bg-gray-50 transition-colors">Learn
-                        More</button>
-                    <button
-                        class="px-6 py-3 bg-dark text-white font-bold rounded-xl hover:bg-dark/90 transition-colors shadow-lg shadow-dark/10">Create
-                        Event</button>
-                </div>
-            </div>
-        </div>
+
 
     </div>
 </x-layouts.app>

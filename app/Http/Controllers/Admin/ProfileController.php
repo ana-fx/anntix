@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
@@ -18,6 +17,7 @@ class ProfileController extends Controller
             'user' => $user,
         ]);
     }
+
     public function update(Request $request)
     {
         /** @var \App\Models\User $user */
@@ -38,8 +38,8 @@ class ProfileController extends Controller
             $rules['email'] = ['required', 'email', 'max:255', 'unique:users,email,'.$user->id];
             $rules['password'] = ['nullable', 'string', 'min:8', 'confirmed'];
         } else {
-             // Just validate email format if provided, though we check changes above
-             $rules['email'] = ['required', 'email', 'max:255', 'unique:users,email,'.$user->id];
+            // Just validate email format if provided, though we check changes above
+            $rules['email'] = ['required', 'email', 'max:255', 'unique:users,email,'.$user->id];
         }
 
         $validated = $request->validate($rules);
@@ -55,7 +55,7 @@ class ProfileController extends Controller
         $user->address = $validated['address'] ?? null;
         $user->bio = $validated['bio'] ?? null;
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $user->password = \Illuminate\Support\Facades\Hash::make($validated['password']);
         }
 
