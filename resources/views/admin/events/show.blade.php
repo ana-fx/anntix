@@ -1,5 +1,5 @@
 <x-layouts.admin>
-    <div class="max-w-6xl mx-auto space-y-8 pb-12">
+    <div class="max-w-6xl mx-auto space-y-8 pb-12" x-data="{ deleteModalOpen: false, formToSubmit: null }">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -109,6 +109,204 @@
                         </div>
                     </div>
                 @endif
+
+                <!-- Ticket Information Table -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                            </svg>
+                            Ticket Information
+                        </h3>
+                        @php
+                            $latestTicket = $event->tickets->sortByDesc('end_date')->first();
+                            $nextStartDate = $latestTicket ? $latestTicket->end_date->addDay()->format('Y-m-d H:i') : null;
+                        @endphp
+                        <a href="{{ route('admin.events.tickets.create', ['event' => $event, 'min_start_date' => $nextStartDate]) }}"
+                            class="text-sm font-bold text-primary hover:text-primary-700 transition-colors">
+                            + Add Ticket
+                        </a>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="px-6 py-4 rounded-tl-xl text-dark">Ticket Type</th>
+                                    <th class="px-6 py-4 text-dark">Price</th>
+                                    <th class="px-6 py-4 text-dark">Quota</th>
+                                    <th class="px-6 py-4 text-dark">Status</th>
+                                    <th class="px-6 py-4 text-dark text-right rounded-tr-xl">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @forelse($event->tickets as $ticket)
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-gray-900">{{ $ticket->name }}</div>
+                                            <div class="text-xs text-gray-500">
+                                                {{ $ticket->description ?? 'No description' }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-primary">
+                                                {{ $ticket->price == 0 ? 'Free' : 'Rp. ' . number_format($ticket->price, 0, ',', '.') }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-medium text-gray-900">{{ $ticket->quota }}</div>
+                                            <div class="text-xs text-gray-400">Limit:
+                                                {{ $ticket->max_purchase_per_user }} / User
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold 
+                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                                {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <a href="{{ route('admin.tickets.edit', $ticket) }}"
+                                                    class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                                    title="Edit Ticket">
+                                                    <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path
+                                                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                                    </svg>
+                                                </a>
+
+                                                <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST"
+                                                    @submit.prevent="formToSubmit = $el; deleteModalOpen = true"
+                                                    class="inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                        title="Delete Ticket">
+                                                        <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd"
+                                                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-8 text-center text-gray-400 italic">
+                                            No ticket information available for this event.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Assigned Scanners Table -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"
+                    x-data="{ assignModalOpen: false }">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3zm1 2v1h1V5h-1z"
+                                    clip-rule="evenodd" />
+                                <path
+                                    d="M11 4a1 1 0 10-2 0v1a1 1 0 002 0V4zM10 7a1 1 0 011 1v1h2a1 1 0 110 2h-3a1 1 0 01-1-1V8a1 1 0 011-1zM16 9a1 1 0 100 2 1 1 0 000-2zM9 13a1 1 0 011-1h1a1 1 0 110 2v2a1 1 0 11-2 0v-3zM7 11a1 1 0 100-2H4a1 1 0 100 2h3zM17 13a1 1 0 01-1 1h-2a1 1 0 110-2h2a1 1 0 011 1zM16 17a1 1 0 100-2h-3a1 1 0 100 2h3z" />
+                            </svg>
+                            Assigned Scanners
+                        </h3>
+                        <button @click="assignModalOpen = !assignModalOpen"
+                            class="text-sm font-bold text-primary hover:text-primary-700 transition-colors">
+                            + Assign Scanner
+                        </button>
+                    </div>
+
+                    <!-- Scan Assignment Form -->
+                    <div x-show="assignModalOpen" @click.away="assignModalOpen = false" x-transition
+                        class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <form action="{{ route('admin.events.assign-scanner', $event) }}" method="POST"
+                            class="flex gap-4 items-end">
+                            @csrf
+                            <div class="flex-1">
+                                <label for="scanner_id" class="block text-sm font-bold text-gray-700 mb-1">Select
+                                    Scanner</label>
+                                <select name="scanner_id" id="scanner_id" required
+                                    class="w-full rounded-xl border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                                    <option value="">-- Choose a scanner --</option>
+                                    @foreach($scanners as $scanner)
+                                        <option value="{{ $scanner->id }}">{{ $scanner->name }} ({{ $scanner->email }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <button type="submit"
+                                class="px-6 py-2 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25">
+                                Assign
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="px-6 py-4 rounded-tl-xl text-dark">Scanner Name</th>
+                                    <th class="px-6 py-4 text-dark">Email</th>
+                                    <th class="px-6 py-4 text-dark">Assigned At</th>
+                                    <th class="px-6 py-4 text-dark text-right rounded-tr-xl">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @forelse($event->scanners as $scanner)
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-gray-900">{{ $scanner->name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600">
+                                            {{ $scanner->email }}
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-500 text-sm">
+                                            {{ $scanner->pivot->created_at->format('M d, Y H:i') }}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <form action="{{ route('admin.events.unassign-scanner', [$event, $scanner]) }}"
+                                                method="POST" @submit.prevent="formToSubmit = $el; deleteModalOpen = true"
+                                                class="inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                    title="Remove Access">
+                                                    <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-8 text-center text-gray-400 italic">
+                                            No scanners assigned to this event yet.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Sidebar (Right) -->
@@ -242,5 +440,6 @@
                 </div>
             </div>
         </div>
+        <x-notifications.delete />
     </div>
 </x-layouts.admin>

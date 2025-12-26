@@ -9,39 +9,17 @@ use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
-    public function list()
-    {
-        $tickets = Ticket::with('event')->latest()->paginate(10);
 
-        return view('admin.tickets.index', compact('tickets'));
-    }
 
-    public function index(Event $event)
-    {
-        // Get the single ticket for this event
-        $ticket = $event->ticket;
-        $tickets = $ticket ? collect([$ticket]) : collect();
 
-        return view('admin.tickets.index', compact('event', 'tickets'));
-    }
 
     public function create(Event $event)
     {
-        if ($event->ticket()->exists()) {
-            return redirect()->route('admin.events.index')
-                ->with('error', 'This event already has a ticket. Only 1 ticket per event is allowed.');
-        }
-
         return view('admin.tickets.create', compact('event'));
     }
 
     public function store(Request $request, Event $event)
     {
-        if ($event->ticket()->exists()) {
-            return redirect()->route('admin.events.index')
-                ->with('error', 'This event already has a ticket.');
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
@@ -52,7 +30,7 @@ class TicketController extends Controller
             'description' => 'required|string',
         ]);
 
-        $event->ticket()->create($validated);
+        $event->tickets()->create($validated);
 
         // Redirect back to event index or ticket index?
         // "after create event can you update to create ticket" -> user flow continues.

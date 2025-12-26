@@ -72,6 +72,39 @@
                         </div>
                     </div>
 
+                    <!-- Organizer Info (Moved here) -->
+                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                        <h2 class="text-2xl font-heading font-bold text-dark mb-6">Organized By</h2>
+                        <div class="flex items-center gap-6">
+                            @if($event->organizer_logo_path)
+                                <img src="{{ asset('storage/' . $event->organizer_logo_path) }}"
+                                    alt="{{ $event->organizer_name }}"
+                                    class="w-20 h-20 rounded-full object-cover border-4 border-gray-50">
+                            @else
+                                <div
+                                    class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-3xl shadow-inner">
+                                    {{ substr($event->organizer_name ?? 'A', 0, 1) }}
+                                </div>
+                            @endif
+
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h3 class="font-bold text-dark text-xl">
+                                        {{ $event->organizer_name ?? 'Anntix Official' }}</h3>
+                                    <span
+                                        class="bg-blue-50 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-blue-100">Verified</span>
+                                </div>
+                                <p class="text-secondary mb-4">
+                                    Creating unforgettable experiences on Anntix since
+                                    {{ $event->created_at->format('Y') }}.
+                                </p>
+                                <button class="text-primary font-bold text-sm hover:underline">
+                                    View Full Profile &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Location / Map -->
                     <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
                         <h2 class="text-2xl font-heading font-bold text-dark mb-6">Location</h2>

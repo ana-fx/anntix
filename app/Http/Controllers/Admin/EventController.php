@@ -58,7 +58,7 @@ class EventController extends Controller
         // Ensure unique slug
         $count = Event::where('slug', 'LIKE', "{$slug}%")->count();
         if ($count > 0) {
-            $slug .= '-'.($count + 1);
+            $slug .= '-' . ($count + 1);
         }
         $validated['slug'] = $slug;
 
@@ -83,9 +83,31 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        $event->load('ticket');
+        $event->load(['tickets', 'scanners']);
+        $scanners = \App\Models\User::where('role', 'scanner')
+            ->whereDoesntHave('scannedEvents', function ($query) use ($event) {
+                $query->where('event_id', $event->id);
+            })->get();
 
-        return view('admin.events.show', compact('event'));
+        return view('admin.events.show', compact('event', 'scanners'));
+    }
+
+    public function assignScanner(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'scanner_id' => 'required|exists:users,id',
+        ]);
+
+        $event->scanners()->attach($validated['scanner_id']);
+
+        return back()->with('success', 'Scanner assigned successfully.');
+    }
+
+    public function unassignScanner(Event $event, \App\Models\User $scanner)
+    {
+        $event->scanners()->detach($scanner->id);
+
+        return back()->with('success', 'Scanner unassigned successfully.');
     }
 
     /**
@@ -127,7 +149,7 @@ class EventController extends Controller
             $slug = Str::slug($validated['name']);
             $count = Event::where('slug', 'LIKE', "{$slug}%")->where('id', '!=', $event->id)->count();
             if ($count > 0) {
-                $slug .= '-'.($count + 1);
+                $slug .= '-' . ($count + 1);
             }
             $validated['slug'] = $slug;
         }

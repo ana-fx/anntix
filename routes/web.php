@@ -4,10 +4,16 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\PageController; // Added this line
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event:slug}', [HomeController::class, 'show'])->name('events.show');
+
+// Static Pages
+Route::get('/terms', [PageController::class, 'terms'])->name('pages.terms');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('pages.privacy');
+Route::get('/services', [PageController::class, 'services'])->name('pages.services');
 
 use App\Http\Controllers\ScheduleController;
 Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');

@@ -37,8 +37,13 @@ class Event extends Model
         'end_date' => 'datetime',
     ];
 
-    public function ticket()
+    public function tickets()
     {
-        return $this->hasOne(Ticket::class);
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function scanners()
+    {
+        return $this->belongsToMany(User::class, 'event_scanner', 'event_id', 'user_id')->withTimestamps();
     }
 }

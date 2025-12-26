@@ -63,7 +63,12 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    public function scannedEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_scanner', 'user_id', 'event_id')->withTimestamps();
     }
 }
