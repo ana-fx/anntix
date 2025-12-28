@@ -29,7 +29,17 @@ class UserLoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('dashboard');
+            $user = Auth::user();
+
+            if ($user->role === 'scanner') {
+                return redirect()->route('scanner.index');
+            }
+
+            if (in_array($user->role, ['Admin', 'Super Admin'])) {
+                return redirect()->intended('dashboard');
+            }
+
+            return redirect()->intended(route('home'));
         }
 
         return back()->withErrors([

@@ -73,16 +73,16 @@
                             </svg>
                             About this Event
                         </h3>
-                        <div class="prose prose-blue max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
-                            {{ $event->description }}
+                        <div class="prose prose-blue max-w-none text-black prose-headings:text-black leading-relaxed">
+                            {!! $event->description !!}
                         </div>
                     </div>
 
                     @if($event->terms)
                         <div class="pt-6 border-t border-gray-50">
                             <h3 class="text-lg font-bold text-gray-900 mb-3">Terms & Conditions</h3>
-                            <div class="text-sm text-gray-500 leading-relaxed whitespace-pre-line">
-                                {{ $event->terms }}
+                            <div class="prose prose-sm max-w-none text-black prose-headings:text-black leading-relaxed">
+                                {!! $event->terms !!}
                             </div>
                         </div>
                     @endif
@@ -104,8 +104,11 @@
                         <p class="text-gray-600 mb-4">{{ $event->location }}, {{ $event->city }}, {{ $event->province }}
                             {{ $event->zip }}
                         </p>
-                        <div class="rounded-2xl overflow-hidden border border-gray-100 aspect-video w-full bg-gray-50">
-                            {!! $event->google_map_embed !!}
+                        <div
+                            class="rounded-2xl overflow-hidden border border-gray-100 aspect-video w-full bg-gray-50 shadow-inner">
+                            <div class="w-full h-full [&>iframe]:!w-full [&>iframe]:!h-full">
+                                {!! $event->google_map_embed !!}
+                            </div>
                         </div>
                     </div>
                 @endif
@@ -165,7 +168,7 @@
                                         <td class="px-6 py-4">
                                             <span
                                                 class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold 
-                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                                                                                                    {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                                 {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
                                             </span>
                                         </td>

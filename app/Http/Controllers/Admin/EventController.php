@@ -15,7 +15,27 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::latest()->paginate(10);
+        $events = Event::withCount([
+            'tickets as total_tickets' => function ($query) {
+                $query->select(\Illuminate\Support\Facades\DB::raw('SUM(quota)'));
+            },
+            'scanners'
+        ])->latest()->paginate(10);
+
+        // Calculate sold tickets count (mock logic for now or real if 'tickets' relation exists on transactions)
+        // For accurate 'sold' vs 'total', we'd need to sum qty from transactions.
+        // Let's just carry total capacity for now as per view usage: tickets_count usually implies available or sold.
+        // Assuming current view logic: tickets_count = currently sold? Or created?
+        // Let's map it: total_tickets = sum of ticket types quantity. tickets_count = sold.
+        // Actually, let's keep it simple:
+        $events = Event::withCount(['tickets', 'scanners'])->latest()->paginate(10);
+
+        // Improve: calculating real metrics
+        $events->getCollection()->transform(function ($event) {
+            $event->total_tickets = $event->tickets->sum('quota');
+            $event->tickets_count = $event->transactions()->where('status', 'paid')->count(); // Example: sold tickets
+            return $event;
+        });
 
         return view('admin.events.index', compact('events'));
     }
@@ -90,6 +110,18 @@ class EventController extends Controller
             })->get();
 
         return view('admin.events.show', compact('event', 'scanners'));
+    }
+
+    public function scanners(Event $event)
+    {
+        $event->load('scanners');
+        // Fetch all available scanners to add
+        $availableScanners = \App\Models\User::where('role', 'scanner')
+            ->whereDoesntHave('scannedEvents', function ($query) use ($event) {
+                $query->where('event_id', $event->id);
+            })->get();
+
+        return view('admin.events.scanners.index', compact('event', 'availableScanners'));
     }
 
     public function assignScanner(Request $request, Event $event)

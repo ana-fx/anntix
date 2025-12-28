@@ -1,6 +1,6 @@
 <x-layouts.app>
     <!-- Header -->
-    <div class="relative bg-dark pt-32 pb-20 overflow-hidden">
+    <div class="relative bg-dark pt-40 pb-20 overflow-hidden">
         <div class="absolute inset-0 opacity-20">
             <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M0 100 L100 0 L100 100 Z" fill="white"></path>
@@ -73,7 +73,7 @@
                 <a href="{{ route('events.show', $event) }}"
                     class="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <div class="relative aspect-[4/3] overflow-hidden">
-                        <img src="{{ $event->thumbnail_path ?? 'https://via.placeholder.com/800x600' }}"
+                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/800x600' }}"
                             alt="{{ $event->name }}"
                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         <div
@@ -101,7 +101,14 @@
                         <div class="flex items-center justify-between pt-4 border-t border-gray-50">
                             <span class="text-gray-500 text-sm font-medium">Starts from</span>
                             <span class="text-lg font-bold text-dark">
-                                Rp {{ number_format($event->ticket->price ?? 0, 0, ',', '.') }}
+                                @php
+                                    $lowestPriceTicket = $event->tickets->sortBy('price')->first();
+                                @endphp
+                                @if($lowestPriceTicket)
+                                    Rp. {{ number_format($lowestPriceTicket->price, 0, ',', '.') }}
+                                @else
+                                    Free / TBA
+                                @endif
                             </span>
                         </div>
                     </div>

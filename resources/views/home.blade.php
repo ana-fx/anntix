@@ -2,14 +2,14 @@
     <div class="bg-white min-h-screen pb-20">
 
         <!-- Main Banner Carousel -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-32">
             <div x-data="{ 
                     activeSlide: 0, 
-                    slides: [
-                        { img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop', title: 'Grand Music Festival', discount: '30% OFF' },
-                        { img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2070&auto=format&fit=crop', title: 'Electronic Dreams', discount: 'Early Bird' },
-                        { img: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1000&auto=format&fit=crop', title: 'Night Life 2025', discount: 'Buy 1 Get 1' }
-                    ],
+                    slides: {{ $banners->map(fn($b) => [
+    'img' => asset('storage/' . $b->image_path),
+    'title' => $b->title,
+    'link' => $b->link_url ?? route('events.index')
+])->toJson() }},
                     next() { this.activeSlide = (this.activeSlide + 1) % this.slides.length },
                     prev() { this.activeSlide = (this.activeSlide - 1 + this.slides.length) % this.slides.length },
                     timer: null
@@ -25,24 +25,10 @@
                         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                         class="absolute inset-0 w-full h-full bg-dark">
 
-                        <img :src="slide.img" class="w-full h-full object-cover opacity-60">
-
-                        <!-- Banner Content Overlay (Mocking the promo style) -->
-                        <div class="absolute inset-0 flex items-center justify-center text-center">
-                            <div class="max-w-3xl px-4 space-y-4">
-                                <span
-                                    class="inline-block px-4 py-1 rounded-full bg-accent text-black font-extrabold text-sm tracking-widest uppercase mb-2"
-                                    x-text="slide.discount"></span>
-                                <h2 class="text-4xl md:text-6xl font-heading font-extrabold text-white tracking-tight leading-tight"
-                                    x-text="slide.title"></h2>
-                                <p class="text-xl text-gray-200">The biggest event of the year is here. Don't miss out.
-                                </p>
-                                <a href="{{ route('events.index') }}"
-                                    class="inline-block mt-6 px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
-                                    Get Tickets
-                                </a>
-                            </div>
-                        </div>
+                        <a :href="slide.link" class="block w-full h-full">
+                            <img :src="slide.img"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                        </a>
                     </div>
                 </template>
 
@@ -87,7 +73,7 @@
                         class="block group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Landscape Image -->
                         <div class="aspect-video relative overflow-hidden">
-                            <img src="{{ $event->thumbnail_path ?? 'https://via.placeholder.com/640x360' }}"
+                            <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/640x360' }}"
                                 alt="{{ $event->name }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
@@ -127,8 +113,11 @@
                             <div class="pt-3 border-t border-gray-50 mt-1 flex items-center justify-between">
                                 <span class="text-xs text-secondary font-medium">Starts from</span>
                                 <span class="font-extrabold text-dark text-sm">
-                                    @if($event->ticket)
-                                        Rp. {{ number_format($event->ticket->price, 0, ',', '.') }}
+                                    @php
+                                        $lowestPriceTicket = $event->tickets->sortBy('price')->first();
+                                    @endphp
+                                    @if($lowestPriceTicket)
+                                        Rp. {{ number_format($lowestPriceTicket->price, 0, ',', '.') }}
                                     @else
                                         Free / TBA
                                     @endif

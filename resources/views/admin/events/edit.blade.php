@@ -1,4 +1,34 @@
 <x-layouts.admin>
+    @push('scripts')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js" referrerpolicy="origin"></script>
+        <script>
+            tinymce.init({
+                selector: 'textarea[name="description"], textarea[name="terms"]',
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                height: 350,
+                skin: 'oxide',
+                promotion: false,
+                branding: false,
+                readonly: false,
+                license_key: 'gpl',
+                setup: function (editor) {
+                    editor.on('change', function () {
+                        editor.save();
+                    });
+                }
+            });
+        </script>
+        <style>
+            .tox-notifications-container {
+                display: none !important;
+            }
+
+            .tox-statusbar__branding {
+                display: none !important;
+            }
+        </style>
+    @endpush
     <div class="max-w-5xl mx-auto">
         <h2 class="text-3xl font-bold text-gray-900 mb-8">Edit Event: {{ $event->name }}</h2>
 

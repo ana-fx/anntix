@@ -1,191 +1,195 @@
 <x-layouts.app>
-    <div class="bg-gray-50 min-h-screen pb-20">
+    <div class="bg-white min-h-screen">
+        
+        <!-- Immersive Dual-Media Hero -->
+        <div class="relative h-[70vh] min-h-[650px] w-full overflow-hidden flex items-end pb-24">
+            <!-- Background: Banner -->
+            <div class="absolute inset-0">
+                <img src="{{ $event->banner_path ? Storage::url($event->banner_path) : ($event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/1920x1080') }}" 
+                     class="w-full h-full object-cover transform scale-105" alt="{{ $event->name }} Banner">
+                <div class="absolute inset-0 bg-dark/40 backdrop-blur-[2px]"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/20 to-transparent"></div>
+                <div class="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-white to-transparent"></div>
+            </div>
 
-        <!-- Hero Banner -->
-        <div class="relative h-[400px] md:h-[500px] w-full overflow-hidden">
-            <div class="absolute inset-0 bg-dark/50 z-10"></div>
-            <img src="{{ $event->banner_path ?? $event->thumbnail_path ?? 'https://via.placeholder.com/1920x600' }}"
-                alt="{{ $event->name }}" class="w-full h-full object-cover blur-sm scale-110">
-
-            <div class="absolute inset-0 z-20 flex items-center justify-center">
-                <div
-                    class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-end gap-8 pb-12">
-                    <!-- Thumbnail -->
-                    <div
-                        class="hidden md:block w-48 h-64 rounded-xl overflow-hidden shadow-2xl border-4 border-white shrink-0">
-                        <img src="{{ $event->thumbnail_path ?? 'https://via.placeholder.com/400x600' }}"
-                            class="w-full h-full object-cover">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+                <div class="flex flex-col md:flex-row items-end gap-12">
+                    <!-- Floating Poster: Thumbnail -->
+                    <div class="hidden md:block w-72 aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] border-4 border-white/20 shrink-0 transform -rotate-2 hover:rotate-0 transition-all duration-700 bg-gray-200">
+                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/400x533' }}" 
+                             class="w-full h-full object-cover" alt="{{ $event->name }} Thumbnail">
                     </div>
 
-                    <!-- Title & Basic Info -->
-                    <div class="text-white space-y-4 flex-1">
-                        <div
-                            class="inline-flex items-center gap-2 px-3 py-1 bg-accent text-dark rounded-full text-xs font-bold uppercase tracking-wider">
-                            {{ $event->category ?? 'Event' }}
+                    <div class="max-w-4xl flex-1 pb-4">
+                        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary text-white text-xs font-black uppercase tracking-[0.2em] mb-8 shadow-2xl shadow-primary/40">
+                            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                            {{ $event->category ?? 'Experience' }}
                         </div>
-                        <h1
-                            class="text-4xl md:text-5xl font-heading font-extrabold leading-tight shadow-black drop-shadow-lg">
-                            {{ $event->name }}
+                        
+                        <h1 class="text-6xl md:text-8xl font-heading font-black text-white tracking-tighter leading-[0.85] mb-10 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                            {{ $event->name }}<span class="text-primary">.</span>
                         </h1>
-                        <div class="flex flex-wrap items-center gap-6 text-sm md:text-base font-medium text-gray-200">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                {{ $event->start_date->format('l, d F Y') }}
+
+                        <div class="flex flex-wrap items-center gap-8 md:gap-12 text-white">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-white/60">Timeline</p>
+                                    <p class="font-bold text-lg leading-none">{{ $event->start_date->format('d M Y') }}</p>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {{ $event->start_date->format('H:i') }} WIB
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                {{ $event->location }}
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-white/60">Venue</p>
+                                    <p class="font-bold text-lg leading-none">{{ $event->location }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <!-- Side background text decoration -->
+            <div class="absolute -right-20 -top-20 text-[25rem] font-black text-white/5 select-none pointer-events-none tracking-tighter opacity-20 uppercase">
+                ANX
+            </div>
         </div>
 
-        <!-- Content Section -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-30">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                <!-- Left Column: Details -->
-                <div class="lg:col-span-2 space-y-8">
-
-                    <!-- Description -->
-                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                        <h2 class="text-2xl font-heading font-bold text-dark mb-6">About This Event</h2>
-                        <div class="prose prose-blue max-w-none text-secondary">
-                            {!! nl2br(e($event->description)) !!}
+        <!-- Content Split (7/5 Ratio) -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+                
+                <!-- Left: Detailed Prose -->
+                <div class="lg:col-span-7 space-y-24">
+                    <section>
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
+                            The Narrative
+                            <div class="h-px flex-1 bg-gray-100"></div>
                         </div>
-                    </div>
+                        <div class="prose prose-2xl prose-blue max-w-none text-black prose-headings:text-dark prose-headings:font-black prose-headings:tracking-tighter">
+                            {!! $event->description !!}
+                        </div>
+                    </section>
 
-                    <!-- Organizer Info (Moved here) -->
-                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                        <h2 class="text-2xl font-heading font-bold text-dark mb-6">Organized By</h2>
-                        <div class="flex items-center gap-6">
-                            @if($event->organizer_logo_path)
-                                <img src="{{ asset('storage/' . $event->organizer_logo_path) }}"
-                                    alt="{{ $event->organizer_name }}"
-                                    class="w-20 h-20 rounded-full object-cover border-4 border-gray-50">
-                            @else
-                                <div
-                                    class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-3xl shadow-inner">
-                                    {{ substr($event->organizer_name ?? 'A', 0, 1) }}
-                                </div>
-                            @endif
-
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3 mb-1">
-                                    <h3 class="font-bold text-dark text-xl">
-                                        {{ $event->organizer_name ?? 'Anntix Official' }}</h3>
-                                    <span
-                                        class="bg-blue-50 text-blue-600 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-blue-100">Verified</span>
-                                </div>
-                                <p class="text-secondary mb-4">
-                                    Creating unforgettable experiences on Anntix since
-                                    {{ $event->created_at->format('Y') }}.
-                                </p>
-                                <button class="text-primary font-bold text-sm hover:underline">
-                                    View Full Profile &rarr;
-                                </button>
+                    <section>
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
+                            Venue Orientation
+                            <div class="h-px flex-1 bg-gray-100"></div>
+                        </div>
+                        <div class="space-y-12">
+                            <div>
+                                <h4 class="text-4xl font-black text-dark mb-4">{{ $event->location }}</h4>
+                                <p class="text-xl text-gray-500 leading-relaxed font-medium">{{ $event->address ?? $event->city }}</p>
+                                <p class="text-gray-400">{{ $event->province }}</p>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Location / Map -->
-                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                        <h2 class="text-2xl font-heading font-bold text-dark mb-6">Location</h2>
-                        <div class="space-y-4">
-                            <h3 class="font-bold text-lg text-dark flex items-center gap-2">
-                                <svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                                {{ $event->location }}
-                            </h3>
-                            <p class="text-secondary">{{ $event->address ?? $event->city . ', ' . $event->province }}
-                            </p>
-
                             @if($event->google_map_embed)
-                                <div class="w-full h-64 rounded-xl overflow-hidden border border-gray-200">
-                                    {!! $event->google_map_embed !!}
+                                <div class="w-full aspect-video rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-2xl group relative">
+                                    <div class="w-full h-full [&>iframe]:!w-full [&>iframe]:!h-full transition-transform duration-700 group-hover:scale-105">
+                                        {!! $event->google_map_embed !!}
+                                    </div>
                                 </div>
                             @endif
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- Terms -->
                     @if($event->terms)
-                        <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                            <h2 class="text-2xl font-heading font-bold text-dark mb-6">Terms & Conditions</h2>
-                            <div class="prose prose-sm max-w-none text-secondary">
-                                {!! nl2br(e($event->terms)) !!}
-                            </div>
+                    <section>
+                        <div class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
+                            Event Policy
+                            <div class="h-px flex-1 bg-gray-100"></div>
                         </div>
+                        <div class="prose prose-lg prose-blue max-w-none text-black/70 prose-headings:text-dark prose-headings:font-bold">
+                            {!! $event->terms !!}
+                        </div>
+                    </section>
                     @endif
-
                 </div>
 
-                <!-- Right Column: Booking Card -->
-                <div class="lg:col-span-1">
-                    <div class="sticky top-28 bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
-                        <div class="text-center mb-6">
-                            <h3 class="text-gray-500 font-medium text-sm uppercase tracking-wider mb-1">Ticket Price
-                            </h3>
-                            @if($event->ticket)
-                                <div class="text-4xl font-extrabold text-primary">
-                                    Rp {{ number_format($event->ticket->price, 0, ',', '.') }}
+                <!-- Right: Action & Summary -->
+                <div class="lg:col-span-5">
+                    <div class="sticky top-32 space-y-12">
+                        <!-- Pricing Sidebar -->
+                        <div class="bg-gray-50 p-12 rounded-[2.5rem] border border-gray-100 relative group">
+                             <div class="absolute -right-4 -bottom-4 text-9xl font-black text-gray-100/50 select-none group-hover:text-primary/5 transition-colors">ANNTX</div>
+                             <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 relative z-10">Access Pass</p>
+                             @php $lowest = $event->tickets->min('price'); @endphp
+                             <h2 class="text-6xl font-black text-primary tracking-tighter mb-8 relative z-10">
+                                @if($lowest !== null)
+                                    Rp {{ number_format($lowest, 0, ',', '.') }}<span class="text-primary/20">.</span>
+                                @else
+                                    TBA.
+                                @endif
+                             </h2>
+                             <a href="{{ route('checkout.create', $event) }}"
+                                class="block w-full py-6 bg-dark text-white text-center font-black rounded-2xl shadow-2xl hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-3 relative z-10">
+                                Reserve Tickets
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                             </a>
+                        </div>
+
+                        <!-- Hosted By -->
+                        <div class="bg-white p-12 space-y-12 border-t border-gray-100">
+                            <div>
+                                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-8">Executive Curator</h4>
+                                <div class="flex items-center gap-6">
+                                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-2xl shadow-inner uppercase">
+                                        {{ substr($event->organizer_name ?? 'A', 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <div class="font-black text-dark text-2xl tracking-tight leading-none mb-1">{{ $event->organizer_name ?? 'Anntix Official' }}</div>
+                                        <div class="text-xs font-bold text-primary uppercase tracking-widest flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                            Verified Authority
+                                        </div>
+                                    </div>
                                 </div>
-                            @else
-                                <div class="text-3xl font-extrabold text-green-600">Free Event</div>
-                            @endif
-                        </div>
-
-                        <div class="space-y-4 mb-8">
-                            <div class="flex items-center justify-between text-sm py-2 border-b border-gray-50">
-                                <span class="text-secondary">Date</span>
-                                <span class="font-bold text-dark">{{ $event->start_date->format('d M Y') }}</span>
                             </div>
-                            <div class="flex items-center justify-between text-sm py-2 border-b border-gray-50">
-                                <span class="text-secondary">Time</span>
-                                <span class="font-bold text-dark">{{ $event->start_date->format('H:i') }} WIB</span>
-                            </div>
-                            <div class="flex items-center justify-between text-sm py-2 border-b border-gray-50">
-                                <span class="text-secondary">Organizer</span>
-                                <span class="font-bold text-dark">{{ $event->organizer_name ?? 'Anntix' }}</span>
-                            </div>
-                        </div>
-
-                        <a href="{{ route('checkout.create', $event) }}"
-                            class="block w-full py-4 bg-primary text-center text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 hover:-translate-y-1 transition-all active:scale-95 text-lg">
-                            Buy Tickets Now
-                        </a>
-
-                        <div class="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Secure Transaction via Anntix Pay
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
+
+        <!-- Discovery Feed -->
+        @if(isset($relatedEvents) && $relatedEvents->count() > 0)
+        <div class="bg-gray-50/20 py-32 border-t border-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-16 flex items-center gap-4">
+                    Expanding Horizons
+                    <div class="h-px flex-1 bg-gray-200"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+                    @foreach($relatedEvents as $related)
+                        <a href="{{ route('events.show', $related) }}" class="group block">
+                            <div class="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl mb-8">
+                                <img src="{{ $related->thumbnail_path ? Storage::url($related->thumbnail_path) : 'https://via.placeholder.com/600x800' }}"
+                                     class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-dark/20 group-hover:bg-dark/10 transition-colors"></div>
+                                <div class="absolute bottom-10 left-10 right-10 text-white">
+                                    <div class="text-xs font-black uppercase tracking-widest mb-3 opacity-70">{{ $related->category ?? 'Experience' }}</div>
+                                    <h4 class="text-3xl font-black tracking-tighter leading-[0.9]">{{ $related->name }}</h4>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
 
     </div>
 </x-layouts.app>

@@ -23,7 +23,17 @@ class Transaction extends Model
         'snap_token',
         'payment_type',
         'midtrans_transaction_id',
+        'redeemed_at',
     ];
+
+    protected $casts = [
+        'redeemed_at' => 'datetime',
+    ];
+
+    public function getRouteKeyName()
+    {
+        return 'code';
+    }
 
     public function event()
     {

@@ -15,6 +15,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'site_password' => env('PASSWORD', 'ANTIX_123'),
+
+    'site_access_enabled' => env('SITE_ACCES', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

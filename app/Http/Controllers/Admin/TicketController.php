@@ -13,6 +13,20 @@ class TicketController extends Controller
 
 
 
+    public function index(Event $event)
+    {
+        $tickets = $event->tickets()
+            ->withSum([
+                'transactions' => function ($query) {
+                    $query->where('status', 'paid');
+                }
+            ], 'quantity')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.tickets.index', compact('event', 'tickets'));
+    }
+
     public function create(Event $event)
     {
         return view('admin.tickets.create', compact('event'));

@@ -1,98 +1,131 @@
 <x-layouts.app>
-    <div class="bg-gray-50 min-h-screen">
-        <!-- Creative Header -->
-        <div class="bg-dark relative overflow-hidden h-[400px] flex items-center justify-center">
-            <div class="absolute inset-0">
+    <div class="bg-white min-h-screen">
+        <!-- Minimalist Hero -->
+        <div class="pt-40 pb-20 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-3xl">
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+                    Legal Framework
                 </div>
-                <!-- Grid Pattern -->
-                <div class="absolute inset-0 opacity-10"
-                    style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 30px 30px;">
-                </div>
-            </div>
-
-            <div class="relative z-10 text-center max-w-2xl px-6">
-                <div
-                    class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-bold uppercase tracking-widest text-primary mb-6">
-                    Legal Documentation
-                </div>
-                <h1 class="text-5xl md:text-6xl font-black text-white tracking-tight mb-4">
-                    Terms of Service
+                <h1 class="text-6xl md:text-8xl font-heading font-black text-dark tracking-tighter leading-none mb-8">
+                    Terms of <br>
+                    <span class="text-primary/20">Service.</span>
                 </h1>
-                <p class="text-gray-400 text-lg">
-                    Essential guidelines to ensure a safe and transparent experience for everyone.
+                <p class="text-xl text-gray-500 max-w-2xl leading-relaxed">
+                    By using Anntix, you agree to these guidelines. They are designed to ensure a safe and fair
+                    experience for every attendee and organizer.
                 </p>
             </div>
+
+            <!-- Abstract background shape -->
+            <div class="absolute bottom-0 right-0 -z-10 w-1/3 h-1/2 bg-gray-50 rounded-tl-[200px]"></div>
         </div>
 
-        <!-- Content Container -->
-        <div class="max-w-4xl mx-auto px-6 -mt-20 relative z-20 pb-20">
-            <div class="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100">
-                <!-- Last Updated Bar -->
-                <div
-                    class="bg-gray-50/50 border-b border-gray-100 px-8 py-4 flex items-center gap-2 text-sm text-gray-500 font-medium">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Last Updated: December 25, 2025
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <!-- Navigation -->
+                <div class="lg:col-span-3 hidden lg:block">
+                    <div class="sticky top-32">
+                        <div class="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-8">Legal Directory
+                        </div>
+                        <nav class="space-y-6">
+                            <a href="#intro" class="group flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full bg-primary"></span>
+                                <span
+                                    class="text-sm font-bold text-dark group-hover:translate-x-1 transition-transform">1.
+                                    Introduction</span>
+                            </a>
+                            <a href="#services" class="group flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full bg-gray-200 group-hover:bg-primary"></span>
+                                <span class="text-sm font-medium text-gray-400 group-hover:text-dark transition-all">2.
+                                    Our Services</span>
+                            </a>
+                            <a href="#payments" class="group flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full bg-gray-200 group-hover:bg-primary"></span>
+                                <span class="text-sm font-medium text-gray-400 group-hover:text-dark transition-all">3.
+                                    Payments</span>
+                            </a>
+                            <a href="#conduct" class="group flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full bg-gray-200 group-hover:bg-primary"></span>
+                                <span class="text-sm font-medium text-gray-400 group-hover:text-dark transition-all">4.
+                                    Conduct</span>
+                            </a>
+                        </nav>
+                    </div>
                 </div>
 
+                <!-- Main content area -->
                 <div
-                    class="p-8 md:p-12 prose prose-lg prose-headings:font-bold prose-headings:text-dark prose-p:text-gray-600 prose-a:text-primary max-w-none">
+                    class="lg:col-span-9 prose prose-2xl prose-blue max-w-none text-black prose-headings:text-dark prose-headings:font-black prose-headings:tracking-tighter">
+                    <section id="intro" class="mb-24 py-4">
+                        <h2 class="text-4xl mb-10">Introduction</h2>
+                        <div class="text-lg leading-relaxed space-y-6 text-black/80">
+                            <p>
+                                Welcome to <strong>Anntix</strong>. By accessing our platform, you enter into a binding
+                                agreement that governs your use of our ticketing and event discovery ecosystem.
+                            </p>
+                            <p>
+                                These terms apply to all visitors, users, and others who wish to access or use the
+                                Service.
+                            </p>
+                        </div>
+                    </section>
 
-                    <h3>1. Introduction</h3>
-                    <p>
-                        Welcome to <strong>Anntix</strong> ("we," "our," or "us"). By accessing or using our website,
-                        mobile application, and ticketing services (collectively, the "Services"), you agree to be bound
-                        by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use our
-                        Services.
-                    </p>
+                    <section id="services" class="mb-24">
+                        <h2 class="text-4xl mb-10">Our Services</h2>
+                        <div class="text-lg leading-relaxed text-black/80">
+                            <p>Anntix acts as an intermediary marketplace. We provide the technology that connects Event
+                                Organizers with Attendees.</p>
+                        </div>
+                        <div class="not-prose mt-12 mb-16 px-10 py-10 border-y border-gray-100 relative">
+                            <div class="absolute top-0 left-0 w-1 h-20 bg-primary"></div>
+                            <h4 class="text-dark font-black uppercase tracking-widest text-sm mb-4">The Anntix Charter
+                            </h4>
+                            <p class="text-black/70 text-lg leading-relaxed max-w-2xl font-medium">
+                                We do not produce, host, or manage the events themselves. The organizer is solely
+                                responsible for the event delivery, quality, and safety.
+                            </p>
+                        </div>
+                    </section>
 
-                    <h3>2. Use of Services</h3>
-                    <p>
-                        Anntix provides a digital marketplace connecting Event Organizers with Attendees. We are an
-                        intermediary platform and do not organize, host, or produce the events listed unless explicitly
-                        stated.
-                    </p>
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl my-8 not-prose">
-                        <h4 class="text-blue-900 font-bold mb-2">Key Responsibility</h4>
-                        <p class="text-blue-800 text-sm">
-                            Organizers are solely responsible for their events, including quality, safety, and
-                            compliance with applicable laws. Anntix is not liable for event cancellations or changes.
+                    <section id="payments" class="mb-24">
+                        <h2 class="text-4xl mb-10">Payments & Refunds</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 not-prose">
+                            <div class="space-y-4">
+                                <div class="text-4xl font-black text-primary/30 tracking-tighter">01</div>
+                                <h4 class="font-bold text-xl text-dark">Clear Pricing</h4>
+                                <p class="text-gray-500 text-base">All ticket prices are set by organizers. Anntix may
+                                    apply a processing fee which is clearly detailed at checkout.</p>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="text-4xl font-black text-primary/30 tracking-tighter">02</div>
+                                <h4 class="font-bold text-xl text-dark">Strict Refunds</h4>
+                                <p class="text-gray-500 text-base">Sales are generally final. Refunds are processed only
+                                    in the event of cancellation as per the organizer's set policy.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div
+                        class="pt-20 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-10">
+                        <div class="flex items-center gap-6">
+                            <div class="w-12 h-12 rounded-full bg-dark flex items-center justify-center text-white">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Legal Desk
+                                </div>
+                                <a href="mailto:legal@anntix.com"
+                                    class="text-xl font-bold hover:text-primary transition-colors">legal@anntix.com</a>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm font-medium tracking-tight whitespace-nowrap">
+                            Anntix Regulatory Affairs &copy; {{ date('Y') }}
                         </p>
                     </div>
-
-                    <h3>3. Ticket Purchases & Payments</h3>
-                    <ul>
-                        <li><strong>Pricing:</strong> Prices are set by the Organizer. Anntix may charge a booking fee
-                            which is non-refundable.</li>
-                        <li><strong>Availability:</strong> Tickets are sold on a first-come, first-served basis.</li>
-                        <li><strong>Refunds:</strong> All sales are final. Refunds are only issued if an event is
-                            cancelled, subject to the Organizer's policy.</li>
-                    </ul>
-
-                    <h3>4. User Conduct</h3>
-                    <p>
-                        You agree not to use the Services for any unlawful purpose or to solicit others to perform or
-                        participate in any unlawful acts. You are prohibited from violating or attempting to violate the
-                        security of the Services.
-                    </p>
-
-                    <h3>5. Intellectual Property</h3>
-                    <p>
-                        The Service and its original content, features, and functionality are and will remain the
-                        exclusive property of Anntix and its licensors.
-                    </p>
-
-                    <hr class="my-12 border-gray-100">
-
-                    <h3>6. Contact Us</h3>
-                    <p>
-                        If you have any questions about these Terms, please contact us at <a
-                            href="mailto:support@anntix.com">support@anntix.com</a>.
-                    </p>
                 </div>
             </div>
         </div>

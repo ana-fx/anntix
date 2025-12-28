@@ -29,16 +29,71 @@
             Dashboard
         </a>
 
-        <!-- Messages -->
-        <a href="{{ route('admin.contacts.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.contacts.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
-            <svg class="w-5 h-5 {{ request()->routeIs('admin.contacts.*') ? 'opacity-100' : 'opacity-70' }}"
+        <!-- Events -->
+        <a href="{{ route('admin.events.index') }}"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.events.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            <svg class="w-5 h-5 {{ request()->routeIs('admin.events.*') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                <path fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd" />
             </svg>
-            Inbox
+            Events
         </a>
+
+        <!-- Banners -->
+        <a href="{{ route('admin.banners.index') }}"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.banners.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            <svg class="w-5 h-5 {{ request()->routeIs('admin.banners.*') ? 'opacity-100' : 'opacity-70' }}" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Banners
+        </a>
+
+        <!-- User Management (Dropdown) -->
+        <div
+            x-data="{ open: {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') ? 'true' : 'false' }} }">
+            <button @click="open = !open"
+                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') ? 'opacity-100' : 'opacity-70' }}"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                            d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                    </svg>
+                    User Management
+                </div>
+                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95" class="pl-4 space-y-1 mt-1">
+
+                <!-- System Admins -->
+                <a href="{{ route('admin.admins.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.admins.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-200 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.admins.*') ? 'bg-white' : 'bg-blue-300' }}"></span>
+                    System Admins
+                </a>
+
+                <!-- Scanners -->
+                <a href="{{ route('admin.scanners.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-200 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.scanners.*') ? 'bg-white' : 'bg-blue-300' }}"></span>
+                    Scanners
+                </a>
+            </div>
+        </div>
 
         <!-- Reports -->
         <a href="{{ route('admin.reports.index') }}"
@@ -51,33 +106,15 @@
             Reports
         </a>
 
-        <!-- Scanners -->
-        <a href="{{ route('admin.scanners.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
-            <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') ? 'opacity-100' : 'opacity-70' }}"
+        <!-- Messages/Inbox -->
+        <a href="{{ route('admin.contacts.index') }}"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.contacts.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            <svg class="w-5 h-5 {{ request()->routeIs('admin.contacts.*') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3zm1 2v1h1V5h-1z"
-                    clip-rule="evenodd" />
-                <path
-                    d="M11 4a1 1 0 10-2 0v1a1 1 0 002 0V4zM10 7a1 1 0 011 1v1h2a1 1 0 110 2h-3a1 1 0 01-1-1V8a1 1 0 011-1zM16 9a1 1 0 100 2 1 1 0 000-2zM9 13a1 1 0 011-1h1a1 1 0 110 2v2a1 1 0 11-2 0v-3zM7 11a1 1 0 100-2H4a1 1 0 100 2h3zM17 13a1 1 0 01-1 1h-2a1 1 0 110-2h2a1 1 0 011 1zM16 17a1 1 0 100-2h-3a1 1 0 100 2h3z" />
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
             </svg>
-            Scanners
-        </a>
-
-        <!-- Placeholder Links -->
-
-        <!-- Management Group -->
-        <!-- Events -->
-        <a href="{{ route('admin.events.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.events.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
-            <svg class="w-5 h-5 {{ request()->routeIs('admin.events.*') ? 'opacity-100' : 'opacity-70' }}"
-                viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                    clip-rule="evenodd" />
-            </svg>
-            Events
+            Inbox
         </a>
 
     </nav>

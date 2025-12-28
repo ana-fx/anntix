@@ -9,7 +9,7 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Event::with('ticket')
+        $query = Event::with('tickets')
             ->whereDate('start_date', '>=', now());
 
         // Search

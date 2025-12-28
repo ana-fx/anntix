@@ -12,11 +12,17 @@ class CheckoutController extends Controller
 {
     public function create(Event $event)
     {
-        $event->load('ticket');
+        $event->load([
+            'tickets' => function ($query) {
+                $query->where('start_date', '<=', now())
+                    ->where('end_date', '>=', now())
+                    ->orderBy('price', 'asc');
+            }
+        ]);
 
-        if (!$event->ticket) {
+        if ($event->tickets->isEmpty()) {
             return redirect()->route('events.show', $event)
-                ->with('error', 'Tickets are not available for this event.');
+                ->with('error', 'No tickets are currently available for this event.');
         }
 
         return view('checkout.create', compact('event'));
@@ -25,7 +31,8 @@ class CheckoutController extends Controller
     public function store(Request $request, Event $event)
     {
         $validated = $request->validate([
-            'quantity' => 'required|integer|min:1|max:' . ($event->ticket->max_purchase_per_user ?? 5),
+            'ticket_id' => 'required|exists:tickets,id',
+            'quantity' => 'required|integer|min:1',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|regex:/^[\d\+\-\s]+$/|min:10|max:20',
@@ -34,12 +41,24 @@ class CheckoutController extends Controller
             'gender' => 'required|in:male,female',
         ]);
 
-        $totalPrice = $event->ticket->price * $validated['quantity'];
+        $ticket = $event->tickets()->findOrFail($validated['ticket_id']);
+
+        // Validate Max Purchase
+        if ($validated['quantity'] > $ticket->max_purchase_per_user) {
+            return back()->withErrors(['quantity' => 'Max purchase for this ticket is ' . $ticket->max_purchase_per_user]);
+        }
+
+        // Validate Quota
+        if ($ticket->quota < $validated['quantity']) {
+            return back()->withErrors(['quantity' => 'Not enough tickets available.']);
+        }
+
+        $totalPrice = $ticket->price * $validated['quantity'];
 
         $transaction = Transaction::create([
-            'code' => 'TRX-' . strtoupper(Str::random(10)), // Simplified code
+            'code' => 'TRX-' . strtoupper(Str::random(10)),
             'event_id' => $event->id,
-            'ticket_id' => $event->ticket->id,
+            'ticket_id' => $ticket->id,
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],

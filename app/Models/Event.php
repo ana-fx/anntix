@@ -37,6 +37,11 @@ class Event extends Model
         'end_date' => 'datetime',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
@@ -45,5 +50,10 @@ class Event extends Model
     public function scanners()
     {
         return $this->belongsToMany(User::class, 'event_scanner', 'event_id', 'user_id')->withTimestamps();
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

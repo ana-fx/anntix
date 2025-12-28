@@ -28,6 +28,7 @@ return new class extends Migration {
             $table->integer('quantity');
             $table->decimal('total_price', 15, 2);
             $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
+            $table->timestamp('redeemed_at')->nullable();
             $table->string('snap_token')->nullable(); // For Payment Gateway later
             $table->string('payment_type')->nullable();
             $table->string('midtrans_transaction_id')->nullable();

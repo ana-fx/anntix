@@ -22,6 +22,8 @@
                         <th class="px-6 py-4">Thumbnail</th>
                         <th class="px-6 py-4">Name</th>
                         <th class="px-6 py-4">Date</th>
+                        <th class="px-6 py-4 text-center">Tickets</th>
+                        <th class="px-6 py-4 text-center">Scanners</th>
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Actions</th>
                     </tr>
@@ -46,11 +48,46 @@
                             <td class="px-6 py-4 text-sm text-gray-500">
                                 {{ $event->start_date->format('M d, Y H:i') }}
                             </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center">
+                                    <a href="{{ route('admin.events.tickets.index', $event) }}"
+                                        class="group flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
+                                        title="Manage Tickets">
+                                        <div class="flex items-baseline gap-0.5">
+                                            <span
+                                                class="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $event->tickets_count ?? '0' }}</span>
+                                            <span class="text-xs text-gray-400 font-medium">/
+                                                {{ $event->total_tickets ?? '0' }}</span>
+                                        </div>
+                                        <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-400 transition-colors ml-1"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center">
+                                    <a href="{{ route('admin.events.scanners.index', $event) }}"
+                                        class="group flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
+                                        title="Manage Scanners">
+                                        <span
+                                            class="font-bold text-gray-900 group-hover:text-purple-600 transition-colors">{{ $event->scanners_count ?? 0 }}</span>
+                                        <svg class="w-4 h-4 text-gray-300 group-hover:text-purple-400 transition-colors"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                    @if($event->status === 'active') bg-green-100 text-green-700
-                                                                    @elseif($event->status === 'draft') bg-gray-100 text-gray-600
-                                                                    @else bg-red-100 text-red-700 @endif">
+                                <span
+                                    class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
+                                                                                                                    @if($event->status === 'active') bg-green-100 text-green-700
+                                                                                                                    @elseif($event->status === 'draft') bg-gray-100 text-gray-600
+                                                                                                                    @else bg-red-100 text-red-700 @endif">
                                     {{ ucfirst($event->status) }}
                                 </span>
                             </td>
@@ -110,6 +147,9 @@
                 </div>
             @endif
         </div>
+
+
+
         <!-- Delete Confirmation Modal -->
         <x-notifications.delete />
     </div>

@@ -9,7 +9,7 @@
                     <div class="relative rounded-3xl overflow-hidden shadow-2xl group">
                         <!-- Background Image with Overlay -->
                         <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/30 transition-colors z-10"></div>
-                        <img src="{{ $event->thumbnail_path ?? 'https://via.placeholder.com/600x800' }}"
+                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/600x800' }}"
                             class="w-full aspect-[4/5] object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
 
                         <!-- Content Overlay -->
@@ -57,8 +57,14 @@
                                 </div>
                                 <div class="pt-4 mt-4 border-t border-white/10 flex justify-between items-center">
                                     <span class="text-sm font-medium text-white/80">Ticket Price</span>
-                                    <span class="text-2xl font-extrabold text-white">Rp
-                                        {{ number_format($event->ticket->price, 0, ',', '.') }}</span>
+                                    <span class="text-2xl font-extrabold text-white">
+                                        @php $lowest = $event->tickets->min('price'); @endphp
+                                        @if($lowest !== null)
+                                            Rp {{ number_format($lowest, 0, ',', '.') }}
+                                        @else
+                                            TBA
+                                        @endif
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -68,40 +74,87 @@
                 <!-- Right Column: Minimalist Form -->
                 <div class="lg:col-span-7">
                     <form action="{{ route('checkout.store', $event) }}" method="POST" x-data="{
-                        price: {{ $event->ticket->price }},
+                        tickets: {{ $event->tickets->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'price' => $t->price, 'limit' => $t->max_purchase_per_user, 'description' => $t->description, 'quota' => $t->quota]) }},
+                        selectedTicketId: null,
+                        selectedTicket: null,
                         quantity: 1,
-                        get total() { return this.price * this.quantity }
+                        
+                        init() {
+                             // Select first available ticket
+                             const available = this.tickets.find(t => t.quota > 0);
+                             if(available) this.selectTicket(available.id);
+                        },
+
+                        selectTicket(id) {
+                            this.selectedTicketId = id;
+                            this.selectedTicket = this.tickets.find(t => t.id === id);
+                            this.quantity = 1;
+                        },
+
+                        get total() { 
+                            return this.selectedTicket ? (this.selectedTicket.price * this.quantity) : 0; 
+                        }
                     }" class="space-y-10">
                         @csrf
+                        <input type="hidden" name="ticket_id" :value="selectedTicketId">
 
                         <!-- Header -->
                         <div>
                             <h2 class="text-3xl font-heading font-bold text-dark mb-2">Secure Your Spot</h2>
-                            <p class="text-secondary">Fill in your details to receive your e-ticket instantly.</p>
+                            <p class="text-secondary">Select a ticket and fill in your details.</p>
                         </div>
 
-                        <!-- Ticket Details / Quantity section -->
-                        <div class="pb-8 border-b border-gray-100">
-                            <div class="flex items-center justify-between">
+                        <!-- Ticket Selection -->
+                        <div class="space-y-4">
+                            <h3 class="font-bold text-dark">Choose Ticket Type</h3>
+                            <div class="grid grid-cols-1 gap-4">
+                                <template x-for="ticket in tickets" :key="ticket.id">
+                                    <div @click="if(ticket.quota > 0) selectTicket(ticket.id)"
+                                        class="cursor-pointer border-2 rounded-xl p-4 transition-all" :class="[
+                                            selectedTicketId === ticket.id ? 'border-primary bg-primary/5' : 'border-gray-100 hover:border-gray-200',
+                                            ticket.quota === 0 ? 'opacity-50 cursor-not-allowed bg-gray-50' : ''
+                                        ]">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <h4 class="font-bold text-dark" x-text="ticket.name"></h4>
+                                                <p class="text-xs text-secondary mt-1"
+                                                    x-text="ticket.description || 'Entry Ticket'"></p>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-bold text-primary"
+                                                    x-text="ticket.price == 0 ? 'Free' : 'Rp ' + new Intl.NumberFormat('id-ID').format(ticket.price)">
+                                                </div>
+                                                <div class="text-xs font-medium"
+                                                    :class="ticket.quota > 0 ? 'text-green-600' : 'text-red-500'"
+                                                    x-text="ticket.quota > 0 ? 'Available' : 'Sold Out'"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Quantity Stepper (Only show if ticket selected) -->
+                        <div class="pb-8 border-b border-gray-100" x-show="selectedTicket">
+                            <div class="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
                                 <div>
-                                    <h3 class="text-lg font-bold text-dark">{{ $event->ticket->name }}</h3>
+                                    <h3 class="font-bold text-dark">Quantity</h3>
                                     <p class="text-sm text-secondary">
-                                        {{ $event->ticket->description ?? 'Single Entry Ticket' }}
+                                        Max purchase: <span x-text="selectedTicket?.limit"></span>
                                     </p>
                                 </div>
 
                                 <!-- Minimalist Stepper -->
                                 <div
-                                    class="flex items-center gap-4 bg-white shadow-sm border border-gray-100 rounded-full px-2 py-1.5">
+                                    class="flex items-center gap-4 bg-white shadow-sm border border-gray-200 rounded-full px-2 py-1.5">
                                     <button type="button" @click="if(quantity > 1) quantity--"
-                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-50 text-secondary transition-colors font-bold text-lg">
+                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary transition-colors font-bold text-lg">
                                         −
                                     </button>
                                     <span class="font-bold text-dark w-6 text-center text-lg" x-text="quantity">1</span>
                                     <input type="hidden" name="quantity" :value="quantity">
-                                    <button type="button"
-                                        @click="if(quantity < {{ $event->ticket->max_purchase_per_user ?? 5 }}) quantity++"
-                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-50 text-secondary transition-colors font-bold text-lg">
+                                    <button type="button" @click="if(quantity < selectedTicket.limit) quantity++"
+                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary transition-colors font-bold text-lg">
                                         +
                                     </button>
                                 </div>
@@ -193,8 +246,9 @@
                                     Rp <span x-text="new Intl.NumberFormat('id-ID').format(total)"></span>
                                 </p>
                             </div>
-                            <button type="submit"
-                                class="px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/30 hover:bg-primary/90 hover:scale-105 transition-all active:scale-95 flex items-center gap-2">
+                            <button type="submit" :disabled="!selectedTicket"
+                                :class="!selectedTicket ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90 hover:scale-105 active:scale-95'"
+                                class="px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center gap-2">
                                 <span>Complete Order</span>
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -204,8 +258,10 @@
                         </div>
 
                         <p class="text-center text-xs text-gray-400 mt-4">
-                            By continuing, you agree to the <a href="#" class="underline hover:text-dark">Terms of
-                                Service</a> and <a href="#" class="underline hover:text-dark">Privacy Policy</a>.
+                            By continuing, you agree to the <a href="{{ route('pages.terms') }}"
+                                class="underline hover:text-dark">Terms of
+                                Service</a> and <a href="{{ route('pages.privacy') }}"
+                                class="underline hover:text-dark">Privacy Policy</a>.
                         </p>
 
                     </form>
