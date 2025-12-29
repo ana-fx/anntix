@@ -1,4 +1,9 @@
 <x-layouts.app>
+    @php
+        $subtotal = $transaction->ticket->price * $transaction->quantity;
+        $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+        $serviceFee = $transaction->total_price - $subtotal - $handlingFee;
+    @endphp
     <div class="bg-white min-h-screen pt-32 pb-20 px-4 sm:px-6">
         <div class="max-w-7xl mx-auto">
 
@@ -12,7 +17,7 @@
                         Thank you for your purchase!
                     </h1>
 
-                    <div class="space-y-2 text-lg text-secondary mb-8">
+                    <div class="space-y-2 text-lg text-black/70 mb-8">
                         <p>You will receive an order confirmation email with details of your order.</p>
                         <p>Your order # is: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
                     </div>
@@ -38,7 +43,7 @@
                     <!-- Create Account / Additional Info (Optional placeholder) -->
                     <div>
                         <h3 class="font-bold text-dark text-xl mb-4 uppercase">Important Information</h3>
-                        <p class="text-secondary mb-4">
+                        <p class="text-black/70 mb-4">
                             Please arrive 30 minutes before the event starts. Show the QR code on the right (or in your
                             email) at the entrance.
                         </p>
@@ -78,7 +83,7 @@
                         <div class="space-y-4">
                             <!-- Table Header -->
                             <div
-                                class="grid grid-cols-12 text-xs font-bold text-secondary uppercase tracking-wider pb-2 border-b border-gray-100">
+                                class="grid grid-cols-12 text-xs font-bold text-black/70 uppercase tracking-wider pb-2 border-b border-gray-100">
                                 <div class="col-span-8">Product Name</div>
                                 <div class="col-span-2 text-right">Qty</div>
                                 <div class="col-span-2 text-right">Subtotal</div>
@@ -88,27 +93,35 @@
                             <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
                                 <div class="col-span-8 pr-4">
                                     <div class="font-bold text-dark">{{ $transaction->ticket->name }}</div>
-                                    <div class="text-xs text-secondary mt-1">{{ $transaction->event->name }}</div>
+                                    <div class="text-xs text-black/70 mt-1">{{ $transaction->event->name }}</div>
                                 </div>
                                 <div class="col-span-2 text-right font-medium text-dark">
                                     {{ $transaction->quantity }}
                                 </div>
                                 <div class="col-span-2 text-right font-bold text-dark">
-                                    {{ number_format($transaction->total_price, 0, ',', '.') }}
+                                    {{ number_format($subtotal, 0, ',', '.') }}
                                 </div>
                             </div>
 
                             <!-- Totals -->
                             <div class="pt-4 space-y-2">
                                 <div class="flex justify-between text-sm">
-                                    <span class="text-secondary">Subtotal</span>
+                                    <span class="text-black/70">Subtotal</span>
                                     <span class="font-medium text-dark">Rp
-                                        {{ number_format($transaction->total_price, 0, ',', '.') }}</span>
+                                        {{ number_format($subtotal, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between text-sm">
-                                    <span class="text-secondary">Tax & Fees</span>
-                                    <span class="font-medium text-dark">Rp 0</span>
+                                    <span class="text-black/70">Handling Fee</span>
+                                    <span class="font-medium text-dark">Rp
+                                        {{ number_format($handlingFee, 0, ',', '.') }}</span>
                                 </div>
+                                @if($serviceFee > 0)
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-black/70">Service Fee</span>
+                                        <span class="font-medium text-dark">Rp
+                                            {{ number_format($serviceFee, 0, ',', '.') }}</span>
+                                    </div>
+                                @endif
                                 <div class="flex justify-between text-lg font-bold pt-4 border-t border-gray-100">
                                     <span class="text-dark">Grand Total</span>
                                     <span class="text-primary">Rp
@@ -130,39 +143,39 @@
                             <div class="space-y-4">
                                 <!-- Table Header -->
                                 <div
-                                    class="grid grid-cols-12 text-xs font-bold text-secondary uppercase tracking-wider pb-2 border-b border-gray-100">
+                                    class="grid grid-cols-12 text-xs font-bold text-black/70 uppercase tracking-wider pb-2 border-b border-gray-100">
                                     <div class="col-span-4">Information</div>
                                     <div class="col-span-8">Details</div>
                                 </div>
 
                                 <!-- Rows -->
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-secondary">Passport / NIK</div>
+                                    <div class="col-span-4 font-bold text-black/70">Passport / NIK</div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->nik }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-secondary">Full Name</div>
+                                    <div class="col-span-4 font-bold text-black/70">Full Name</div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->name }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-secondary">Email Address</div>
+                                    <div class="col-span-4 font-bold text-black/70">Email Address</div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->email }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-secondary">Phone Number</div>
+                                    <div class="col-span-4 font-bold text-black/70">Phone Number</div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->phone }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-secondary">City / Address</div>
+                                    <div class="col-span-4 font-bold text-black/70">City / Address</div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->city }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-secondary">Payment Method</div>
+                                    <div class="col-span-4 font-bold text-black/70">Payment Method</div>
                                     <div class="col-span-8 font-bold text-primary">
                                         {{ strtoupper($transaction->payment_type ?? 'Online Payment') }}
                                     </div>

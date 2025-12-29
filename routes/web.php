@@ -10,6 +10,20 @@ use App\Http\Controllers\SiteAccessController;
 Route::get('/site-access', [SiteAccessController::class, 'index'])->name('site-access.index');
 Route::post('/site-access/unlock', [SiteAccessController::class, 'unlock'])->name('site-access.unlock');
 
+// Error Page Previews
+Route::get('/errors/403', function () {
+    abort(403);
+});
+Route::get('/errors/404', function () {
+    abort(404);
+});
+Route::get('/errors/419', function () {
+    abort(419);
+});
+Route::get('/errors/500', function () {
+    abort(500);
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event}', [HomeController::class, 'show'])->name('events.show');
@@ -33,8 +47,10 @@ Route::post('/checkout/{event}', [CheckoutController::class, 'store'])->name('ch
 
 use App\Http\Controllers\PaymentController;
 Route::get('/payment/{transaction}', [PaymentController::class, 'show'])->name('payment.show');
+Route::post('/payment/{transaction}/token', [PaymentController::class, 'generateToken'])->name('payment.token');
 Route::post('/payment/{transaction}/complete', [PaymentController::class, 'updateStatus'])->name('payment.update');
-Route::get('/payment/{transaction}/success', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/success/{transaction}', [PaymentController::class, 'success'])->name('payment.success');
+Route::post('/midtrans/notification', [PaymentController::class, 'notification'])->name('midtrans.notification');
 
 Route::view('dashboard', 'admin.dashboard')
     ->middleware(['auth', 'verified', 'admin'])

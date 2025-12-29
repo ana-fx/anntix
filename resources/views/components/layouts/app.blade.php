@@ -6,7 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ $global_settings['seo_title'] ?? ($global_settings['site_name'] ?? config('app.name', 'Laravel')) }}
+    </title>
+    @if(isset($global_settings['seo_description']))
+        <meta name="description" content="{{ $global_settings['seo_description'] }}">
+    @endif
+    @if(isset($global_settings['site_icon']))
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
+    @endif
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -26,7 +33,8 @@
     </div>
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer"
+    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $global_settings['contact_whatsapp'] ?? '6281234567890') }}"
+        target="_blank" rel="noopener noreferrer"
         class="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-110 flex items-center justify-center group"
         aria-label="Contact us on WhatsApp">
         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">

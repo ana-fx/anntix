@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\SiteAccessMiddleware::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'midtrans/notification',
+        ]);
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
         ]);

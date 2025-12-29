@@ -35,4 +35,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Admins
     Route::resource('admins', \App\Http\Controllers\Admin\AdminUserController::class)->except(['show']);
+
+    // Settings
+    Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::put('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
 });

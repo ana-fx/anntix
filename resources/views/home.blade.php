@@ -15,7 +15,7 @@
                     timer: null
                 }" x-init="timer = setInterval(() => next(), 5000)" @mouseenter="clearInterval(timer)"
                 @mouseleave="timer = setInterval(() => next(), 5000)"
-                class="relative group rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/10 aspect-[3/1] md:aspect-[3.5/1]">
+                class="relative group rounded-3xl overflow-hidden shadow-2xl shadow-primary/10 aspect-[3/1] md:aspect-[3.5/1]">
 
                 <!-- Slides -->
                 <template x-for="(slide, index) in slides" :key="index">
@@ -73,7 +73,7 @@
                         class="block group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Landscape Image -->
                         <div class="aspect-video relative overflow-hidden">
-                            <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/640x360' }}"
+                            <img src="{{ $event->banner_path ? Storage::url($event->banner_path) : ($event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/1280x720') }}"
                                 alt="{{ $event->name }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
@@ -111,7 +111,7 @@
                             </div>
 
                             <div class="pt-3 border-t border-gray-50 mt-1 flex items-center justify-between">
-                                <span class="text-xs text-secondary font-medium">Starts from</span>
+                                <span class="text-xs text-black font-medium">Starts from</span>
                                 <span class="font-extrabold text-dark text-sm">
                                     @php
                                         $lowestPriceTicket = $event->tickets->sortBy('price')->first();

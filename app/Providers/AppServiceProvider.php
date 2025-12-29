@@ -14,11 +14,15 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $settings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
+                \Illuminate\Support\Facades\View::share('global_settings', $settings);
+            }
+        } catch (\Exception $e) {
+            // Table might not exist during migration
+        }
     }
 }

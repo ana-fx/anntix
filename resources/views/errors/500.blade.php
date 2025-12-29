@@ -22,13 +22,13 @@
             <div class="flex-1 text-center md:text-left space-y-8 order-2 md:order-1">
 
                 <h2 class="text-5xl md:text-7xl font-heading font-black leading-tight tracking-tight text-dark">
-                    Lost in the <br>
-                    <span class="text-primary">Digital Void.</span>
+                    Server <br>
+                    <span class="text-primary">Error.</span>
                 </h2>
 
                 <p class="text-lg text-black max-w-md mx-auto md:mx-0 leading-relaxed opacity-90">
-                    The page you are looking for has vanished into thin air. It may have been moved, deleted, or never
-                    existed in the first place.
+                    Something went wrong on our end. We're already notified and working to fix the issue. Please try
+                    again later.
                 </p>
 
                 <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -51,7 +51,7 @@
                 <h1
                     class="relative text-[12rem] md:text-[18rem] leading-none font-black text-transparent select-none z-10 pr-20 overflow-visible">
                     <span
-                        class="relative z-20 bg-clip-text text-transparent bg-gradient-to-br from-dark to-primary opacity-90">404</span>
+                        class="relative z-20 bg-clip-text text-transparent bg-gradient-to-br from-dark to-primary opacity-90">500</span>
                 </h1>
             </div>
 

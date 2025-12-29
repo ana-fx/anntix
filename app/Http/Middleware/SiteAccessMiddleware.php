@@ -20,8 +20,8 @@ class SiteAccessMiddleware
             return $next($request);
         }
 
-        // Don't block the access page itself
-        if ($request->is('site-access*')) {
+        // Don't block the access page itself or error previews
+        if ($request->is('site-access*') || $request->is('errors/*')) {
             return $next($request);
         }
 

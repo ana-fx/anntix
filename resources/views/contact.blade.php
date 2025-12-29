@@ -19,7 +19,7 @@
             <div class="space-y-12">
                 <div>
                     <h2 class="text-3xl font-heading font-bold text-dark mb-6">Contact Information</h2>
-                    <p class="text-secondary leading-relaxed">
+                    <p class="text-black/70 leading-relaxed">
                         Whether you have a question about events, tickets, or just want to say hello, we'd love to hear
                         from you.
                     </p>
@@ -38,8 +38,9 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-dark text-lg">Our Office</h3>
-                            <p class="text-secondary mt-1">123 Event Street, Creative District<br>Jakarta, Indonesia
-                                12345</p>
+                            <p class="text-black/70 mt-1">
+                                {!! nl2br(e($global_settings['contact_location'] ?? "123 Event Street, Creative District\nJakarta, Indonesia 12345")) !!}
+                            </p>
                         </div>
                     </div>
 
@@ -53,8 +54,11 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-dark text-lg">Email Us</h3>
-                            <p class="text-secondary mt-1">support@anntix.com</p>
-                            <p class="text-secondary">Partnership: partners@anntix.com</p>
+                            <p class="text-black/70 mt-1">{{ $global_settings['contact_email'] ?? 'support@anntix.com'
+                                }}</p>
+                            @if(isset($settings['partnership_email']))
+                                <p class="text-black/70">Partnership: {{ $settings['partnership_email'] }}</p>
+                            @endif
                         </div>
                     </div>
 
@@ -68,8 +72,9 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-dark text-lg">Call Us</h3>
-                            <p class="text-secondary mt-1">+62 821 1234 5678</p>
-                            <p class="text-secondary text-sm">(Mon-Fri, 9am - 5pm WIB)</p>
+                            <p class="text-black/70 mt-1">
+                                {{ $global_settings['contact_whatsapp'] ?? '+62 821 1234 5678' }}</p>
+                            <p class="text-black/70 text-sm">(Mon-Fri, 9am - 5pm WIB)</p>
                         </div>
                     </div>
                 </div>

@@ -22,23 +22,24 @@
             <div class="flex-1 text-center md:text-left space-y-8 order-2 md:order-1">
 
                 <h2 class="text-5xl md:text-7xl font-heading font-black leading-tight tracking-tight text-dark">
-                    Lost in the <br>
-                    <span class="text-primary">Digital Void.</span>
+                    Session <br>
+                    <span class="text-primary">Expired.</span>
                 </h2>
 
                 <p class="text-lg text-black max-w-md mx-auto md:mx-0 leading-relaxed opacity-90">
-                    The page you are looking for has vanished into thin air. It may have been moved, deleted, or never
-                    existed in the first place.
+                    Your session has expired due to inactivity. Please refresh the page or try submitting the form
+                    again.
                 </p>
 
                 <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                    <a href="{{ route('home') }}"
+                    <a href="{{ url()->previous() }}"
                         class="px-8 py-4 bg-primary text-white font-bold rounded-xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group">
-                        <span>Back to Home</span>
-                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                        <span>Refresh Page</span>
+                        <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
                         </svg>
                     </a>
                 </div>
@@ -51,7 +52,7 @@
                 <h1
                     class="relative text-[12rem] md:text-[18rem] leading-none font-black text-transparent select-none z-10 pr-20 overflow-visible">
                     <span
-                        class="relative z-20 bg-clip-text text-transparent bg-gradient-to-br from-dark to-primary opacity-90">404</span>
+                        class="relative z-20 bg-clip-text text-transparent bg-gradient-to-br from-dark to-primary opacity-90">419</span>
                 </h1>
             </div>
 

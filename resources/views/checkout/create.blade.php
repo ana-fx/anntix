@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <div class="bg-gray-50 min-h-screen">
+    <div class="bg-gray-50 min-h-screen pt-28">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -101,7 +101,7 @@
                         <!-- Header -->
                         <div>
                             <h2 class="text-3xl font-heading font-bold text-dark mb-2">Secure Your Spot</h2>
-                            <p class="text-secondary">Select a ticket and fill in your details.</p>
+                            <p class="text-black/70">Select a ticket and fill in your details.</p>
                         </div>
 
                         <!-- Ticket Selection -->
@@ -117,7 +117,7 @@
                                         <div class="flex justify-between items-center">
                                             <div>
                                                 <h4 class="font-bold text-dark" x-text="ticket.name"></h4>
-                                                <p class="text-xs text-secondary mt-1"
+                                                <p class="text-xs text-black/70 mt-1"
                                                     x-text="ticket.description || 'Entry Ticket'"></p>
                                             </div>
                                             <div class="text-right">
@@ -139,7 +139,7 @@
                             <div class="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
                                 <div>
                                     <h3 class="font-bold text-dark">Quantity</h3>
-                                    <p class="text-sm text-secondary">
+                                    <p class="text-sm text-black/70">
                                         Max purchase: <span x-text="selectedTicket?.limit"></span>
                                     </p>
                                 </div>
@@ -148,13 +148,13 @@
                                 <div
                                     class="flex items-center gap-4 bg-white shadow-sm border border-gray-200 rounded-full px-2 py-1.5">
                                     <button type="button" @click="if(quantity > 1) quantity--"
-                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary transition-colors font-bold text-lg">
+                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-black/70 transition-colors font-bold text-lg">
                                         −
                                     </button>
                                     <span class="font-bold text-dark w-6 text-center text-lg" x-text="quantity">1</span>
                                     <input type="hidden" name="quantity" :value="quantity">
                                     <button type="button" @click="if(quantity < selectedTicket.limit) quantity++"
-                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-secondary transition-colors font-bold text-lg">
+                                        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-black/70 transition-colors font-bold text-lg">
                                         +
                                     </button>
                                 </div>
@@ -168,7 +168,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="group">
                                     <label
-                                        class="block text-xs font-bold text-secondary uppercase tracking-wider mb-2 ml-1">Identity
+                                        class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">Identity
                                         Number (NIK)</label>
                                     <input type="text" inputmode="numeric" name="nik" maxlength="16" minlength="16"
                                         pattern="\d{16}"
@@ -178,7 +178,7 @@
                                 </div>
                                 <div class="group">
                                     <label
-                                        class="block text-xs font-bold text-secondary uppercase tracking-wider mb-2 ml-1">Gender</label>
+                                        class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">Gender</label>
                                     <div class="relative">
                                         <select name="gender"
                                             class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white appearance-none cursor-pointer"
@@ -187,7 +187,7 @@
                                             <option value="male">Male</option>
                                             <option value="female">Female</option>
                                         </select>
-                                        <svg class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-secondary pointer-events-none"
+                                        <svg class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-black/70 pointer-events-none"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M19 9l-7 7-7-7" />
@@ -199,7 +199,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="group">
                                     <label
-                                        class="block text-xs font-bold text-secondary uppercase tracking-wider mb-2 ml-1">Full
+                                        class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">Full
                                         Name</label>
                                     <input type="text" name="name"
                                         class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
@@ -208,7 +208,7 @@
 
                                 <div class="group">
                                     <label
-                                        class="block text-xs font-bold text-secondary uppercase tracking-wider mb-2 ml-1">Email
+                                        class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">Email
                                         Address</label>
                                     <input type="email" name="email"
                                         class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
@@ -219,7 +219,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="group">
                                     <label
-                                        class="block text-xs font-bold text-secondary uppercase tracking-wider mb-2 ml-1">Phone
+                                        class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">Phone
                                         Number</label>
                                     <input type="tel" name="phone"
                                         class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
@@ -229,7 +229,7 @@
 
                                 <div class="group">
                                     <label
-                                        class="block text-xs font-bold text-secondary uppercase tracking-wider mb-2 ml-1">City
+                                        class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">City
                                         of Residence</label>
                                     <input type="text" name="city"
                                         class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
@@ -241,7 +241,7 @@
                         <!-- Footer / Pay -->
                         <div class="pt-8 mt-4 border-t border-gray-100 flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-secondary font-medium">Total Payable</p>
+                                <p class="text-sm text-black/70 font-medium">Total Payable</p>
                                 <p class="text-3xl font-extrabold text-primary tracking-tight">
                                     Rp <span x-text="new Intl.NumberFormat('id-ID').format(total)"></span>
                                 </p>

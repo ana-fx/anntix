@@ -13,7 +13,7 @@
     </div>
 
     <!-- Filter Section -->
-    <div class="border-b border-gray-100 bg-white sticky top-[80px] z-30 shadow-sm/50">
+    <div class="border-b border-gray-100 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <form action="{{ route('events.index') }}" method="GET"
                 class="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -72,8 +72,8 @@
             @forelse($events as $event)
                 <a href="{{ route('events.show', $event) }}"
                     class="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="relative aspect-[4/3] overflow-hidden">
-                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/800x600' }}"
+                    <div class="relative aspect-video overflow-hidden">
+                        <img src="{{ $event->banner_path ? Storage::url($event->banner_path) : ($event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/1280x720') }}"
                             alt="{{ $event->name }}"
                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         <div
@@ -99,7 +99,7 @@
                             {{ Str::limit($event->location, 30) }}
                         </p>
                         <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                            <span class="text-gray-500 text-sm font-medium">Starts from</span>
+                            <span class="text-xs text-black font-medium">Starts from</span>
                             <span class="text-lg font-bold text-dark">
                                 @php
                                     $lowestPriceTicket = $event->tickets->sortBy('price')->first();

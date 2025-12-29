@@ -14,11 +14,15 @@
             <div class="flex-shrink-0">
                 <a href="{{ route('home') }}" class="group flex items-center gap-3">
                     <div class="relative w-10 h-10 flex items-center justify-center bg-dark text-white rounded-2xl group-hover:bg-primary transition-all duration-500 group-hover:rotate-[15deg]">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                        </svg>
+                        @if(isset($global_settings['site_logo']))
+                            <img src="{{ asset('storage/' . $global_settings['site_logo']) }}" class="w-6 h-6 object-contain">
+                        @else
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                            </svg>
+                        @endif
                     </div>
-                    <span class="font-heading font-black text-2xl tracking-tighter text-dark">Anntix.</span>
+                    <span class="font-heading font-black text-2xl tracking-tighter text-dark">{{ $global_settings['site_name'] ?? 'Anntix' }}<span class="text-primary">.</span></span>
                 </a>
             </div>
 

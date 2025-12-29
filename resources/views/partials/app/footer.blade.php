@@ -6,16 +6,21 @@
             <div class="space-y-6">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group">
                     <div class="bg-white text-dark p-2 rounded-xl group-hover:rotate-12 transition-transform">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                        </svg>
+                        @if(isset($global_settings['site_logo']))
+                            <img src="{{ asset('storage/' . $global_settings['site_logo']) }}"
+                                class="w-6 h-6 object-contain">
+                        @else
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                            </svg>
+                        @endif
                     </div>
-                    <span class="font-heading font-extrabold text-2xl tracking-tight">Anntix</span>
+                    <span
+                        class="font-heading font-extrabold text-2xl tracking-tight">{{ $global_settings['site_name'] ?? 'Anntix' }}</span>
                 </a>
                 <p class="text-gray-400 leading-relaxed">
-                    Your premier destination for discovering and experiencing the best events in town. From music
-                    festivals to tech conferences, we've got you covered.
+                    {{ $global_settings['seo_description'] ?? "Your premier destination for discovering and experiencing the best events in town. From music festivals to tech conferences, we've got you covered." }}
                 </p>
                 <div class="flex gap-4">
                     <a href="#"
@@ -66,7 +71,9 @@
                     <li><a href="{{ route('contact.index') }}" class="hover:text-primary transition-colors">Contact
                             Support</a></li>
                     <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
-                    <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                    @guest
+                        <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">Login</a></li>
+                    @endguest
                 </ul>
             </div>
 
@@ -82,7 +89,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span>Jl. Sudirman No. 123, SCBD, Jakarta Selatan, Indonesia</span>
+                        <span>{{ $global_settings['contact_location'] ?? 'Jl. Sudirman No. 123, SCBD, Jakarta Selatan, Indonesia' }}</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <svg class="w-6 h-6 text-primary shrink-0" fill="none" viewBox="0 0 24 24"
@@ -90,8 +97,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
-                        <a href="mailto:hello@anntix.com"
-                            class="hover:text-primary transition-colors">hello@anntix.com</a>
+                        <a href="mailto:{{ $global_settings['contact_email'] ?? 'hello@anntix.com' }}"
+                            class="hover:text-primary transition-colors">{{ $global_settings['contact_email'] ??
+                            'hello@anntix.com' }}</a>
                     </li>
                     <li class="flex items-center gap-3">
                         <svg class="w-6 h-6 text-primary shrink-0" fill="none" viewBox="0 0 24 24"
@@ -99,7 +107,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                         </svg>
-                        <a href="tel:+62215555555" class="hover:text-primary transition-colors">(021) 555-5555</a>
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $global_settings['contact_whatsapp'] ?? '+62215555555') }}"
+                            class="hover:text-primary transition-colors">{{ $global_settings['contact_whatsapp'] ?? '(021) 555-5555' }}</a>
                     </li>
                 </ul>
             </div>

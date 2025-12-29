@@ -56,7 +56,7 @@
 
                 <!-- Main content area -->
                 <div
-                    class="lg:col-span-9 prose prose-2xl prose-blue max-w-none text-black prose-headings:text-dark prose-headings:font-black prose-headings:tracking-tighter">
+                    class="lg:col-span-9 prose prose-2xl prose-primary max-w-none text-black prose-headings:text-dark prose-headings:font-black prose-headings:tracking-tighter">
                     <section id="intro" class="mb-24 py-4">
                         <h2 class="text-4xl mb-10">Introduction</h2>
                         <div class="text-lg leading-relaxed space-y-6 text-black/80">

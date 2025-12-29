@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 use App\Models\Transaction;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentRequired;
 
 class CheckoutController extends Controller
 {
@@ -53,10 +55,11 @@ class CheckoutController extends Controller
             return back()->withErrors(['quantity' => 'Not enough tickets available.']);
         }
 
-        $totalPrice = $ticket->price * $validated['quantity'];
+        $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+        $totalPrice = ($ticket->price * $validated['quantity']) + $handlingFee;
 
         $transaction = Transaction::create([
-            'code' => 'TRX-' . strtoupper(Str::random(10)),
+            'code' => 'ANNTIX-' . strtoupper(Str::random(10)),
             'event_id' => $event->id,
             'ticket_id' => $ticket->id,
             'name' => $validated['name'],
@@ -70,8 +73,13 @@ class CheckoutController extends Controller
             'status' => 'pending',
         ]);
 
-        // Here we would normally redirect to payment gateway
-        // For now, redirect home with success
+        // Send Payment Required Email
+        try {
+            Mail::to($transaction->email)->send(new PaymentRequired($transaction));
+        } catch (\Exception $e) {
+            // Log error but continue to payment
+            logger()->error('Failed to send payment required email: ' . $e->getMessage());
+        }
 
         return redirect()->route('payment.show', $transaction->code);
     }
