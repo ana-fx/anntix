@@ -55,11 +55,11 @@
                                         title="Manage Tickets">
                                         <div class="flex items-baseline gap-0.5">
                                             <span
-                                                class="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $event->tickets_count ?? '0' }}</span>
+                                                class="font-bold text-gray-900 group-hover:text-primary transition-colors">{{ $event->tickets_count ?? '0' }}</span>
                                             <span class="text-xs text-gray-400 font-medium">/
                                                 {{ $event->total_tickets ?? '0' }}</span>
                                         </div>
-                                        <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-400 transition-colors ml-1"
+                                        <svg class="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors ml-1"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
@@ -73,8 +73,8 @@
                                         class="group flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
                                         title="Manage Scanners">
                                         <span
-                                            class="font-bold text-gray-900 group-hover:text-purple-600 transition-colors">{{ $event->scanners_count ?? 0 }}</span>
-                                        <svg class="w-4 h-4 text-gray-300 group-hover:text-purple-400 transition-colors"
+                                            class="font-bold text-gray-900 group-hover:text-primary transition-colors">{{ $event->scanners_count ?? 0 }}</span>
+                                        <svg class="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors"
                                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -85,16 +85,16 @@
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                                                    @if($event->status === 'active') bg-green-100 text-green-700
-                                                                                                                    @elseif($event->status === 'draft') bg-gray-100 text-gray-600
-                                                                                                                    @else bg-red-100 text-red-700 @endif">
+                                                                                                                        @if($event->status === 'active') bg-green-100 text-green-700
+                                                                                                                        @elseif($event->status === 'draft') bg-gray-100 text-gray-600
+                                                                                                                        @else bg-red-100 text-red-700 @endif">
                                     {{ ucfirst($event->status) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('admin.events.show', $event) }}"
-                                        class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                        class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
                                         title="View Event Details">
                                         <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -107,7 +107,7 @@
 
 
                                     <a href="{{ route('admin.events.edit', $event) }}"
-                                        class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                        class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
                                         title="Edit Event">
                                         <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path

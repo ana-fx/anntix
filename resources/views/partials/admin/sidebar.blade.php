@@ -1,11 +1,17 @@
-<div class="w-64 bg-gradient-to-b from-blue-600 to-blue-500 text-white min-h-screen flex flex-col shadow-xl">
+<div class="w-64 bg-gradient-to-b from-primary to-[#108c8d] text-white min-h-screen flex flex-col shadow-xl">
     <!-- Branding -->
-    <div class="h-24 flex items-center justify-between px-8 border-b border-blue-400/30">
+    <div class="h-24 flex items-center justify-between px-8 border-b border-white/10">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <div class="w-2.5 h-2.5 bg-blue-600 rounded-full"></div>
-            </div>
-            <span class="text-lg font-bold tracking-wider uppercase">ANNTIX</span>
+            @if(isset($global_settings['site_logo_white']))
+                <img src="{{ asset('storage/' . $global_settings['site_logo_white']) }}" class="h-8 w-auto">
+            @elseif(isset($global_settings['site_logo']))
+                <img src="{{ asset('storage/' . $global_settings['site_logo']) }}" class="h-8 w-auto brightness-0 invert">
+            @else
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
+                    <div class="w-2.5 h-2.5 bg-primary rounded-full"></div>
+                </div>
+                <span class="text-lg font-bold tracking-wider uppercase">ANTIX</span>
+            @endif
         </div>
 
         <!-- Close Button -->
@@ -20,7 +26,7 @@
     <!-- Navigation -->
     <nav class="flex-1 py-8 px-4 space-y-2">
         <a href="{{ route('admin.dashboard') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
             <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 20 20" fill="currentColor">
                 <path
@@ -31,7 +37,7 @@
 
         <!-- Events -->
         <a href="{{ route('admin.events.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.events.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.events.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
             <svg class="w-5 h-5 {{ request()->routeIs('admin.events.*') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -43,7 +49,7 @@
 
         <!-- Banners -->
         <a href="{{ route('admin.banners.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.banners.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.banners.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
             <svg class="w-5 h-5 {{ request()->routeIs('admin.banners.*') ? 'opacity-100' : 'opacity-70' }}" fill="none"
                 stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -54,11 +60,11 @@
 
         <!-- User Management (Dropdown) -->
         <div
-            x-data="{ open: {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') ? 'true' : 'false' }} }">
+            x-data="{ open: {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.*') ? 'true' : 'false' }} }">
             <button @click="open = !open"
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') ? 'opacity-100' : 'opacity-70' }}"
+                    <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.*') ? 'opacity-100' : 'opacity-70' }}"
                         viewBox="0 0 20 20" fill="currentColor">
                         <path
                             d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
@@ -79,25 +85,33 @@
 
                 <!-- System Admins -->
                 <a href="{{ route('admin.admins.index') }}"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.admins.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-200 hover:text-white hover:bg-white/5' }}">
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.admins.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
                     <span
-                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.admins.*') ? 'bg-white' : 'bg-blue-300' }}"></span>
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.admins.*') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     System Admins
                 </a>
 
                 <!-- Scanners -->
                 <a href="{{ route('admin.scanners.index') }}"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') ? 'bg-white/10 text-white font-semibold' : 'text-blue-200 hover:text-white hover:bg-white/5' }}">
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
                     <span
-                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.scanners.*') ? 'bg-white' : 'bg-blue-300' }}"></span>
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.scanners.*') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     Scanners
+                </a>
+
+                <!-- Resellers -->
+                <a href="{{ route('admin.resellers.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.resellers.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.resellers.*') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    Resellers
                 </a>
             </div>
         </div>
 
         <!-- Global Settings -->
         <a href="{{ route('admin.settings.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
             <svg class="w-5 h-5 {{ request()->routeIs('admin.settings.*') ? 'opacity-100' : 'opacity-70' }}" fill="none"
                 stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -110,7 +124,7 @@
 
         <!-- Reports -->
         <a href="{{ route('admin.reports.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
             <svg class="w-5 h-5 {{ request()->routeIs('admin.reports.*') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 20 20" fill="currentColor">
                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
@@ -121,7 +135,7 @@
 
         <!-- Messages/Inbox -->
         <a href="{{ route('admin.contacts.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.contacts.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-blue-100 hover:bg-white/10 font-medium' }}">
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.contacts.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
             <svg class="w-5 h-5 {{ request()->routeIs('admin.contacts.*') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 20 20" fill="currentColor">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
@@ -133,11 +147,11 @@
     </nav>
 
     <!-- User Section / Logout -->
-    <div class="p-4 border-t border-blue-400/30">
+    <div class="p-4 border-t border-white/10">
         <form action="{{ route('admin.logout') }}" method="POST">
             @csrf
             <button type="submit"
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-blue-100 hover:bg-white/10 hover:text-white transition-colors">
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-teal-50 hover:bg-white/10 hover:text-white transition-colors">
                 <svg class="w-5 h-5 opacity-70" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
                         d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"

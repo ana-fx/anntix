@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
+
+            Route::middleware('web')
+                ->prefix('reseller')
+                ->name('reseller.')
+                ->group(base_path('routes/reseller.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -26,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
+            'reseller' => \App\Http\Middleware\IsReseller::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

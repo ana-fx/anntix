@@ -17,14 +17,14 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($contacts as $contact)
-                        <tr class="hover:bg-gray-50/50 transition-colors {{ $contact->read_at ? '' : 'bg-blue-50/30' }}">
+                        <tr class="hover:bg-gray-50/50 transition-colors {{ $contact->read_at ? '' : 'bg-primary/5' }}">
                             <td class="px-6 py-4">
                                 @if($contact->read_at)
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                         Read
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                                         Unread
                                     </span>
                                 @endif

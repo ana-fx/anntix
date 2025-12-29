@@ -26,7 +26,7 @@
                     <p class="text-xs text-gray-400 mt-1 leading-none">{{ auth()->user()->role }}</p>
                 </div>
                 <div
-                    class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white shadow-sm">
+                    class="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white shadow-sm">
                     {{ auth()->user()->initials() ?? 'A' }}
                 </div>
             </button>

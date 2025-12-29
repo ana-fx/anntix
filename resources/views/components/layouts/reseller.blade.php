@@ -6,18 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} - Admin</title>
+    <title>{{ config('app.name', 'Laravel') }} - Reseller</title>
     @if(isset($global_settings['site_icon']))
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
     @endif
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- Flatpickr -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 
 <body class="font-sans antialiased text-gray-900 bg-gray-50 flex min-h-screen overflow-hidden"
@@ -29,13 +24,13 @@
         x-transition:leave="transition ease-in duration-300" x-transition:leave-start="translate-x-0"
         x-transition:leave-end="-translate-x-full"
         class="relative z-30 transition-all duration-300 ease-in-out flex-shrink-0">
-        @include('partials.admin.sidebar')
+        @include('partials.reseller.sidebar')
     </div>
 
     <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col min-w-0 overflow-y-auto h-screen">
 
-        <!-- Header -->
+        <!-- Header (Reuse admin header or create reseller one if needed) -->
         @include('partials.admin.header')
 
         <!-- Page Content -->
@@ -47,9 +42,9 @@
         @include('partials.admin.footer')
     </div>
 
-    <!-- Floating Toggle (Only show if sidebar is closed) -->
+    <!-- Floating Toggle -->
     <button x-show="!sidebarOpen" @click="sidebarOpen = true" x-cloak
-        class="fixed bottom-6 left-6 z-50 p-4 bg-blue-600 text-white rounded-2xl shadow-2xl hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center">
+        class="fixed bottom-6 left-6 z-50 p-4 bg-primary text-white rounded-2xl shadow-2xl hover:bg-dark transition-all active:scale-95 flex items-center justify-center">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>

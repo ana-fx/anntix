@@ -45,7 +45,7 @@
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Banner <span
                                 class="text-xs font-normal text-gray-500 ml-1">(16:9)</span></label>
                         <div
-                            class="border-2 border-dashed border-gray-300 rounded-xl w-full aspect-video overflow-hidden relative text-center hover:border-blue-500 transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
+                            class="border-2 border-dashed border-gray-300 rounded-xl w-full aspect-video overflow-hidden relative text-center hover:border-primary transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
 
                             <!-- Input -->
                             <input type="file" name="banner" accept="image/*"
@@ -71,7 +71,7 @@
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Thumbnail <span
                                 class="text-xs font-normal text-gray-500 ml-1">(1:1)</span></label>
                         <div
-                            class="border-2 border-dashed border-gray-300 rounded-xl w-full aspect-square max-w-sm overflow-hidden relative text-center hover:border-blue-500 transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
+                            class="border-2 border-dashed border-gray-300 rounded-xl w-full aspect-square max-w-sm overflow-hidden relative text-center hover:border-primary transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
 
                             <!-- Input -->
                             <input type="file" name="thumbnail" accept="image/*"
@@ -242,7 +242,7 @@
                         <div x-data="{ organizerLogoPreview: null }">
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Logo</label>
                             <div
-                                class="border-2 border-dashed border-gray-300 rounded-xl max-h-48 h-48 w-48 overflow-hidden relative text-center hover:border-blue-500 transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
+                                class="border-2 border-dashed border-gray-300 rounded-xl max-h-48 h-48 w-48 overflow-hidden relative text-center hover:border-primary transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
 
                                 <!-- Input -->
                                 <input type="file" name="organizer_logo" accept="image/*"

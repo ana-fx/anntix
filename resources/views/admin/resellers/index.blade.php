@@ -1,21 +1,15 @@
 <x-layouts.admin>
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-dark">System Admins</h1>
-        <a href="{{ route('admin.admins.create') }}"
+        <h1 class="text-2xl font-bold text-dark">Reseller Accounts</h1>
+        <a href="{{ route('admin.resellers.create') }}"
             class="px-5 py-2.5 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all flex items-center gap-2">
-            Add Admin
+            Add Reseller
         </a>
     </div>
 
     @if (session('success'))
         <div class="mb-6 p-4 rounded-lg bg-green-50 text-green-700 border border-green-200">
             {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="mb-6 p-4 rounded-lg bg-red-50 text-red-700 border border-red-200">
-            {{ session('error') }}
         </div>
     @endif
 
@@ -32,20 +26,20 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @forelse($admins as $admin)
+                    @forelse($resellers as $reseller)
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-6 py-4">
-                                <div class="font-medium text-dark">{{ $admin->name }}</div>
+                                <div class="font-medium text-dark">{{ $reseller->name }}</div>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                {{ $admin->email }}
+                                {{ $reseller->email }}
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                {{ $admin->created_at->format('M d, Y') }}
+                                {{ $reseller->created_at->format('M d, Y') }}
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.admins.edit', $admin) }}"
+                                    <a href="{{ route('admin.resellers.edit', $reseller) }}"
                                         class="p-2 text-gray-400 rounded-lg hover:text-primary hover:bg-primary/5 transition-colors"
                                         title="Edit">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,28 +48,26 @@
                                         </svg>
                                     </a>
 
-                                    @if(auth()->id() !== $admin->id)
-                                        <form action="{{ route('admin.admins.destroy', $admin) }}" method="POST"
-                                            onsubmit="return confirm('Delete this admin?');" class="inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="p-2 text-gray-400 rounded-lg hover:text-red-600 hover:bg-red-50 transition-colors"
-                                                title="Delete">
-                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    @endif
+                                    <form action="{{ route('admin.resellers.destroy', $reseller) }}" method="POST"
+                                        onsubmit="return confirm('Delete this reseller?');" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="p-2 text-gray-400 rounded-lg hover:text-red-600 hover:bg-red-50 transition-colors"
+                                            title="Delete">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="4" class="px-6 py-8 text-center text-gray-400">
-                                No admin users found.
+                                No reseller users found.
                             </td>
                         </tr>
                     @endforelse
@@ -83,9 +75,9 @@
             </table>
         </div>
 
-        @if($admins->hasPages())
+        @if($resellers->hasPages())
             <div class="px-6 py-4 border-t border-gray-100">
-                {{ $admins->links() }}
+                {{ $resellers->links() }}
             </div>
         @endif
     </div>

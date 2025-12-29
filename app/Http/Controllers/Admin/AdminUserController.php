@@ -58,10 +58,22 @@ class AdminUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($admin->id)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'bio' => ['nullable', 'string', 'max:1000'],
+            'address' => ['nullable', 'string', 'max:1000'],
+            'photo' => ['nullable', 'image', 'max:1024'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('profile-photos', 'public');
+            $admin->profile_photo_path = $path;
+        }
 
         $admin->name = $validated['name'];
         $admin->email = $validated['email'];
+        $admin->phone = $validated['phone'];
+        $admin->bio = $validated['bio'];
+        $admin->address = $validated['address'];
 
         if (!empty($validated['password'])) {
             $admin->password = Hash::make($validated['password']);

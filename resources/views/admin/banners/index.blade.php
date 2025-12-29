@@ -14,7 +14,7 @@
             </div>
         @endif
 
-        <div class="bg-white rounded-3xl shadow-xl shadow-blue-900/5 overflow-hidden border border-gray-100">
+        <div class="bg-white rounded-3xl shadow-xl shadow-primary/5 overflow-hidden border border-gray-100">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-gray-50 border-b border-gray-100">
@@ -53,7 +53,7 @@
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <div class="flex items-center justify-end gap-2">
                                         <a href="{{ route('admin.banners.edit', $banner) }}"
-                                            class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                            class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
                                             title="Edit Banner">
                                             <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                                                 <path

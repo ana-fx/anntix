@@ -35,8 +35,12 @@ class UserLoginController extends Controller
                 return redirect()->route('scanner.index');
             }
 
-            if (in_array($user->role, ['Admin', 'Super Admin'])) {
-                return redirect()->intended('dashboard');
+            if ($user->role === 'reseller') {
+                return redirect()->route('reseller.dashboard');
+            }
+
+            if (in_array($user->role, ['admin', 'super_admin'])) {
+                return redirect()->intended(route('admin.dashboard'));
             }
 
             return redirect()->intended(route('home'));

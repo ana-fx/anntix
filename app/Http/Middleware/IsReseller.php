@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsAdmin
+class IsReseller
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,7 @@ class IsAdmin
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
-        if ($user && in_array($user->role, ['admin', 'super_admin'])) {
+        if ($user && $user->role === 'reseller') {
             return $next($request);
         }
 

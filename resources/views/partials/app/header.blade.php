@@ -5,7 +5,7 @@
         activeLink: '{{ request()->url() }}'
      }" 
      @scroll.window="scrolled = (window.pageYOffset > 50)"
-     :class="{ 'py-2 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]': scrolled, 'py-5': !scrolled }">
+     :class="{ 'py-2 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]': scrolled, 'py-0': !scrolled }">
     
     <div class="max-w-7xl mx-auto px-6 lg:px-10">
         <div class="flex justify-between items-center">
@@ -13,16 +13,20 @@
             <!-- Logo area -->
             <div class="flex-shrink-0">
                 <a href="{{ route('home') }}" class="group flex items-center gap-3">
-                    <div class="relative w-10 h-10 flex items-center justify-center bg-dark text-white rounded-2xl group-hover:bg-primary transition-all duration-500 group-hover:rotate-[15deg]">
+                    <div class="relative flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
                         @if(isset($global_settings['site_logo']))
-                            <img src="{{ asset('storage/' . $global_settings['site_logo']) }}" class="w-6 h-6 object-contain">
+                            <img src="{{ asset('storage/' . $global_settings['site_logo']) }}" 
+                                 class="w-auto object-contain transition-all duration-500"
+                                 :class="scrolled ? 'h-[40px]' : 'h-[64px]'">
                         @else
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                            </svg>
+                            <div class="bg-dark rounded-xl flex items-center justify-center text-white transition-all duration-500"
+                                 :class="scrolled ? 'w-[50px] h-[50px]' : 'w-16 h-16'">
+                                <svg class="transition-all duration-500" :class="scrolled ? 'w-6 h-6' : 'w-8 h-8'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                </svg>
+                            </div>
                         @endif
                     </div>
-                    <span class="font-heading font-black text-2xl tracking-tighter text-dark">{{ $global_settings['site_name'] ?? 'Anntix' }}<span class="text-primary">.</span></span>
                 </a>
             </div>
 
@@ -83,6 +87,13 @@
                                     <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-8 py-3 text-xs font-bold text-dark hover:bg-gray-50 hover:text-primary transition-colors">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                                         Admin Panel
+                                    </a>
+                                @endif
+
+                                @if(Auth::user()->role === 'reseller')
+                                    <a href="{{ route('reseller.dashboard') }}" class="flex items-center gap-3 px-8 py-3 text-xs font-bold text-dark hover:bg-gray-50 hover:text-primary transition-colors">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                                        Reseller Panel
                                     </a>
                                 @endif
                                 

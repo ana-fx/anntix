@@ -57,11 +57,23 @@ class ScannerController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($scanner->id)],
-            'password' => ['nullable', 'string', 'min:8'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'bio' => ['nullable', 'string', 'max:1000'],
+            'address' => ['nullable', 'string', 'max:1000'],
+            'photo' => ['nullable', 'image', 'max:1024'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('profile-photos', 'public');
+            $scanner->profile_photo_path = $path;
+        }
 
         $scanner->name = $validated['name'];
         $scanner->email = $validated['email'];
+        $scanner->phone = $validated['phone'];
+        $scanner->bio = $validated['bio'];
+        $scanner->address = $validated['address'];
 
         if (!empty($validated['password'])) {
             $scanner->password = Hash::make($validated['password']);

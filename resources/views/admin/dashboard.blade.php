@@ -14,8 +14,9 @@
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <!-- Stat Card 1 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-all duration-300">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z">
@@ -23,14 +24,15 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Users</p>
-                <p class="text-2xl font-bold text-gray-900">1,234</p>
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Total Users</p>
+                <p class="text-2xl font-black text-dark tracking-tight">1,234</p>
             </div>
         </div>
 
         <!-- Stat Card 2 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center text-violet-600">
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-all duration-300">
+            <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
@@ -38,14 +40,15 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Active Events</p>
-                <p class="text-2xl font-bold text-gray-900">56</p>
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Active Events</p>
+                <p class="text-2xl font-black text-dark tracking-tight">56</p>
             </div>
         </div>
 
         <!-- Stat Card 3 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-600">
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-all duration-300">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z">
@@ -53,13 +56,14 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Tickets Sold</p>
-                <p class="text-2xl font-bold text-gray-900">8,942</p>
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Tickets Sold</p>
+                <p class="text-2xl font-black text-dark tracking-tight">8,942</p>
             </div>
         </div>
 
         <!-- Stat Card 4 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-all duration-300">
             <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -68,8 +72,8 @@
                 </svg>
             </div>
             <div>
-                <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Revenue</p>
-                <p class="text-2xl font-bold text-gray-900">$45.2k</p>
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Revenue</p>
+                <p class="text-2xl font-black text-dark tracking-tight">Rp 45.2M</p>
             </div>
         </div>
     </div>
