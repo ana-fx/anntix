@@ -31,7 +31,7 @@ class PaymentController extends Controller
         $bankFeeFixed = (int) \App\Models\Setting::getValue('fee_bank_fixed', 0);
 
         $subtotal = $transaction->ticket->price * $transaction->quantity;
-        $baseTotal = $subtotal + $handlingFee;
+        $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
         $paymentFee = 0;
 
         $enabledPayments = [];
@@ -65,7 +65,7 @@ class PaymentController extends Controller
             $itemDetails[] = [
                 'id' => 'HANDLING-FEE',
                 'price' => $handlingFee,
-                'quantity' => 1,
+                'quantity' => $transaction->quantity,
                 'name' => 'Handling Fee',
             ];
         }

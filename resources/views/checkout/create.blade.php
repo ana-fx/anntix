@@ -75,6 +75,7 @@
                 <div class="lg:col-span-7">
                     <form action="{{ route('checkout.store', $event) }}" method="POST" x-data="{
                         tickets: {{ $event->tickets->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'price' => $t->price, 'limit' => $t->max_purchase_per_user, 'description' => $t->description, 'quota' => $t->quota]) }},
+                        handlingFee: {{ (int) \App\Models\Setting::getValue('handling_fee', 0) }},
                         selectedTicketId: null,
                         selectedTicket: null,
                         quantity: 1,
@@ -84,15 +85,15 @@
                              const available = this.tickets.find(t => t.quota > 0);
                              if(available) this.selectTicket(available.id);
                         },
-
+\u0020
                         selectTicket(id) {
                             this.selectedTicketId = id;
                             this.selectedTicket = this.tickets.find(t => t.id === id);
                             this.quantity = 1;
                         },
-
+\u0020
                         get total() { 
-                            return this.selectedTicket ? (this.selectedTicket.price * this.quantity) : 0; 
+                            return this.selectedTicket ? ((this.selectedTicket.price + this.handlingFee) * this.quantity) : 0; 
                         }
                     }" class="space-y-10">
                         @csrf

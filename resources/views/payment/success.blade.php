@@ -2,7 +2,7 @@
     @php
         $subtotal = $transaction->ticket->price * $transaction->quantity;
         $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
-        $serviceFee = $transaction->total_price - $subtotal - $handlingFee;
+        $serviceFee = $transaction->total_price - $subtotal - ($handlingFee * $transaction->quantity);
     @endphp
     <div class="bg-white min-h-screen pt-32 pb-20 px-4 sm:px-6">
         <div class="max-w-7xl mx-auto">
@@ -113,7 +113,7 @@
                                 <div class="flex justify-between text-sm">
                                     <span class="text-black/70">Handling Fee</span>
                                     <span class="font-medium text-dark">Rp
-                                        {{ number_format($handlingFee, 0, ',', '.') }}</span>
+                                        {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
                                 </div>
                                 @if($serviceFee > 0)
                                     <div class="flex justify-between text-sm">

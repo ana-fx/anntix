@@ -56,7 +56,7 @@ class CheckoutController extends Controller
         }
 
         $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
-        $totalPrice = ($ticket->price * $validated['quantity']) + $handlingFee;
+        $totalPrice = ($ticket->price + $handlingFee) * $validated['quantity'];
 
         $transaction = Transaction::create([
             'code' => 'ANNTIX-' . strtoupper(Str::random(10)),

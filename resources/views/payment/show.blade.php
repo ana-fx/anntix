@@ -3,7 +3,7 @@
         // Base values
         $subtotal = $transaction->ticket->price * $transaction->quantity;
         $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
-        $baseTotal = $subtotal + $handlingFee;
+        $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
 
         // Fee Constants
         $qrisPercent = (float) \App\Models\Setting::getValue('fee_qris_percent', 0);
@@ -183,7 +183,7 @@
                                 <div class="flex justify-between text-sm">
                                     <span class="text-black/70">Handling Fee</span>
                                     <span class="font-medium text-dark">Rp
-                                        {{ number_format($handlingFee, 0, ',', '.') }}</span>
+                                        {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between text-sm text-primary font-bold">
                                     <span>Service Fee</span>
