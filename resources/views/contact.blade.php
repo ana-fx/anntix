@@ -74,7 +74,7 @@
                         <div>
                             <h3 class="font-bold text-dark text-lg">Call Us</h3>
                             <p class="text-black/70 mt-1">
-                                {{ $global_settings['contact_whatsapp'] ?? '087750581589' }}
+                                {{ $global_settings['contact_whatsapp'] ?? '+62 856-0045-7192' }}
                             </p>
                             <p class="text-black/70 text-sm">(Mon-Fri, 9am - 5pm WIB)</p>
                         </div>

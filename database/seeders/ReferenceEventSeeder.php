@@ -12,6 +12,26 @@ class ReferenceEventSeeder extends Seeder
 {
     public function run(): void
     {
+        // Ensure sample directory exists in storage
+        if (!file_exists(storage_path('app/public/sample'))) {
+            mkdir(storage_path('app/public/sample'), 0775, true);
+        }
+
+        // Copy files from public/sample to storage/app/public/sample if they exist
+        $files = [
+            '1080 x 1080.png',
+            '1920 x  1080.png',
+            '3240 x 1080.png'
+        ];
+
+        foreach ($files as $file) {
+            $source = public_path('sample/' . $file);
+            $destination = storage_path('app/public/sample/' . $file);
+            if (file_exists($source) && !file_exists($destination)) {
+                copy($source, $destination);
+            }
+        }
+
         // 1. Create Reference Event
         $event = Event::updateOrCreate(
             ['slug' => 'reference-design-festival'],
@@ -25,8 +45,8 @@ class ReferenceEventSeeder extends Seeder
                 'end_date' => Carbon::now()->addDays(32),
                 'status' => 'active',
                 'organizer_name' => 'Anntix Design Team',
-                'thumbnail_path' => 'events/dummy-thumb.png', // 1080x1080
-                'banner_path' => 'events/dummy-banner.png',   // 1920x1080 (Card)
+                'thumbnail_path' => 'sample/1080 x 1080.png',
+                'banner_path' => 'sample/1920 x  1080.png',
                 'category' => 'Reference',
             ]
         );
@@ -49,7 +69,7 @@ class ReferenceEventSeeder extends Seeder
             ['slug' => 'reference-hero-banner'],
             [
                 'title' => 'Reference Hero Banner',
-                'image_path' => 'banners/dummy-hero.png', // 3240x1080
+                'image_path' => 'sample/3240 x 1080.png',
                 'link_url' => route('events.show', $event->slug),
                 'is_active' => true,
             ]

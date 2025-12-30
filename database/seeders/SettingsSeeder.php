@@ -12,6 +12,16 @@ class SettingsSeeder extends Seeder
      */
     public function run(): void
     {
+        // Copy branding assets from public/ to storage/app/public/ if they exist
+        $brandingFiles = ['logo.png', 'logo-white.png', 'icon.png'];
+        foreach ($brandingFiles as $file) {
+            $source = public_path($file);
+            $destination = storage_path('app/public/' . $file);
+            if (file_exists($source) && !file_exists($destination)) {
+                copy($source, $destination);
+            }
+        }
+
         $settings = [
             // Site Identity
             ['key' => 'site_name', 'value' => 'ANTIX'],
@@ -31,7 +41,7 @@ class SettingsSeeder extends Seeder
 
             // Contact Info
             ['key' => 'contact_email', 'value' => 'hallo@anntix.com'],
-            ['key' => 'contact_whatsapp', 'value' => '087750581589'],
+            ['key' => 'contact_whatsapp', 'value' => '+62 856-0045-7192'],
             ['key' => 'contact_location', 'value' => 'Tegal, Jawa Tengah'],
 
             // Payment Configuration
