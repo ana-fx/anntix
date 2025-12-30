@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} - Admin</title>
+    <title>
+        @if(isset($title))
+            {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | ' . $title }}
+        @else
+            {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | Admin' }}
+        @endif
+    </title>
     @if(isset($global_settings['site_icon']))
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
     @endif

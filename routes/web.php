@@ -33,9 +33,8 @@ Route::get('/terms', [PageController::class, 'terms'])->name('pages.terms');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('pages.privacy');
 Route::get('/cookie-policy', [PageController::class, 'cookie'])->name('pages.cookie');
 Route::get('/services', [PageController::class, 'services'])->name('pages.services');
+Route::get('/about-us', [PageController::class, 'about'])->name('pages.about');
 
-use App\Http\Controllers\ScheduleController;
-Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
 
 use App\Http\Controllers\ContactController;
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');

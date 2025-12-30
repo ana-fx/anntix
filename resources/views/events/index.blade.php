@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Events">
     <!-- Header -->
     <div class="relative bg-dark pt-40 pb-20 overflow-hidden">
         <div class="absolute inset-0 opacity-20">

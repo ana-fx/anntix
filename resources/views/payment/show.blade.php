@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Payment">
     @php
         // Base values
         $subtotal = $transaction->ticket->price * $transaction->quantity;

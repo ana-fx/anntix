@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Terms of Service">
     <div class="bg-white min-h-screen">
         <!-- Minimalist Hero -->
         <div class="pt-40 pb-20 relative overflow-hidden">

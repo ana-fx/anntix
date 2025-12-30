@@ -1,4 +1,4 @@
-<x-layouts.admin>
+<x-layouts.admin title="Events">
     <div x-data="{ deleteModalOpen: false, formToSubmit: null }">
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-3xl font-bold text-gray-900">Events</h2>
@@ -85,9 +85,9 @@
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                                                        @if($event->status === 'active') bg-green-100 text-green-700
-                                                                                                                        @elseif($event->status === 'draft') bg-gray-100 text-gray-600
-                                                                                                                        @else bg-red-100 text-red-700 @endif">
+                                                                                                                            @if($event->status === 'active') bg-green-100 text-green-700
+                                                                                                                            @elseif($event->status === 'draft') bg-gray-100 text-gray-600
+                                                                                                                            @else bg-red-100 text-red-700 @endif">
                                     {{ ucfirst($event->status) }}
                                 </span>
                             </td>

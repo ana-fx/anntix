@@ -25,4 +25,9 @@ class PageController extends Controller
     {
         return view('pages.cookie');
     }
+
+    public function about()
+    {
+        return view('pages.about');
+    }
 }

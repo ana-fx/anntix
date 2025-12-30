@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Home">
     <div class="bg-white min-h-screen pb-20">
 
         <!-- Main Banner Carousel -->

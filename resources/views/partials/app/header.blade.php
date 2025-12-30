@@ -37,7 +37,7 @@
                         $navLinks = [
                             ['name' => 'Home', 'route' => 'home'],
                             ['name' => 'Events', 'route' => 'events.index'],
-                            ['name' => 'Schedule', 'route' => 'schedule.index'],
+                            ['name' => 'About Us', 'route' => 'pages.about'],
                             ['name' => 'Contact', 'route' => 'contact.index']
                         ];
                     @endphp
@@ -117,9 +117,9 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('contact.index') }}" 
+                    <a href="{{ route('login') }}" 
                        class="px-8 py-3 bg-dark text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all duration-500 shadow-xl hover:-translate-y-1">
-                        Get In Touch
+                        Login
                     </a>
                 @endauth
             </div>
@@ -167,10 +167,17 @@
                     </div>
                 @endauth
 
-                <a href="{{ route('contact.index') }}" 
-                   class="block w-full py-5 bg-dark text-white text-center font-black rounded-[1.5rem] tracking-widest text-sm uppercase">
-                    Contact Us
-                </a>
+                @guest
+                    <a href="{{ route('login') }}" 
+                       class="block w-full py-5 bg-dark text-white text-center font-black rounded-[1.5rem] tracking-widest text-sm uppercase transition-all hover:bg-primary">
+                        Login
+                    </a>
+                @else
+                    <a href="{{ route('contact.index') }}" 
+                       class="block w-full py-5 bg-gray-50 text-dark text-center font-black rounded-[1.5rem] tracking-widest text-sm uppercase">
+                        Support Center
+                    </a>
+                @endguest
 
                 @auth
                     <form method="POST" action="{{ route('logout') }}">

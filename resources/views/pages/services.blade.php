@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Our Services">
     <div class="bg-white min-h-screen">
         <!-- Minimalist Hero -->
         <div class="pt-40 pb-40 relative overflow-hidden bg-dark">

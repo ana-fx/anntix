@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Checkout">
     <div class="bg-gray-50 min-h-screen pt-28">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
 

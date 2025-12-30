@@ -88,13 +88,13 @@
             <div>
                 <h3 class="font-bold text-lg mb-6">Company</h3>
                 <ul class="space-y-4 text-gray-400">
-                    <li><a href="{{ route('pages.services') }}" class="hover:text-primary transition-colors">About
+                    <li><a href="{{ route('pages.about') }}" class="hover:text-primary transition-colors">About
                             Us</a></li>
                     <li><a href="{{ route('contact.index') }}" class="hover:text-primary transition-colors">Contact
                             Support</a></li>
                     <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
                     @guest
-                        <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">Management Login</a>
+                        <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">Login</a>
                         </li>
                     @endguest
                 </ul>
@@ -112,7 +112,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span>{{ $global_settings['contact_location'] ?? 'Jl. Sudirman No. 123, SCBD, Jakarta Selatan, Indonesia' }}</span>
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($global_settings['contact_location'] ?? 'Tegal, Jawa Tengah') }}"
+                            target="_blank" class="hover:text-primary transition-colors">
+                            {{ $global_settings['contact_location'] ?? 'Tegal, Jawa Tengah' }}
+                        </a>
                     </li>
                     <li class="flex items-center gap-3">
                         <svg class="w-6 h-6 text-primary shrink-0" fill="none" viewBox="0 0 24 24"
@@ -120,9 +123,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
-                        <a href="mailto:{{ $global_settings['contact_email'] ?? 'hello@anntix.com' }}"
+                        <a href="mailto:{{ $global_settings['contact_email'] ?? 'hallo@anntix.com' }}"
                             class="hover:text-primary transition-colors">{{ $global_settings['contact_email'] ??
-                            'hello@anntix.com' }}</a>
+                            'hallo@anntix.com' }}</a>
                     </li>
                     <li class="flex items-center gap-3">
                         <svg class="w-6 h-6 text-primary shrink-0" fill="none" viewBox="0 0 24 24"
@@ -130,8 +133,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                         </svg>
-                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $global_settings['contact_whatsapp'] ?? '+62215555555') }}"
-                            class="hover:text-primary transition-colors">{{ $global_settings['contact_whatsapp'] ?? '(021) 555-5555' }}</a>
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $global_settings['contact_whatsapp'] ?? '087750581589') }}"
+                            class="hover:text-primary transition-colors">{{ $global_settings['contact_whatsapp'] ?? '087750581589' }}</a>
                     </li>
                 </ul>
             </div>

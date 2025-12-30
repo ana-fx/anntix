@@ -1,4 +1,4 @@
-<x-layouts.admin>
+<x-layouts.admin title="Dashboard">
 
     <!-- Dashboard Header -->
     <div class="mb-10 flex items-end justify-between">

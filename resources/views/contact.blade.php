@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Contact">
     <!-- Header -->
     <div class="bg-dark pt-32 pb-20 relative overflow-hidden">
         <div class="absolute inset-0 opacity-20">
@@ -38,9 +38,10 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-dark text-lg">Our Office</h3>
-                            <p class="text-black/70 mt-1">
-                                {!! nl2br(e($global_settings['contact_location'] ?? "123 Event Street, Creative District\nJakarta, Indonesia 12345")) !!}
-                            </p>
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($global_settings['contact_location'] ?? 'Tegal, Jawa Tengah') }}"
+                                target="_blank" class="text-black/70 mt-1 hover:text-primary transition-colors">
+                                {!! nl2br(e($global_settings['contact_location'] ?? "Tegal, Jawa Tengah")) !!}
+                            </a>
                         </div>
                     </div>
 
@@ -54,7 +55,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-dark text-lg">Email Us</h3>
-                            <p class="text-black/70 mt-1">{{ $global_settings['contact_email'] ?? 'support@anntix.com'
+                            <p class="text-black/70 mt-1">{{ $global_settings['contact_email'] ?? 'hallo@anntix.com'
                                 }}</p>
                             @if(isset($settings['partnership_email']))
                                 <p class="text-black/70">Partnership: {{ $settings['partnership_email'] }}</p>
@@ -73,7 +74,8 @@
                         <div>
                             <h3 class="font-bold text-dark text-lg">Call Us</h3>
                             <p class="text-black/70 mt-1">
-                                {{ $global_settings['contact_whatsapp'] ?? '+62 821 1234 5678' }}</p>
+                                {{ $global_settings['contact_whatsapp'] ?? '087750581589' }}
+                            </p>
                             <p class="text-black/70 text-sm">(Mon-Fri, 9am - 5pm WIB)</p>
                         </div>
                     </div>

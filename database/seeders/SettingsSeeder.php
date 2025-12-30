@@ -30,9 +30,9 @@ class SettingsSeeder extends Seeder
             ['key' => 'social_tiktok', 'value' => '#'],
 
             // Contact Info
-            ['key' => 'contact_email', 'value' => 'support@anntix.com'],
-            ['key' => 'contact_whatsapp', 'value' => '+6281234567890'],
-            ['key' => 'contact_location', 'value' => 'Jakarta, Indonesia'],
+            ['key' => 'contact_email', 'value' => 'hallo@anntix.com'],
+            ['key' => 'contact_whatsapp', 'value' => '087750581589'],
+            ['key' => 'contact_location', 'value' => 'Tegal, Jawa Tengah'],
 
             // Payment Configuration
             ['key' => 'fee_qris_percent', 'value' => '0.7'],

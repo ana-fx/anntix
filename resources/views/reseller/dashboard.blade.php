@@ -1,4 +1,4 @@
-<x-layouts.reseller>
+<x-layouts.reseller title="Dashboard">
     <div class="space-y-8">
         <!-- Header -->
         <div class="flex items-center justify-between">

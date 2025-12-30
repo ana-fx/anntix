@@ -1,4 +1,4 @@
-<x-layouts.admin>
+<x-layouts.admin title="Global Settings">
     <div class="space-y-8">
         <!-- Header -->
         <div class="flex items-center justify-between">

@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app title="Order Confirmed">
     @php
         $subtotal = $transaction->ticket->price * $transaction->quantity;
         $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);

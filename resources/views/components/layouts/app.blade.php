@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $global_settings['seo_title'] ?? ($global_settings['site_name'] ?? config('app.name', 'Laravel')) }}
+    <title>
+        @if(isset($title))
+            {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | ' . $title }}
+        @else
+            {{ $global_settings['seo_title'] ?? ($global_settings['site_name'] ?? config('app.name', 'Laravel')) }}
+        @endif
     </title>
     @if(isset($global_settings['seo_description']))
         <meta name="description" content="{{ $global_settings['seo_description'] }}">
