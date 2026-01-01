@@ -7,8 +7,8 @@
                         class="font-bold">{{ $event->name }}</span></p>
             </div>
             <a href="{{ route('admin.events.tickets.create', $event) }}"
-                class="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
-                + Tambah Data
+                class="px-6 py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition shadow-lg shadow-primary/30">
+                + Add Ticket
             </a>
         </div>
 
@@ -23,7 +23,7 @@
             <div class="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-2 text-sm text-gray-600">
                     <span>Show</span>
-                    <select class="border-gray-200 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <select class="border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary">
                         <option>10</option>
                         <option>25</option>
                         <option>50</option>
@@ -33,7 +33,7 @@
                 <div class="flex items-center gap-2 text-sm text-gray-600 w-full md:w-auto">
                     <span>Search:</span>
                     <input type="text"
-                        class="border-gray-200 rounded-lg text-sm w-full md:w-64 focus:ring-indigo-500 focus:border-indigo-500">
+                        class="border-gray-200 rounded-lg text-sm w-full md:w-64 focus:ring-primary focus:border-primary">
                 </div>
             </div>
 
@@ -55,8 +55,9 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse($tickets as $index => $ticket)
                             @php
-                                $sold = $ticket->transactions_sum_quantity ?? 0;
-                                $available = $ticket->quota - $sold;
+                                $sold = $ticket->transactions_sum_quantity_paid ?? 0;
+                                $pending = $ticket->transactions_sum_quantity_pending ?? 0;
+                                $available = $ticket->quota - ($sold + $pending);
                                 $now = now();
                                 $status = 'Inactive';
                                 $statusClass = 'bg-gray-100 text-gray-800';
@@ -91,8 +92,15 @@
                                 <td class="px-6 py-4 text-sm text-gray-500">
                                     {{ $ticket->quota }}
                                 </td>
-                                <td class="px-6 py-4 text-sm font-bold text-indigo-600">
-                                    {{ $available }}
+                                <td class="px-6 py-4 text-sm font-bold text-primary">
+                                    <div class="flex flex-col">
+                                        <span>{{ $available }}</span>
+                                        @if($pending > 0)
+                                            <span
+                                                class="text-[9px] font-black text-amber-500 uppercase tracking-tighter">Locked:
+                                                {{ $pending }}</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500">
                                     {{ $ticket->max_purchase_per_user }}
@@ -135,7 +143,7 @@
                         @empty
                             <tr>
                                 <td colspan="9" class="px-6 py-12 text-center text-gray-500">
-                                    No tickets found. Click "Tambah Data" to create one.
+                                    No tickets found. Click "Add Ticket" to create one.
                                 </td>
                             </tr>
                         @endforelse
@@ -148,6 +156,99 @@
                     {{ $tickets->links() }}
                 </div>
             @endif
+        </div>
+
+        <!-- Data Events Report Section (Light Style Matching Dashboard) -->
+        <div class="mt-12 mb-20">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Data Events Report</h2>
+                    <p class="text-sm text-gray-500">Sales summary breakdown for this event</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-gray-50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-bold">
+                                <th class="px-6 py-4">No</th>
+                                <th class="px-6 py-4">Ticket Variation</th>
+                                <th class="px-6 py-4">Ticket Price</th>
+                                <th class="px-6 py-4 text-center">Ticket Available</th>
+                                <th class="px-6 py-4 text-center">Ticket Sales</th>
+                                <th class="px-6 py-4 text-right">Total Ticket Sales</th>
+                                <th class="px-6 py-4 text-right">Service Fee</th>
+                                <th class="px-6 py-4 text-right">Handling Fee</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @php
+                                $grandQty = 0;
+                                $grandTotalSales = 0;
+                                $grandServiceFee = 0;
+                                $grandHandlingFee = 0;
+                            @endphp
+                            @foreach($tickets as $index => $ticket)
+                                @php
+                                    $salesQty = $ticket->transactions_sum_quantity_paid ?? 0;
+                                    $pendingQty = $ticket->transactions_sum_quantity_pending ?? 0;
+                                    $availableQty = $ticket->quota - ($salesQty + $pendingQty);
+                                    $totalPriceCollected = (float) ($ticket->transactions_sum_total_price ?? 0);
+
+                                    $ticketSales = $salesQty * $ticket->price;
+                                    $handlingTotal = $salesQty * $handlingFeeValue;
+                                    $serviceFeeValue = $totalPriceCollected > 0 ? ($totalPriceCollected - ($ticketSales + $handlingTotal)) : 0;
+
+                                    $grandQty += $salesQty;
+                                    $grandTotalSales += $ticketSales;
+                                    $grandServiceFee += $serviceFeeValue;
+                                    $grandHandlingFee += $handlingTotal;
+                                @endphp
+                                <tr class="hover:bg-gray-50/50 transition-colors text-sm">
+                                    <td class="px-6 py-5 text-gray-500">{{ $index + 1 }}</td>
+                                    <td class="px-6 py-5 font-bold text-gray-900">{{ $ticket->name }}</td>
+                                    <td class="px-6 py-5 text-gray-900">Rp {{ number_format($ticket->price, 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-6 py-5 text-center font-bold text-primary">
+                                        <div class="flex flex-col items-center">
+                                            <span>{{ number_format($availableQty) }}</span>
+                                            @if($pendingQty > 0)
+                                                <span
+                                                    class="text-[9px] text-amber-500 font-bold uppercase tracking-widest">Locked:
+                                                    {{ $pendingQty }}</span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-5 text-center font-bold text-gray-900">{{ number_format($salesQty) }}
+                                    </td>
+                                    <td class="px-6 py-5 text-right font-black text-dark">Rp
+                                        {{ number_format($ticketSales, 0, ',', '.') }}</td>
+                                    <td class="px-6 py-5 text-right text-gray-500">Rp
+                                        {{ number_format($serviceFeeValue, 0, ',', '.') }}</td>
+                                    <td class="px-6 py-5 text-right text-gray-500">Rp
+                                        {{ number_format($handlingTotal, 0, ',', '.') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-gray-50">
+                            <tr class="font-black text-dark">
+                                <td colspan="4" class="px-6 py-6 text-sm uppercase tracking-wider text-gray-500">Total
+                                    Ticket Sales</td>
+                                <td class="px-6 py-6 text-center text-lg text-primary">{{ number_format($grandQty) }}
+                                </td>
+                                <td class="px-6 py-6 text-right text-lg">Rp
+                                    {{ number_format($grandTotalSales, 0, ',', '.') }}</td>
+                                <td class="px-6 py-6 text-right text-lg text-gray-600">Rp
+                                    {{ number_format($grandServiceFee, 0, ',', '.') }}</td>
+                                <td class="px-6 py-6 text-right text-lg text-gray-600">Rp
+                                    {{ number_format($grandHandlingFee, 0, ',', '.') }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </x-layouts.admin>

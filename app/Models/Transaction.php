@@ -24,6 +24,7 @@ class Transaction extends Model
         'payment_type',
         'midtrans_transaction_id',
         'redeemed_at',
+        'redeemed_by',
     ];
 
     protected $casts = [
@@ -43,5 +44,10 @@ class Transaction extends Model
     public function ticket()
     {
         return $this->belongsTo(Ticket::class);
+    }
+
+    public function scanner()
+    {
+        return $this->belongsTo(User::class, 'redeemed_by');
     }
 }

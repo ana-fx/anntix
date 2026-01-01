@@ -51,24 +51,87 @@ class ReportController extends Controller
         $chartDates = $dailyRevenue->pluck('date');
         $chartRevenue = $dailyRevenue->pluck('revenue');
 
-        // Detailed Transactions
-        $transactions = Transaction::where('status', 'paid')
-            ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-            ->with('event:id,name')
-            ->latest()
-            ->paginate(20, ['*'], 'transactions_page');
+        // Scanned Stats within Date Range
+        $ticketsRedeemed = Transaction::whereNotNull('redeemed_at')
+            ->whereBetween('redeemed_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->sum('quantity');
+
+        // Recent Activity (Mixed) -> optional, but let's just keep the summary focus
+
 
         return view('admin.reports.index', compact(
             'totalRevenue',
             'ticketsSold',
+            'ticketsRedeemed',
             'totalTransactions',
             'revenueByEvent',
             'startDate',
             'endDate',
             'chartDates',
             'chartRevenue',
-            'dailyRevenue',
-            'transactions'
+            'dailyRevenue'
         ));
+    }
+    public function transactions(Request $request)
+    {
+        $search = $request->input('search');
+        $status = $request->input('status');
+
+        $query = Transaction::with(['event:id,name', 'ticket:id,name,price'])
+            ->latest();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $transactions = $query->paginate(15)->withQueryString();
+        $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
+
+        return view('admin.reports.transactions', compact('transactions', 'handlingFeeValue'));
+    }
+
+    public function showTransaction(Transaction $transaction)
+    {
+        $transaction->load(['event', 'ticket']);
+        $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
+
+        $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
+        $handlingTotal = $transaction->quantity * $handlingFeeValue;
+        $serviceFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal);
+        if ($serviceFee < 0)
+            $serviceFee = 0;
+
+        return view('admin.reports.transaction-show', compact('transaction', 'serviceFee', 'handlingTotal'));
+    }
+    public function scanner(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = Transaction::whereNotNull('redeemed_at')
+            ->with(['event:id,name', 'ticket:id,name', 'scanner:id,name'])
+            ->latest('redeemed_at');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('event', function ($e) use ($search) {
+                        $e->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $transactions = $query->paginate(20)->withQueryString();
+
+        return view('admin.reports.scanner', compact('transactions'));
     }
 }

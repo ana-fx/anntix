@@ -17,16 +17,12 @@
         <div class="bg-white rounded-3xl shadow-xl shadow-primary/5 overflow-hidden border border-gray-100">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                    <thead class="bg-gray-50 border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-4 font-bold text-secondary uppercase text-xs tracking-wider">Image
-                            </th>
-
-
-                            <th class="px-6 py-4 font-bold text-secondary uppercase text-xs tracking-wider">Active
-                            </th>
-                            <th class="px-6 py-4 font-bold text-secondary uppercase text-xs tracking-wider text-right">
-                                Actions</th>
+                    <thead>
+                        <tr
+                            class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                            <th class="px-6 py-4">Image</th>
+                            <th class="px-6 py-4">Active</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">

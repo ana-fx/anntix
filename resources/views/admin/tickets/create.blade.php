@@ -81,7 +81,7 @@
             <!-- Submit -->
             <div class="flex justify-end pt-4 pb-12">
                 <button type="submit"
-                    class="px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25 text-lg w-full md:w-auto">
+                    class="px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25 text-lg w-full md:w-auto">
                     Create Ticket
                 </button>
             </div>

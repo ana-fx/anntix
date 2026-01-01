@@ -46,7 +46,7 @@
                     <div
                         x-data="{ bannerPreview: '{{ $event->banner_path ? Storage::url($event->banner_path) : '' }}' }">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Banner <span
-                                class="text-xs font-normal text-gray-500 ml-1">(16:9)</span></label>
+                                class="text-xs font-normal text-gray-500 ml-1">(16:9, Max 2MB)</span></label>
                         <div
                             class="border-2 border-dashed border-gray-300 rounded-xl w-full aspect-video overflow-hidden relative text-center hover:border-primary transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
 
@@ -73,7 +73,7 @@
                     <div
                         x-data="{ thumbPreview: '{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : '' }}' }">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Thumbnail <span
-                                class="text-xs font-normal text-gray-500 ml-1">(1:1)</span></label>
+                                class="text-xs font-normal text-gray-500 ml-1">(1:1, Max 2MB)</span></label>
                         <div
                             class="border-2 border-dashed border-gray-300 rounded-xl w-full aspect-square max-w-sm overflow-hidden relative text-center hover:border-primary transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
 
@@ -248,7 +248,8 @@
                     <div>
                         <div
                             x-data="{ organizerLogoPreview: '{{ $event->organizer_logo_path ? Storage::url($event->organizer_logo_path) : '' }}' }">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Logo</label>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Logo <span
+                                    class="text-xs font-normal text-gray-500 ml-1">(Max 2MB)</span></label>
                             <div
                                 class="border-2 border-dashed border-gray-300 rounded-xl max-h-48 h-48 w-48 overflow-hidden relative text-center hover:border-primary transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
 

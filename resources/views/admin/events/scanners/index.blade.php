@@ -7,7 +7,7 @@
                         class="font-bold">{{ $event->name }}</span></p>
             </div>
             <button @click="assignModalOpen = true"
-                class="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                class="px-6 py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition shadow-lg shadow-primary/30">
                 + Assign Scanner
             </button>
         </div>
@@ -23,7 +23,7 @@
             <div class="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-2 text-sm text-gray-600">
                     <span>Show</span>
-                    <select class="border-gray-200 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <select class="border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary">
                         <option>10</option>
                         <option>25</option>
                         <option>50</option>
@@ -33,7 +33,7 @@
                 <div class="flex items-center gap-2 text-sm text-gray-600 w-full md:w-auto">
                     <span>Search:</span>
                     <input type="text"
-                        class="border-gray-200 rounded-lg text-sm w-full md:w-64 focus:ring-indigo-500 focus:border-indigo-500">
+                        class="border-gray-200 rounded-lg text-sm w-full md:w-64 focus:ring-primary focus:border-primary">
                 </div>
             </div>
 
@@ -124,7 +124,7 @@
                         <label for="scanner_id" class="block text-sm font-medium text-gray-700 mb-1">Select
                             Scanner</label>
                         <select name="scanner_id" id="scanner_id"
-                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-primary focus:ring-primary">
                             @forelse($availableScanners as $scanner)
                                 <option value="{{ $scanner->id }}">{{ $scanner->name }} ({{ $scanner->email }})</option>
                             @empty
@@ -134,7 +134,7 @@
                     </div>
                     <div class="flex justify-end">
                         <button type="submit"
-                            class="px-4 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-colors"
+                            class="px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition shadow-lg shadow-primary/30"
                             @if($availableScanners->isEmpty()) disabled @endif>
                             Assign
                         </button>

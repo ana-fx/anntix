@@ -28,6 +28,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Report
     Route::get('reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/transactions', [\App\Http\Controllers\Admin\ReportController::class, 'transactions'])->name('reports.transactions');
+    Route::get('reports/scanner', [\App\Http\Controllers\Admin\ReportController::class, 'scanner'])->name('reports.scanner');
+    Route::get('reports/transactions/{transaction:id}', [\App\Http\Controllers\Admin\ReportController::class, 'showTransaction'])->name('reports.transactions.show');
 
     // Scanners
     // Scanners

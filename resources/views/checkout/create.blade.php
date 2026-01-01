@@ -1,16 +1,16 @@
 <x-layouts.app title="Checkout">
-    <div class="bg-gray-50 min-h-screen pt-28">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+    <div class="bg-gray-50 min-h-screen pt-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
                 <!-- Left Column: Visual Summary (Sticky) -->
-                <div class="lg:col-span-5 sticky top-24">
+                <div class="lg:col-span-5 lg:sticky lg:top-24">
                     <div class="relative rounded-3xl overflow-hidden shadow-2xl group">
                         <!-- Background Image with Overlay -->
                         <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/30 transition-colors z-10"></div>
-                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/600x800' }}"
-                            class="w-full aspect-[4/5] object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
+                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/600x600' }}"
+                            class="w-full aspect-square object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
 
                         <!-- Content Overlay -->
                         <div class="absolute inset-0 z-20 p-8 flex flex-col justify-between text-white">
@@ -73,31 +73,62 @@
 
                 <!-- Right Column: Minimalist Form -->
                 <div class="lg:col-span-7">
-                    <form action="{{ route('checkout.store', $event) }}" method="POST" x-data="{
-                        tickets: {{ $event->tickets->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'price' => $t->price, 'limit' => $t->max_purchase_per_user, 'description' => $t->description, 'quota' => $t->quota]) }},
-                        handlingFee: {{ (int) \App\Models\Setting::getValue('handling_fee', 0) }},
+                    <form action="{{ route('checkout.store', $event) }}" method="POST" x-data='{
+                        tickets: {{ $event->tickets->map(function ($t) {
+    $available = $t->quota - (($t->paid_qty ?? 0) + ($t->pending_qty ?? 0));
+    return [
+        "id" => $t->id,
+        "name" => $t->name,
+        "price" => (int) $t->price,
+        "limit" => (int) $t->max_purchase_per_user,
+        "description" => $t->description,
+        "quota" => max(0, $available)
+    ];
+})->toJson() }},
+                        handlingFee: {{ (int) \App\Models\Setting::getValue("handling_fee", 0) }},
                         selectedTicketId: null,
                         selectedTicket: null,
                         quantity: 1,
                         
                         init() {
-                             // Select first available ticket
                              const available = this.tickets.find(t => t.quota > 0);
                              if(available) this.selectTicket(available.id);
                         },
-\u0020
+
                         selectTicket(id) {
                             this.selectedTicketId = id;
                             this.selectedTicket = this.tickets.find(t => t.id === id);
                             this.quantity = 1;
                         },
-\u0020
+
                         get total() { 
                             return this.selectedTicket ? ((this.selectedTicket.price + this.handlingFee) * this.quantity) : 0; 
                         }
-                    }" class="space-y-10">
+                    }' class="space-y-10">
                         @csrf
                         <input type="hidden" name="ticket_id" :value="selectedTicketId">
+
+                        <!-- Stock/Availability Notifications -->
+                        @if ($errors->any())
+                            <div
+                                class="mb-8 p-5 bg-rose-50 border border-rose-100 rounded-[2rem] flex items-start gap-4 shadow-sm animate-shake">
+                                <div
+                                    class="w-10 h-10 rounded-2xl bg-rose-500 flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-rose-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 pt-1">
+                                    <h4 class="text-sm font-black text-rose-900 uppercase tracking-widest mb-1">Availability
+                                        Conflict</h4>
+                                    @foreach ($errors->all() as $error)
+                                        <p class="text-[13px] font-bold text-rose-600/80 leading-relaxed">{{ $error }}</p>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- Header -->
                         <div>
@@ -222,7 +253,7 @@
                                     <label
                                         class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">Phone
                                         Number</label>
-                                    <input type="tel" name="phone"
+                                    <input type="tel" name="phone" maxlength="15"
                                         class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
                                         placeholder="+62..." required
                                         oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
@@ -240,16 +271,29 @@
                         </div>
 
                         <!-- Footer / Pay -->
-                        <div class="pt-8 mt-4 border-t border-gray-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-black/70 font-medium">Total Payable</p>
-                                <p class="text-3xl font-extrabold text-primary tracking-tight">
+                        <div
+                            class="pt-8 mt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0">
+                            <div class="w-full sm:w-auto text-center sm:text-left">
+                                <p class="text-[10px] text-black/50 font-medium uppercase tracking-wider">Total Payable
+                                </p>
+                                <p class="text-3xl font-black text-primary tracking-tight">
                                     Rp <span x-text="new Intl.NumberFormat('id-ID').format(total)"></span>
                                 </p>
+                                <div class="flex items-center justify-center sm:justify-start gap-2 mt-1.5"
+                                    x-show="selectedTicket">
+                                    <span
+                                        class="text-[10px] font-bold text-white bg-black/10 px-1.5 py-0.5 rounded leading-none">
+                                        INC. FEES
+                                    </span>
+                                    <span class="text-[10px] text-black/40">
+                                        Rp <span x-text="new Intl.NumberFormat('id-ID').format(handlingFee)"></span>
+                                        handling fee
+                                    </span>
+                                </div>
                             </div>
                             <button type="submit" :disabled="!selectedTicket"
                                 :class="!selectedTicket ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90 hover:scale-105 active:scale-95'"
-                                class="px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center gap-2">
+                                class="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-2">
                                 <span>Complete Order</span>
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

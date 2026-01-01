@@ -91,6 +91,10 @@ class PaymentController extends Controller
             ],
             'item_details' => $itemDetails,
             'enabled_payments' => $enabledPayments,
+            'expiry' => [
+                'unit' => 'day',
+                'duration' => 1,
+            ],
         ];
 
         try {

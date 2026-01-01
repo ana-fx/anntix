@@ -15,16 +15,36 @@ class TicketController extends Controller
 
     public function index(Event $event)
     {
+        $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
+
         $tickets = $event->tickets()
             ->withSum([
-                'transactions' => function ($query) {
+                'transactions as transactions_sum_quantity_paid' => function ($query) {
                     $query->where('status', 'paid');
                 }
             ], 'quantity')
+            ->withSum([
+                'transactions as transactions_sum_quantity_pending' => function ($query) {
+                    $query->where('status', 'pending')
+                        ->where('created_at', '>=', now()->subDay());
+                }
+            ], 'quantity')
+            ->withSum([
+                'transactions as transactions_sum_total_price' => function ($query) {
+                    $query->where('status', 'paid');
+                }
+            ], 'total_price')
             ->latest()
             ->paginate(10);
 
-        return view('admin.tickets.index', compact('event', 'tickets'));
+        $recentSales = $event->transactions()
+            ->where('status', 'paid')
+            ->with('ticket')
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('admin.tickets.index', compact('event', 'tickets', 'recentSales', 'handlingFeeValue'));
     }
 
     public function create(Event $event)

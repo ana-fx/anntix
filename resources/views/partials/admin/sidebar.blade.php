@@ -122,16 +122,52 @@
             Global Settings
         </a>
 
-        <!-- Reports -->
-        <a href="{{ route('admin.reports.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
-            <svg class="w-5 h-5 {{ request()->routeIs('admin.reports.*') ? 'opacity-100' : 'opacity-70' }}"
-                viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
-                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
-            </svg>
-            Reports
-        </a>
+        <!-- Reports (Dropdown) -->
+        <div x-data="{ open: {{ request()->routeIs('admin.reports.*') ? 'true' : 'false' }} }">
+            <button @click="open = !open"
+                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 {{ request()->routeIs('admin.reports.*') ? 'opacity-100' : 'opacity-70' }}"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
+                    </svg>
+                    Reports
+                </div>
+                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95" class="pl-4 space-y-1 mt-1">
+
+                <a href="{{ route('admin.reports.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.reports.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    General Report
+                </a>
+
+                <a href="{{ route('admin.reports.transactions') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.transactions') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.reports.transactions') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    Transactions
+                </a>
+
+                <a href="{{ route('admin.reports.scanner') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.scanner') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.reports.scanner') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    Scanner
+                </a>
+            </div>
+        </div>
 
         <!-- Messages/Inbox -->
         <a href="{{ route('admin.contacts.index') }}"

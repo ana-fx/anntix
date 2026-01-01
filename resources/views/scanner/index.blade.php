@@ -1,4 +1,240 @@
-<x-layouts.app>
+<x-layouts.scanner>
+    <div x-data="scannerApp()" class="h-full flex flex-col pt-safe" x-cloak>
+
+        <!-- Header -->
+        <header class="px-6 py-6 flex items-center justify-between border-b border-gray-100 bg-white shadow-sm">
+            <div>
+                <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Entry Scanner</h1>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">System Online</span>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                    class="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+            </form>
+        </header>
+
+        <!-- Form Control -->
+        <div class="p-6 space-y-4">
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Current
+                    Event</label>
+                <div class="relative group">
+                    <select x-model="selectedEventId" @change="stopScanner()"
+                        class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-5 pr-12 text-sm font-bold text-slate-900 appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm">
+                        <option value="">Select an Event...</option>
+                        @foreach($events as $event)
+                            <option value="{{ $event->id }}">{{ $event->name }}</option>
+                        @endforeach
+                    </select>
+                    <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scanning Hub -->
+        <main class="flex-1 px-6 flex flex-col gap-6 min-h-0">
+
+            <!-- Idle State -->
+            <div x-show="!selectedEventId"
+                class="flex-1 flex flex-col items-center justify-center text-center p-8 bg-white/50 border-2 border-dashed border-slate-200 rounded-[2.5rem]">
+                <div
+                    class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center border border-slate-100 shadow-sm mb-6">
+                    <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 17h.01M8 11h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-8a2 2 0 012-2z" />
+                    </svg>
+                </div>
+                <h2 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-1">Authorization Required</h2>
+                <p class="text-xs text-slate-400 font-medium max-w-[180px]">Choose an active event from the list above
+                    to start scanning.</p>
+            </div>
+
+            <!-- Active Scanning State -->
+            <div x-show="selectedEventId" class="flex-1 flex flex-col gap-6 min-h-0" x-transition>
+
+                <!-- Viewport Container -->
+                <div
+                    class="relative flex-1 bg-black rounded-[2.5rem] overflow-hidden shadow-2xl group border-[6px] border-white shadow-slate-200">
+                    <div id="reader" class="w-full h-full object-cover"></div>
+
+                    <!-- Scanning Line -->
+                    <div x-show="isScanning"
+                        class="absolute inset-x-0 h-0.5 bg-primary/40 animate-scan pointer-events-none z-20"></div>
+
+                    <!-- Manual Entry Button Overlay -->
+                    <div class="absolute bottom-6 inset-x-0 flex justify-center z-30">
+                        <button @click="toggleManual()"
+                            class="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-black text-white uppercase tracking-[0.2em] shadow-lg hover:bg-white/20 transition-all">Manual
+                            Code</button>
+                    </div>
+
+                    <!-- Manual Input Panel -->
+                    <div x-show="isManual" x-transition:enter="transition ease-out duration-300 transform"
+                        x-transition:enter-start="translate-y-full"
+                        class="absolute inset-0 z-[40] bg-white flex flex-col p-8 justify-center items-center text-center">
+                        <div class="w-full max-w-xs space-y-8">
+                            <div>
+                                <h3 class="text-lg font-black text-slate-900 uppercase tracking-widest">Manual Entry
+                                </h3>
+                                <p class="text-xs text-slate-400 font-bold mt-1 uppercase tracking-wider">Type ticket
+                                    reference</p>
+                            </div>
+                            <input type="text" x-model="manualCode" placeholder="Reference ID"
+                                class="w-full border-b-4 border-slate-100 py-4 text-center text-2xl font-black text-slate-900 focus:outline-none focus:border-primary transition-all uppercase placeholder:text-slate-100">
+                            <div class="grid grid-cols-2 gap-4">
+                                <button type="button" @click="isManual = false; if(selectedEventId) initScanner()"
+                                    class="py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Cancel</button>
+                                <button type="button" @click="verifyCode(manualCode)"
+                                    class="py-4 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20">Check</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Control -->
+                <div class="pb-6">
+                    <button @click="toggleScanner()"
+                        class="w-full py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3 shadow-xl"
+                        :class="isScanning ? 'bg-rose-50 text-rose-600 border border-rose-100' : 'bg-primary text-white'">
+                        <span x-text="isScanning ? 'Disable Camera' : 'Start QR Scanner'"></span>
+                        <svg x-show="!isScanning" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Result Backdrop & Modal -->
+        <template x-if="scanResult">
+            <div class="fixed inset-0 z-[100] p-6 flex items-center justify-center" x-transition>
+                <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md" @click="resetScan()"></div>
+
+                <div class="relative w-full max-w-sm bg-white rounded-[3rem] p-10 flex flex-col items-center text-center shadow-3xl overflow-hidden"
+                    x-transition:enter="transition-all duration-500 ease-out transform"
+                    x-transition:enter-start="scale-50 rotate-3 opacity-0">
+
+                    <!-- Status Indicator -->
+                    <div class="w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl group animate-bounce-short"
+                        :class="scanResult.status === 'success' ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'">
+                        <svg x-show="scanResult.status === 'success'" class="w-12 h-12" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <svg x-show="scanResult.status === 'error'" class="w-12 h-12" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </div>
+
+                    <div class="mb-10">
+                        <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight"
+                            x-text="scanResult.status === 'success' ? 'Verified' : 'Invalid'"></h2>
+                        <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest"
+                            x-text="scanResult.message"></p>
+                    </div>
+
+                    <!-- Expanded Data Hub -->
+                    <div x-show="scanResult.data"
+                        class="w-full space-y-4 mb-8 text-left max-h-[40vh] overflow-y-auto pr-2 scrollbar-hide">
+                        <!-- Ticket Section -->
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Ticket
+                                Registry</h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold text-slate-400">Ref Code</span>
+                                    <span
+                                        class="text-xs font-black text-slate-900 tracking-wider font-mono bg-white px-2 py-0.5 rounded"
+                                        x-text="scanResult.data.code"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold text-slate-400">Category</span>
+                                    <span class="text-xs font-black text-primary uppercase tracking-widest"
+                                        x-text="scanResult.data.ticket_type"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold text-slate-400">Quantity</span>
+                                    <span class="text-sm font-black text-slate-900"
+                                        x-text="'x' + scanResult.data.quantity"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Section -->
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Identity
+                                Profile</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <span
+                                        class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-1">Full
+                                        Name</span>
+                                    <span class="text-sm font-black text-slate-900"
+                                        x-text="scanResult.data.name"></span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <span
+                                            class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-1">NIK</span>
+                                        <span class="text-[11px] font-bold text-slate-700 font-mono"
+                                            x-text="scanResult.data.nik"></span>
+                                    </div>
+                                    <div>
+                                        <span
+                                            class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-1">Gender</span>
+                                        <span class="text-[11px] font-bold text-slate-700 uppercase"
+                                            x-text="scanResult.data.gender"></span>
+                                    </div>
+                                </div>
+                                <div class="h-px bg-slate-200/50"></div>
+                                <div>
+                                    <span
+                                        class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-1">Contact
+                                        Details</span>
+                                    <div class="space-y-1">
+                                        <span class="text-[11px] font-bold text-slate-700 block"
+                                            x-text="scanResult.data.email"></span>
+                                        <span class="text-[11px] font-bold text-slate-700 block"
+                                            x-text="scanResult.data.phone"></span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span
+                                        class="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-1">Location</span>
+                                    <span class="text-[11px] font-bold text-slate-700"
+                                        x-text="scanResult.data.city"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button @click="resetScan()"
+                        class="w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl"
+                        :class="scanResult.status === 'success' ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-rose-500 text-white shadow-rose-500/20'">
+                        Next Scan
+                    </button>
+                </div>
+            </div>
+        </template>
+    </div>
+
     @push('scripts')
         <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
         <script>
@@ -7,36 +243,30 @@
                     selectedEventId: '',
                     manualCode: '',
                     isScanning: false,
+                    isManual: false,
                     html5QrCode: null,
                     scanResult: null,
 
                     async initScanner() {
-                        // Check if HTTPS is being used
-                        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-                            alert("Camera access requires HTTPS. Please secure your connection or use 'localhost'.");
-                            return;
-                        }
-
+                        const reader = document.getElementById('reader');
                         this.html5QrCode = new Html5Qrcode("reader");
-                        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                        const config = {
+                            fps: 20,
+                            qrbox: { width: 220, height: 220 },
+                            aspectRatio: 1.0,
+                        };
 
                         try {
                             await this.html5QrCode.start(
                                 { facingMode: "environment" },
                                 config,
-                                this.onScanSuccess.bind(this),
-                                this.onScanFailure.bind(this)
+                                (text) => this.onScanSuccess(text),
+                                () => { }
                             );
                             this.isScanning = true;
+                            this.isManual = false;
                         } catch (err) {
-                            console.error("Error starting scanner", err);
-                            if (err.name === 'NotAllowedError') {
-                                alert("Camera permission denied. Please allow camera access in your browser settings.");
-                            } else if (err.name === 'NotFoundError') {
-                                alert("No camera found associated with this device.");
-                            } else {
-                                alert("Could not start camera. Ensure you are using HTTPS and permissions are granted.\nError: " + err);
-                            }
+                            alert("Camera Access Denied");
                         }
                     },
 
@@ -48,250 +278,105 @@
                     },
 
                     toggleScanner() {
-                        if (this.isScanning) {
-                            this.stopScanner();
-                        } else {
-                            if (!this.selectedEventId) {
-                                alert('Please select an event first.');
-                                return;
-                            }
+                        if (this.isScanning) this.stopScanner();
+                        else {
+                            if (!this.selectedEventId) return alert('Select an event');
                             this.initScanner();
-                            this.scanResult = null;
-                            this.manualCode = '';
                         }
                     },
 
-                    onScanSuccess(decodedText, decodedResult) {
-                        if (this.scanResult) return; // Prevent multiple scans
-                        console.log(`Code scanned = ${decodedText}`, decodedResult);
-                        this.verifyCode(decodedText);
-
-                        // Optional: Stop scanning after success
+                    toggleManual() {
                         this.stopScanner();
+                        this.isManual = true;
                     },
 
-                    onScanFailure(error) {
-                        // handle scan failure, usually better to ignore and keep scanning.
-                        // console.warn(`Code scan error = ${error}`);
+                    onScanSuccess(code) {
+                        if (this.scanResult) return;
+                        this.verifyCode(code);
+                        this.stopScanner();
+                        if (navigator.vibrate) navigator.vibrate(50);
                     },
 
                     async verifyCode(code) {
                         if (!code) return;
-                        if (!this.selectedEventId) {
-                            alert('Please select an event first.');
-                            return;
-                        }
-
                         try {
                             const response = await fetch("{{ route('scanner.verify') }}", {
                                 method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                },
-                                body: JSON.stringify({
-                                    code: code,
-                                    event_id: this.selectedEventId
-                                })
+                                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                                body: JSON.stringify({ code: code, event_id: this.selectedEventId })
                             });
-
-                            const result = await response.json();
-                            this.scanResult = result;
-
-                        } catch (error) {
-                            console.error("Verification error:", error);
-                            this.scanResult = {
-                                status: 'error',
-                                message: 'Network or server error occurred.'
-                            };
+                            this.scanResult = await response.json();
+                            if (navigator.vibrate) navigator.vibrate(this.scanResult.status === 'success' ? 100 : [100, 100]);
+                        } catch (e) {
+                            this.scanResult = { status: 'error', message: 'Connection issue' };
                         }
                     },
 
                     resetScan() {
                         this.scanResult = null;
                         this.manualCode = '';
-                        // restart scanner if needed
-                        this.initScanner();
+                        this.isManual = false;
+                        if (this.selectedEventId) this.initScanner();
                     }
                 }
             }
         </script>
+
+        <style>
+            @keyframes scan-line {
+                0% {
+                    top: 10%;
+                    opacity: 0;
+                }
+
+                50% {
+                    opacity: 1;
+                }
+
+                100% {
+                    top: 90%;
+                    opacity: 0;
+                }
+            }
+
+            .animate-scan {
+                animation: scan-line 2s infinite ease-in-out;
+            }
+
+            @keyframes bounce-short {
+
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+
+                50% {
+                    transform: translateY(-5px);
+                }
+            }
+
+            .animate-bounce-short {
+                animation: bounce-short 1s ease-in-out infinite;
+            }
+
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            #reader video {
+                object-fit: cover !important;
+                border-radius: 2rem !important;
+            }
+
+            #reader__status_span,
+            #reader__dashboard {
+                display: none !important;
+            }
+        </style>
     @endpush
-
-    <div class="bg-gray-50 min-h-screen pb-20 pt-10" x-data="scannerApp()">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <!-- Header Section -->
-            <div class="mb-8 md:flex md:items-center md:justify-between">
-                <div class="min-w-0 flex-1">
-                    <h2 class="text-3xl font-heading font-bold text-dark sm:truncate sm:text-4xl sm:tracking-tight">
-                        Scanner Dashboard
-                    </h2>
-                    <p class="mt-2 text-lg text-secondary">
-                        Welcome back, {{ Auth::user()->name }}
-                    </p>
-                </div>
-                <div class="mt-4 flex md:ml-4 md:mt-0">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="inline-flex items-center rounded-xl bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Event Selection -->
-            <div class="bg-white rounded-3xl shadow-xl shadow-blue-900/5 p-8 mb-8 border border-gray-100">
-                <label for="event" class="block text-sm font-bold text-secondary uppercase tracking-wider mb-2">Select
-                    Active Event</label>
-                <div class="relative">
-                    <select x-model="selectedEventId" @change="stopScanner()" id="event"
-                        class="block w-full rounded-xl border-0 py-4 pl-4 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-lg sm:leading-6 bg-gray-50">
-                        <option value="">-- Choose an Event to Scan --</option>
-                        @foreach($events as $event)
-                            <option value="{{ $event->id }}">{{ $event->name }} ({{ $event->start_date->format('d M Y') }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <!-- Scanner Interface -->
-            <div x-show="selectedEventId" x-transition class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                <!-- Camera Section -->
-                <div class="space-y-6">
-                    <div
-                        class="bg-white rounded-3xl shadow-xl shadow-blue-900/5 overflow-hidden border border-gray-100">
-                        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                            <h3 class="font-heading font-bold text-xl text-dark">Camera Access</h3>
-                            <button @click="toggleScanner()"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition shadow-lg shadow-primary/20"
-                                :class="isScanning ? 'bg-red-500 hover:bg-red-600 shadow-red-500/20' : ''">
-                                <span x-text="isScanning ? 'Stop Camera' : 'Start Camera'"></span>
-                            </button>
-                        </div>
-
-                        <div class="p-6">
-                            <div id="reader" class="rounded-2xl overflow-hidden bg-black w-full shadow-inner"
-                                style="min-height: 300px;"></div>
-
-                            <div class="relative mt-8">
-                                <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                                    <div class="w-full border-t border-gray-200"></div>
-                                </div>
-                                <div class="relative flex justify-center">
-                                    <span
-                                        class="bg-white px-3 text-sm font-bold text-gray-400 uppercase tracking-wider">Or</span>
-                                </div>
-                            </div>
-
-                            <div class="mt-6">
-                                <form @submit.prevent="verifyCode(manualCode)" class="flex gap-3">
-                                    <input type="text" x-model="manualCode" placeholder="Enter ticket code manually..."
-                                        class="block w-full rounded-xl border-0 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
-                                    <button type="submit"
-                                        class="px-6 py-3 bg-dark text-white font-bold rounded-xl hover:bg-gray-800 transition shadow-lg">
-                                        Check
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Result Section -->
-                <div
-                    class="bg-white rounded-3xl shadow-xl shadow-blue-900/5 overflow-hidden border border-gray-100 flex flex-col min-h-[400px]">
-
-                    <!-- Empty State -->
-                    <div x-show="!scanResult" class="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                        <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                            <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 17h.01M8 11h16M12 5l7 7-7 7M5 5l-7 7 7 7">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-dark mb-2">Ready to Scan</h3>
-                        <p class="text-secondary max-w-xs">Use the camera or enter a code to verify ticket details.</p>
-                    </div>
-
-                    <!-- Result Data -->
-                    <div x-show="scanResult" style="display: none;" class="flex-1 flex flex-col">
-
-                        <!-- Header -->
-                        <div class="p-8 text-center flex-1 flex flex-col items-center justify-center"
-                            :class="scanResult?.status === 'success' ? 'bg-green-50/50' : 'bg-red-50/50'">
-
-                            <div class="w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-sm"
-                                :class="scanResult?.status === 'success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'">
-                                <svg x-show="scanResult?.status === 'success'" class="w-12 h-12" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <svg x-show="scanResult?.status === 'error'" class="w-12 h-12" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </div>
-
-                            <h3 class="text-3xl font-heading font-bold mb-2"
-                                :class="scanResult?.status === 'success' ? 'text-green-700' : 'text-red-700'"
-                                x-text="scanResult?.status === 'success' ? 'Valid Ticket' : 'Scan Failed'">
-                            </h3>
-                            <p class="font-medium text-lg"
-                                :class="scanResult?.status === 'success' ? 'text-green-600' : 'text-red-600'"
-                                x-text="scanResult?.message">
-                            </p>
-                        </div>
-
-                        <!-- Ticket Details (Only on success) -->
-                        <div class="p-8 bg-white border-t border-gray-100" x-show="scanResult?.data">
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                                    <span class="text-secondary">Owner Name</span>
-                                    <span class="font-bold text-dark text-lg" x-text="scanResult?.data?.name"></span>
-                                </div>
-                                <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                                    <span class="text-secondary">Ticket Type</span>
-                                    <span class="font-bold text-primary text-lg"
-                                        x-text="scanResult?.data?.ticket_type"></span>
-                                </div>
-                                <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                                    <span class="text-secondary">Quantity</span>
-                                    <span class="font-bold text-dark text-lg"
-                                        x-text="scanResult?.data?.quantity"></span>
-                                </div>
-                                <div class="flex justify-between items-center py-2">
-                                    <span class="text-secondary">Email</span>
-                                    <span class="font-medium text-dark" x-text="scanResult?.data?.email"></span>
-                                </div>
-                            </div>
-
-                            <button @click="resetScan()"
-                                class="mt-8 w-full py-4 bg-gray-100 text-dark font-bold rounded-xl hover:bg-gray-200 transition">
-                                Scan Next Ticket
-                            </button>
-                        </div>
-
-                        <!-- Error Reset (Only on error) -->
-                        <div class="p-8 bg-white border-t border-gray-100" x-show="scanResult?.status === 'error'">
-                            <button @click="resetScan()"
-                                class="w-full py-4 bg-dark text-white font-bold rounded-xl hover:bg-gray-800 transition shadow-lg">
-                                Try Again
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-</x-layouts.app>
+</x-layouts.scanner>

@@ -168,7 +168,7 @@
                                         <td class="px-6 py-4">
                                             <span
                                                 class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold 
-                                                                                                                    {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                                 {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
                                             </span>
                                         </td>
@@ -228,7 +228,7 @@
                             Assigned Scanners
                         </h3>
                         <button @click="assignModalOpen = !assignModalOpen"
-                            class="text-sm font-bold text-primary hover:text-primary-700 transition-colors">
+                            class="px-4 py-2 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary/90 transition shadow-lg shadow-primary/20">
                             + Assign Scanner
                         </button>
                     </div>

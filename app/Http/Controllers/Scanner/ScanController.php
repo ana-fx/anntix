@@ -77,16 +77,23 @@ class ScanController extends Controller
 
         // Mark as redeemed
         $transaction->redeemed_at = now();
+        $transaction->redeemed_by = Auth::id();
         $transaction->save();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Ticket verified successfully!',
             'data' => [
+                'code' => $transaction->code,
                 'name' => $transaction->name,
                 'email' => $transaction->email,
+                'phone' => $transaction->phone,
+                'city' => $transaction->city,
+                'nik' => $transaction->nik,
+                'gender' => $transaction->gender,
                 'ticket_type' => $transaction->ticket->name,
                 'quantity' => $transaction->quantity,
+                'redeemed_at' => $transaction->redeemed_at->format('H:i:s'),
             ]
         ]);
     }

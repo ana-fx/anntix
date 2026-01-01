@@ -18,6 +18,17 @@ class CheckoutController extends Controller
             'tickets' => function ($query) {
                 $query->where('start_date', '<=', now())
                     ->where('end_date', '>=', now())
+                    ->withSum([
+                        'transactions as paid_qty' => function ($q) {
+                            $q->where('status', 'paid');
+                        }
+                    ], 'quantity')
+                    ->withSum([
+                        'transactions as pending_qty' => function ($q) {
+                            $q->where('status', 'pending')
+                                ->where('created_at', '>=', now()->subDay());
+                        }
+                    ], 'quantity')
                     ->orderBy('price', 'asc');
             }
         ]);
@@ -50,9 +61,19 @@ class CheckoutController extends Controller
             return back()->withErrors(['quantity' => 'Max purchase for this ticket is ' . $ticket->max_purchase_per_user]);
         }
 
-        // Validate Quota
-        if ($ticket->quota < $validated['quantity']) {
-            return back()->withErrors(['quantity' => 'Not enough tickets available.']);
+        // Validate Quota with Soft Lock (1 Day)
+        $paidCount = $ticket->transactions()->where('status', 'paid')->sum('quantity');
+        $pendingCount = $ticket->transactions()
+            ->where('status', 'pending')
+            ->where('created_at', '>=', now()->subDay())
+            ->sum('quantity');
+
+        $availableQuota = $ticket->quota - ($paidCount + $pendingCount);
+
+        if ($availableQuota < $validated['quantity']) {
+            return back()->withErrors([
+                'quantity' => 'Not enough available seats. There are currently ' . $availableQuota . ' tickets remaining, as others are held in pending checkout sessions. Please try again soon or reduce your quantity.'
+            ])->withInput();
         }
 
         $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);

@@ -20,7 +20,7 @@
 
                 <div x-data="{ bannerPreview: null }">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Upload Banner <span
-                            class="text-xs font-normal text-gray-500 ml-1">(3:1 Recommended)</span></label>
+                            class="text-xs font-normal text-gray-500 ml-1">(3:1 Recommended, Max 2MB)</span></label>
                     <div
                         class="border-2 border-dashed border-gray-300 rounded-xl w-full aspect-[3/1] overflow-hidden relative text-center hover:border-blue-500 transition-colors cursor-pointer bg-gray-50/50 flex items-center justify-center">
 
