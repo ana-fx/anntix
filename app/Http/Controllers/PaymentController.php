@@ -135,6 +135,33 @@ class PaymentController extends Controller
         return response()->json(['status' => 'success']);
     }
 
+    public function resellerComplete(Request $request, Transaction $transaction)
+    {
+        // 1. Authorization
+        if (!auth()->check() || auth()->id() !== $transaction->reseller_id) {
+            abort(403, 'Unauthorized. Only the assigned reseller can confirm this payment.');
+        }
+
+        // 2. Mark as Paid
+        if ($transaction->status !== 'paid') {
+            $transaction->update([
+                'status' => 'paid',
+                'payment_type' => 'reseller_manual', // Or 'cash'
+                'midtrans_transaction_id' => 'RES-' . strtoupper(\Illuminate\Support\Str::random(10)), // Generate a dummy ID
+            ]);
+
+            // 3. Send Email
+            try {
+                Mail::to($transaction->email)->send(new PaymentSuccess($transaction));
+            } catch (\Exception $e) {
+                logger()->error('Failed to send payment success email: ' . $e->getMessage());
+            }
+        }
+
+        // 4. Redirect to Success
+        return redirect()->route('payment.success', $transaction->code);
+    }
+
     public function success(Transaction $transaction)
     {
         // Simple success page

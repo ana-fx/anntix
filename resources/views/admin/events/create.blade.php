@@ -271,14 +271,67 @@
                     </div>
                 </div>
             </div>
+            <!-- 6. Fees & Commission -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Fees & Commission
+                    </h3>
 
-            <!-- Submit -->
-            <div class="flex justify-end pt-4 pb-12">
-                <button type="submit"
-                    class="px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25 text-lg w-full md:w-auto">
-                    Create Event
-                </button>
-            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Type</label>
+                            <div class="flex gap-4 items-center h-[46px]">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="reseller_fee_type" value="fixed" {{ old('reseller_fee_type') == 'fixed' || !old('reseller_fee_type') ? 'checked' : '' }} class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                    <span class="text-sm font-medium text-gray-700">Fixed</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="reseller_fee_type" value="percent" {{ old('reseller_fee_type') == 'percent' ? 'checked' : '' }} class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                    <span class="text-sm font-medium text-gray-700">Percent (%)</span>
+                                </label>
+                            </div>
+                             @error('reseller_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Value</label>
+                            <input type="number" name="reseller_fee_value" value="{{ old('reseller_fee_value', 0) }}" min="0" step="0.01" placeholder="0"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                            @error('reseller_fee_value') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2 border-t border-gray-100"></div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee Type</label>
+                            <div class="flex gap-4 items-center h-[46px]">
+                                 <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="organizer_fee_type" value="fixed" {{ old('organizer_fee_type') == 'fixed' || !old('organizer_fee_type') ? 'checked' : '' }} class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                    <span class="text-sm font-medium text-gray-700">Fixed</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="organizer_fee_type" value="percent" {{ old('organizer_fee_type') == 'percent' ? 'checked' : '' }} class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                    <span class="text-sm font-medium text-gray-700">Percent (%)</span>
+                                </label>
+                            </div>
+                             @error('organizer_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee Value</label>
+                            <input type="number" name="organizer_fee" value="{{ old('organizer_fee', 0) }}" min="0" step="0.01" placeholder="0"
+                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                            @error('organizer_fee') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="flex justify-end pt-4 pb-12">
+                    <button type="submit"
+                        class="px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25 text-lg w-full md:w-auto">
+                        Create Event
+                    </button>
+                </div>
 
         </form>
     </div>

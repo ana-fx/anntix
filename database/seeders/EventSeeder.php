@@ -33,6 +33,10 @@ class EventSeeder extends Seeder
                 'organizer_name' => 'AL Organizer',
                 'banner_path' => 'event.jpeg',
                 'thumbnail_path' => 'event.jpeg',
+                // Reseller Commission / Fee
+                'reseller_fee_type' => 'fixed',
+                'reseller_fee_value' => 5000,
+                'organizer_fee' => 2000,
             ]
         );
 
@@ -60,5 +64,11 @@ class EventSeeder extends Seeder
                 'max_purchase_per_user' => 2,
             ]
         );
+
+        // Attach Reseller
+        $reseller = \App\Models\User::where('email', 'reseller@anntix.com')->first();
+        if ($reseller) {
+            $event->resellers()->syncWithoutDetaching([$reseller->id]);
+        }
     }
 }

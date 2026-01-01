@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -44,6 +43,13 @@ return new class extends Migration
             // Organizer
             $table->string('organizer_name')->nullable();
             $table->string('organizer_logo_path')->nullable();
+
+            // Fees & Commissions
+            $table->enum('reseller_fee_type', ['fixed', 'percent'])->default('fixed');
+            $table->decimal('reseller_fee_value', 12, 2)->default(0);
+
+            $table->enum('organizer_fee_type', ['fixed', 'percent'])->default('fixed');
+            $table->decimal('organizer_fee', 12, 2)->default(0);
 
             $table->softDeletes();
             $table->timestamps();

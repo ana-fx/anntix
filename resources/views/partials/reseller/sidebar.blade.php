@@ -1,4 +1,18 @@
-<div class="w-64 bg-gradient-to-b from-primary to-[#108c8d] text-white min-h-screen flex flex-col shadow-xl">
+<div class="w-64 bg-gradient-to-b from-primary to-[#108c8d] text-white min-h-screen flex flex-col shadow-xl relative"
+    x-data>
+    <!-- Modern Creative Toggle Button -->
+    <button @click="sidebarOpen = false"
+        class="absolute left-full top-1/2 transform -translate-y-1/2 focus:outline-none z-50 group"
+        title="Collapse Sidebar">
+        <div
+            class="flex items-center justify-center w-4 h-12 bg-white text-gray-300 rounded-r-xl shadow-[4px_0_24px_rgba(0,0,0,0.1)] border-y border-r border-gray-100 group-hover:w-8 group-hover:text-primary transition-all duration-300 ease-out">
+            <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-300" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </div>
+    </button>
+
     <!-- Branding -->
     <div class="h-24 flex items-center justify-between px-8 border-b border-white/10">
         <div class="flex items-center gap-3">
@@ -13,19 +27,11 @@
                 <span class="text-lg font-bold tracking-wider uppercase">ANTIX</span>
             @endif
         </div>
-
-        <!-- Close Button -->
-        <button @click="sidebarOpen = false"
-            class="p-2 rounded-lg hover:bg-white/10 text-white transition-colors focus:outline-none">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 py-8 px-4 space-y-2">
-        <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-teal-100/50 mb-4">Reseller Panel</p>
+    <nav class="flex-1 py-8 px-4 flex flex-col gap-2 overflow-y-auto">
+        <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-teal-100/50 mb-2">Reseller Panel</p>
 
         <a href="{{ route('reseller.dashboard') }}"
             class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('reseller.dashboard') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
@@ -37,10 +43,11 @@
             Dashboard
         </a>
 
-        <!-- Add more reseller specific routes here later -->
-        <a href="#"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors text-teal-50 hover:bg-white/10 font-medium">
-            <svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <!-- Reports / Sales -->
+        <a href="{{ route('reseller.reports.index') }}"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('reseller.reports.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+            <svg class="w-5 h-5 {{ request()->routeIs('reseller.reports.*') ? 'opacity-100' : 'opacity-70' }}"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>

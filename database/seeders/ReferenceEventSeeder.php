@@ -48,6 +48,9 @@ class ReferenceEventSeeder extends Seeder
                 'thumbnail_path' => 'sample/1080 x 1080.png',
                 'banner_path' => 'sample/1920 x  1080.png',
                 'category' => 'Reference',
+                'reseller_fee_type' => 'fixed',
+                'reseller_fee_value' => 5000,
+                'organizer_fee' => 2000,
             ]
         );
 
@@ -74,5 +77,11 @@ class ReferenceEventSeeder extends Seeder
                 'is_active' => true,
             ]
         );
+
+        // 4. Attach Reseller
+        $reseller = \App\Models\User::where('email', 'reseller@anntix.com')->first();
+        if ($reseller) {
+            $event->resellers()->syncWithoutDetaching([$reseller->id]);
+        }
     }
 }

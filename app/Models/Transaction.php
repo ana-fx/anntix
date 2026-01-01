@@ -25,6 +25,7 @@ class Transaction extends Model
         'midtrans_transaction_id',
         'redeemed_at',
         'redeemed_by',
+        'reseller_id',
     ];
 
     protected $casts = [
@@ -49,5 +50,10 @@ class Transaction extends Model
     public function scanner()
     {
         return $this->belongsTo(User::class, 'redeemed_by');
+    }
+
+    public function reseller()
+    {
+        return $this->belongsTo(User::class, 'reseller_id');
     }
 }

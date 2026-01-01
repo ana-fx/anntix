@@ -30,6 +30,10 @@ class Event extends Model
         'seo_description',
         'organizer_name',
         'organizer_logo_path',
+        'reseller_fee_type',
+        'reseller_fee_value',
+        'organizer_fee_type',
+        'organizer_fee',
     ];
 
     protected $casts = [
@@ -55,5 +59,10 @@ class Event extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function resellers()
+    {
+        return $this->belongsToMany(User::class, 'event_reseller', 'event_id', 'user_id')->withTimestamps();
     }
 }

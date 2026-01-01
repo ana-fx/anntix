@@ -28,7 +28,7 @@ class EventController extends Controller
         // Assuming current view logic: tickets_count = currently sold? Or created?
         // Let's map it: total_tickets = sum of ticket types quantity. tickets_count = sold.
         // Actually, let's keep it simple:
-        $events = Event::withCount(['tickets', 'scanners'])->latest()->paginate(10);
+        $events = Event::with('tickets')->withCount(['tickets', 'scanners', 'resellers'])->latest()->paginate(10);
 
         // Improve: calculating real metrics
         $events->getCollection()->transform(function ($event) {
@@ -72,6 +72,10 @@ class EventController extends Controller
             'banner' => 'nullable|image|max:2048',
             'thumbnail' => 'nullable|image|max:2048',
             'organizer_logo' => 'nullable|image|max:1024',
+            'reseller_fee_type' => 'nullable|in:fixed,percent',
+            'reseller_fee_value' => 'nullable|numeric|min:0',
+            'organizer_fee_type' => 'nullable|in:fixed,percent',
+            'organizer_fee' => 'nullable|numeric|min:0',
         ]);
 
         $slug = Str::slug($validated['name']);
@@ -103,13 +107,19 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        $event->load(['tickets', 'scanners']);
+        $event->load(['tickets', 'scanners', 'resellers']);
+
         $scanners = \App\Models\User::where('role', 'scanner')
             ->whereDoesntHave('scannedEvents', function ($query) use ($event) {
                 $query->where('event_id', $event->id);
             })->get();
 
-        return view('admin.events.show', compact('event', 'scanners'));
+        $resellers = \App\Models\User::where('role', 'reseller')
+            ->whereDoesntHave('resellerEvents', function ($query) use ($event) {
+                $query->where('event_id', $event->id);
+            })->get();
+
+        return view('admin.events.show', compact('event', 'scanners', 'resellers'));
     }
 
     public function scanners(Event $event)
@@ -140,6 +150,36 @@ class EventController extends Controller
         $event->scanners()->detach($scanner->id);
 
         return back()->with('success', 'Scanner unassigned successfully.');
+    }
+
+    public function resellers(Event $event)
+    {
+        $event->load('resellers');
+        // Fetch all available resellers to add
+        $availableResellers = \App\Models\User::where('role', 'reseller')
+            ->whereDoesntHave('resellerEvents', function ($query) use ($event) {
+                $query->where('event_id', $event->id);
+            })->get();
+
+        return view('admin.events.resellers.index', compact('event', 'availableResellers'));
+    }
+
+    public function assignReseller(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'reseller_id' => 'required|exists:users,id',
+        ]);
+
+        $event->resellers()->attach($validated['reseller_id']);
+
+        return back()->with('success', 'Reseller assigned successfully.');
+    }
+
+    public function unassignReseller(Event $event, \App\Models\User $reseller)
+    {
+        $event->resellers()->detach($reseller->id);
+
+        return back()->with('success', 'Reseller unassigned successfully.');
     }
 
     /**
@@ -174,6 +214,10 @@ class EventController extends Controller
             'banner' => 'nullable|image|max:2048',
             'thumbnail' => 'nullable|image|max:2048',
             'organizer_logo' => 'nullable|image|max:1024',
+            'reseller_fee_type' => 'nullable|in:fixed,percent',
+            'reseller_fee_value' => 'nullable|numeric|min:0',
+            'organizer_fee_type' => 'nullable|in:fixed,percent',
+            'organizer_fee' => 'nullable|numeric|min:0',
         ]);
 
         // Regenerate slug if name changed

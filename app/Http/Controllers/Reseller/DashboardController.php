@@ -11,12 +11,17 @@ class DashboardController extends Controller
     {
         // Dummy data for reseller dashboard
         $stats = [
-            'total_sales' => 0,
-            'total_commission' => 0,
-            'active_events' => \App\Models\Event::where('status', 'published')->count(),
-            'tickets_sold' => 0,
+            'total_sales' => \App\Models\Transaction::where('reseller_id', auth()->id())->where('status', 'paid')->sum('total_price'),
+            'total_commission' => 0, // Implement commission logic later if needed
+            'active_events' => auth()->user()->resellerEvents()->where('status', 'active')->count(),
+            'tickets_sold' => \App\Models\Transaction::where('reseller_id', auth()->id())->where('status', 'paid')->sum('quantity'),
         ];
 
-        return view('reseller.dashboard', compact('stats'));
+        $events = auth()->user()->resellerEvents()
+            ->where('status', 'active')
+            ->where('end_date', '>=', now())
+            ->get();
+
+        return view('reseller.dashboard', compact('stats', 'events'));
     }
 }

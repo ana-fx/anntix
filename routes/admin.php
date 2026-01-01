@@ -23,6 +23,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('events/{event}/scanners', [\App\Http\Controllers\Admin\EventController::class, 'scanners'])->name('events.scanners.index');
     Route::post('events/{event}/assign-scanner', [\App\Http\Controllers\Admin\EventController::class, 'assignScanner'])->name('events.assign-scanner');
     Route::delete('events/{event}/unassign-scanner/{scanner}', [\App\Http\Controllers\Admin\EventController::class, 'unassignScanner'])->name('events.unassign-scanner');
+    Route::get('events/{event}/resellers', [\App\Http\Controllers\Admin\EventController::class, 'resellers'])->name('events.resellers.index');
+    Route::post('events/{event}/assign-reseller', [\App\Http\Controllers\Admin\EventController::class, 'assignReseller'])->name('events.assign-reseller');
+    Route::delete('events/{event}/unassign-reseller/{reseller}', [\App\Http\Controllers\Admin\EventController::class, 'unassignReseller'])->name('events.unassign-reseller');
     Route::resource('events.tickets', \App\Http\Controllers\Admin\TicketController::class)->shallow();
     Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
 

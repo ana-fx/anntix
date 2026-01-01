@@ -27,7 +27,7 @@
 </head>
 
 <body class="font-sans antialiased text-gray-900 bg-gray-50 flex min-h-screen overflow-hidden"
-    x-data="{ sidebarOpen: true }">
+    x-data="{ sidebarOpen: window.innerWidth >= 1024 }">
 
     <!-- Sidebar -->
     <div x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300"
@@ -55,9 +55,10 @@
 
     <!-- Floating Toggle (Only show if sidebar is closed) -->
     <button x-show="!sidebarOpen" @click="sidebarOpen = true" x-cloak
-        class="fixed bottom-6 left-6 z-50 p-4 bg-blue-600 text-white rounded-2xl shadow-2xl hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        class="fixed bottom-8 left-8 z-50 p-4 bg-primary text-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-primary-700 hover:shadow-primary/30 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center group">
+        <div class="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-0 group-hover:opacity-100"></div>
+        <svg class="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
     </button>
 

@@ -24,6 +24,7 @@
                         <th class="px-6 py-4">Date</th>
                         <th class="px-6 py-4 text-center">Tickets</th>
                         <th class="px-6 py-4 text-center">Scanners</th>
+                        <th class="px-6 py-4 text-center">Resellers</th>
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Actions</th>
                     </tr>
@@ -82,12 +83,27 @@
                                     </a>
                                 </div>
                             </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center">
+                                    <a href="{{ route('admin.events.resellers.index', $event) }}"
+                                        class="group flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
+                                        title="Manage Resellers">
+                                        <span
+                                            class="font-bold text-gray-900 group-hover:text-primary transition-colors">{{ $event->resellers_count ?? 0 }}</span>
+                                        <svg class="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
                             <td class="px-6 py-4">
                                 <span
                                     class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                                                            @if($event->status === 'active') bg-green-100 text-green-700
-                                                                                                                            @elseif($event->status === 'draft') bg-gray-100 text-gray-600
-                                                                                                                            @else bg-red-100 text-red-700 @endif">
+                                                                                                                                    @if($event->status === 'active') bg-green-100 text-green-700
+                                                                                                                                    @elseif($event->status === 'draft') bg-gray-100 text-gray-600
+                                                                                                                                    @else bg-red-100 text-red-700 @endif">
                                     {{ ucfirst($event->status) }}
                                 </span>
                             </td>
@@ -134,7 +150,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                                 No events found. Start by creating one!
                             </td>
                         </tr>

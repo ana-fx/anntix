@@ -2,7 +2,23 @@
     @php
         // Base values
         $subtotal = $transaction->ticket->price * $transaction->quantity;
-        $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+
+        // Fee Logic
+        $isReseller = $transaction->reseller_id ? true : false;
+        $handlingFee = 0;
+
+        if ($isReseller) {
+            // Reseller Commission / Fee
+            if ($transaction->event->reseller_fee_type === 'fixed') {
+                $handlingFee = $transaction->event->reseller_fee_value;
+            } else {
+                $handlingFee = ($transaction->ticket->price * ($transaction->event->reseller_fee_value / 100));
+            }
+        } else {
+            // Standard Standard Fee
+            $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+        }
+
         $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
 
         // Fee Constants
@@ -39,75 +55,158 @@
                         <p>Transaction ID: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
                     </div>
 
-                    <!-- Payment Method Selection -->
-                    <div class="mb-12 space-y-4">
-                        <h3 class="font-bold text-dark text-lg uppercase mb-4">Select Payment Method</h3>
+                    @if(auth()->check() && $transaction->reseller_id && auth()->id() == $transaction->reseller_id)
+                        <!-- Reseller Direct Payment Mode -->
+                        <div class="mb-12 p-6 bg-primary/5 rounded-2xl border border-primary/20"
+                            x-data="{ showModal: false }">
+                            <h3 class="font-bold text-dark text-lg uppercase mb-2">Reseller Payment Mode</h3>
+                            <p class="text-sm text-black/60 mb-6">You are processing this transaction as a reseller. Please
+                                collect the cash from the customer and confirm below.</p>
 
-                        <!-- QRIS Option -->
-                        <div class="relative">
-                            <input type="radio" name="payment_method" id="method_qris" value="qris"
-                                data-fee="{{ $qrisFee }}" class="peer hidden">
-                            <label for="method_qris"
-                                class="block p-6 bg-white border-2 border-gray-100 rounded-2xl cursor-pointer peer-checked:border-primary peer-checked:bg-primary/5 transition-all group">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-4">
-                                        <div class="bg-gray-100 p-2 rounded-lg group-hover:bg-white transition-colors">
-                                            <svg class="w-8 h-8 text-dark" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                            <!-- Warning Notification -->
+                            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-100 rounded-xl flex items-start gap-3">
+                                <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <p class="text-sm text-yellow-800 leading-relaxed">
+                                    <strong>Ready to process?</strong> Confirming this will immediately mark the transaction
+                                    as
+                                    <strong>PAID</strong> and send the E-Ticket directly to the customer's email.
+                                    <br><br>
+                                    Please <strong>check your personal data and email</strong> to ensure they are correct
+                                    before proceeding.
+                                </p>
+                            </div>
+
+                            <form action="{{ route('payment.reseller.complete', $transaction->code) }}" method="POST"
+                                x-ref="resellerForm">
+                                @csrf
+                                <button type="button" @click="showModal = true"
+                                    class="w-full px-12 py-5 bg-primary text-white font-black rounded-2xl shadow-xl hover:bg-primary-dark transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-lg flex items-center justify-center gap-3">
+                                    Confirm Cash Received
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </button>
+                            </form>
+
+                            <!-- Confirmation Modal -->
+                            <div x-show="showModal" style="display: none;"
+                                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+                                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                                <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 relative transform transition-all"
+                                    @click.away="showModal = false" x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                                    x-transition:leave="transition ease-in duration-200"
+                                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                                    x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+
+                                    <div class="text-center mb-6">
+                                        <div
+                                            class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                             </svg>
                                         </div>
-                                        <div>
-                                            <div class="font-black text-dark text-lg">QRIS</div>
-                                            <div class="text-sm text-gray-500">Scan via GoPay, OVO, Dana, etc.</div>
-                                        </div>
+                                        <h3 class="text-2xl font-black text-dark uppercase tracking-tight">Confirm Payment?
+                                        </h3>
+                                        <p class="text-gray-500 mt-2">
+                                            Are you sure you have received the cash? This action cannot be undone and the
+                                            ticket will be sent immediately.
+                                        </p>
                                     </div>
-                                    <div class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-600">
-                                        + {{ $qrisPercent }}% Fee
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <button @click="showModal = false"
+                                            class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-dark font-bold rounded-xl transition-colors">
+                                            Cancel
+                                        </button>
+                                        <button @click="$refs.resellerForm.submit()"
+                                            class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95">
+                                            Yes, Process
+                                        </button>
                                     </div>
                                 </div>
-                            </label>
+                            </div>
                         </div>
+                    @else
+                        <!-- Payment Method Selection -->
+                        <div class="mb-12 space-y-4">
+                            <h3 class="font-bold text-dark text-lg uppercase mb-4">Select Payment Method</h3>
 
-                        <!-- Bank Transfer Option -->
-                        <div class="relative">
-                            <input type="radio" name="payment_method" id="method_bank" value="bank_transfer"
-                                data-fee="{{ $bankFixed }}" class="peer hidden">
-                            <label for="method_bank"
-                                class="block p-6 bg-white border-2 border-gray-100 rounded-2xl cursor-pointer peer-checked:border-primary peer-checked:bg-primary/5 transition-all group">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-4">
-                                        <div class="bg-gray-100 p-2 rounded-lg group-hover:bg-white transition-colors">
-                                            <svg class="w-8 h-8 text-dark" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                            </svg>
+                            <!-- QRIS Option -->
+                            <div class="relative">
+                                <input type="radio" name="payment_method" id="method_qris" value="qris"
+                                    data-fee="{{ $qrisFee }}" class="peer hidden">
+                                <label for="method_qris"
+                                    class="block p-6 bg-white border-2 border-gray-100 rounded-2xl cursor-pointer peer-checked:border-primary peer-checked:bg-primary/5 transition-all group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-4">
+                                            <div class="bg-gray-100 p-2 rounded-lg group-hover:bg-white transition-colors">
+                                                <svg class="w-8 h-8 text-dark" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <div class="font-black text-dark text-lg">QRIS</div>
+                                                <div class="text-sm text-gray-500">Scan via GoPay, OVO, Dana, etc.</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div class="font-black text-dark text-lg">Bank Transfer</div>
-                                            <div class="text-sm text-gray-500">BCA, Mandiri, BNI, BRI</div>
+                                        <div class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-600">
+                                            + {{ $qrisPercent }}% Fee
                                         </div>
                                     </div>
-                                    <div class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-600">
-                                        + Rp {{ number_format($bankFixed, 0, ',', '.') }} Fee
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+                                </label>
+                            </div>
 
-                    <div class="mb-16">
-                        <button id="pay-button" disabled
-                            class="w-full md:w-auto px-12 py-5 bg-dark text-white font-black rounded-2xl shadow-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-lg flex items-center justify-center gap-3">
-                            Secure Payment Now
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                        </button>
-                    </div>
+                            <!-- Bank Transfer Option -->
+                            <div class="relative">
+                                <input type="radio" name="payment_method" id="method_bank" value="bank_transfer"
+                                    data-fee="{{ $bankFixed }}" class="peer hidden">
+                                <label for="method_bank"
+                                    class="block p-6 bg-white border-2 border-gray-100 rounded-2xl cursor-pointer peer-checked:border-primary peer-checked:bg-primary/5 transition-all group">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-4">
+                                            <div class="bg-gray-100 p-2 rounded-lg group-hover:bg-white transition-colors">
+                                                <svg class="w-8 h-8 text-dark" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <div class="font-black text-dark text-lg">Bank Transfer</div>
+                                                <div class="text-sm text-gray-500">BCA, Mandiri, BNI, BRI</div>
+                                            </div>
+                                        </div>
+                                        <div class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-full text-gray-600">
+                                            + Rp {{ number_format($bankFixed, 0, ',', '.') }} Fee
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-16">
+                            <button id="pay-button" disabled
+                                class="w-full md:w-auto px-12 py-5 bg-dark text-white font-black rounded-2xl shadow-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-lg flex items-center justify-center gap-3">
+                                Secure Payment Now
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                </svg>
+                            </button>
+                        </div>
+                    @endif
 
                     <!-- Event Banner -->
                     <div class="relative rounded-xl overflow-hidden group mb-12">
@@ -180,15 +279,21 @@
                                     <span class="font-medium text-dark">Rp
                                         {{ number_format($transaction->ticket->price * $transaction->quantity, 0, ',', '.') }}</span>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-black/70">Handling Fee</span>
-                                    <span class="font-medium text-dark">Rp
-                                        {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
-                                </div>
-                                <div class="flex justify-between text-sm text-primary font-bold">
-                                    <span>Service Fee</span>
-                                    <span id="service-fee-display">Rp 0</span>
-                                </div>
+                                @if($handlingFee > 0)
+                                    <div class="flex justify-between text-sm">
+                                        <span
+                                            class="text-black/70">{{ $transaction->reseller_id ? 'Reseller Fee' : 'Handling Fee' }}</span>
+                                        <span class="font-medium text-dark">Rp
+                                            {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
+                                    </div>
+                                @endif
+
+                                @if(!$transaction->reseller_id)
+                                    <div class="flex justify-between text-sm text-primary font-bold">
+                                        <span>Service Fee</span>
+                                        <span id="service-fee-display">Rp 0</span>
+                                    </div>
+                                @endif
                                 <div class="flex justify-between text-xl font-black pt-4 border-t border-gray-100">
                                     <span class="text-dark uppercase">Grand Total</span>
                                     <span class="text-primary tracking-tighter" id="grand-total-display">Rp

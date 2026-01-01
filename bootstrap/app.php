@@ -32,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
             'reseller' => \App\Http\Middleware\IsReseller::class,
+            'scanner' => \App\Http\Middleware\IsScanner::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

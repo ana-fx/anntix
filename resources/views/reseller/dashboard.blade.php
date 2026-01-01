@@ -95,26 +95,58 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Recent Sales -->
+            <!-- Active Events -->
             <div class="lg:col-span-2 bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
-                    <h2 class="text-xl font-black text-dark uppercase tracking-tight">Recent Sales</h2>
-                    <a href="#"
-                        class="text-xs font-black uppercase tracking-[0.2em] text-primary hover:text-dark transition-colors">View
-                        All</a>
+                    <h2 class="text-xl font-black text-dark uppercase tracking-tight">Active Events</h2>
                 </div>
-                <div class="p-8">
-                    <div class="text-center py-12">
-                        <div
-                            class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-300">
-                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
+                <div class="overflow-x-auto">
+                    @if($events->count() > 0)
+                        <table class="w-full text-left">
+                            <tbody class="divide-y divide-gray-50">
+                                @foreach($events as $event)
+                                    <tr class="group hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-8 py-6">
+                                            <div class="flex items-center gap-4">
+                                                <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/100' }}"
+                                                    class="w-16 h-16 rounded-xl object-cover shadow-sm">
+                                                <div>
+                                                    <h4 class="font-bold text-dark text-lg">{{ $event->name }}</h4>
+                                                    <div class="flex items-center gap-2 text-sm text-gray-400 mt-1">
+                                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                                            stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <span>{{ $event->start_date->format('d M Y') }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-8 py-6 text-right">
+                                            <a href="{{ route('reseller.transactions.create', $event) }}"
+                                                class="inline-block px-6 py-3 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                                                Buy Ticket
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="p-8 text-center py-12">
+                            <div
+                                class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                            </div>
+                            <h4 class="text-lg font-bold text-dark mb-1">No active events</h4>
+                            <p class="text-sm text-secondary">Check back later for new events.</p>
                         </div>
-                        <h4 class="text-lg font-bold text-dark mb-1">No sales yet</h4>
-                        <p class="text-sm text-secondary">Share your referral links to start earning!</p>
-                    </div>
+                    @endif
                 </div>
             </div>
 

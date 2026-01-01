@@ -71,4 +71,30 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Event::class, 'event_scanner', 'user_id', 'event_id')->withTimestamps();
     }
+
+    public function resellerEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_reseller', 'user_id', 'event_id')->withTimestamps();
+    }
+
+    /**
+     * Check if user can scan tickets for a given event.
+     * Resellers can scan tickets for events they are assigned to.
+     */
+    public function canScan(Event $event): bool
+    {
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        if ($this->role === 'scanner') {
+            return $this->scannedEvents->contains($event);
+        }
+
+        if ($this->role === 'reseller') {
+            return $this->resellerEvents->contains($event);
+        }
+
+        return false;
+    }
 }

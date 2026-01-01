@@ -48,6 +48,7 @@ use App\Http\Controllers\PaymentController;
 Route::get('/payment/{transaction}', [PaymentController::class, 'show'])->name('payment.show');
 Route::post('/payment/{transaction}/token', [PaymentController::class, 'generateToken'])->name('payment.token');
 Route::post('/payment/{transaction}/complete', [PaymentController::class, 'updateStatus'])->name('payment.update');
+Route::post('/payment/{transaction}/reseller-complete', [PaymentController::class, 'resellerComplete'])->name('payment.reseller.complete');
 Route::get('/payment/success/{transaction}', [PaymentController::class, 'success'])->name('payment.success');
 Route::post('/midtrans/notification', [PaymentController::class, 'notification'])->name('midtrans.notification');
 

@@ -30,6 +30,7 @@ return new class extends Migration {
             $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
             $table->timestamp('redeemed_at')->nullable();
             $table->foreignId('redeemed_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('reseller_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('snap_token')->nullable(); // For Payment Gateway later
             $table->string('payment_type')->nullable();
             $table->string('midtrans_transaction_id')->nullable();

@@ -168,7 +168,7 @@
                                         <td class="px-6 py-4">
                                             <span
                                                 class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold 
-                                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                                 {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
                                             </span>
                                         </td>
@@ -242,14 +242,24 @@
                             <div class="flex-1">
                                 <label for="scanner_id" class="block text-sm font-bold text-gray-700 mb-1">Select
                                     Scanner</label>
-                                <select name="scanner_id" id="scanner_id" required
-                                    class="w-full rounded-xl border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                                    <option value="">-- Choose a scanner --</option>
-                                    @foreach($scanners as $scanner)
-                                        <option value="{{ $scanner->id }}">{{ $scanner->name }} ({{ $scanner->email }})
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div class="relative">
+                                    <select name="scanner_id" id="scanner_id" required
+                                        class="w-full appearance-none bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-xl leading-tight focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-medium">
+                                        <option value="">-- Choose a scanner --</option>
+                                        @foreach($scanners as $scanner)
+                                            <option value="{{ $scanner->id }}">{{ $scanner->name }} ({{ $scanner->email }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div
+                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit"
                                 class="px-6 py-2 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25">
@@ -310,33 +320,150 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Assigned Resellers Table -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"
+                    x-data="{ assignResellerModalOpen: false }">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                            </svg>
+                            Assigned Resellers
+                        </h3>
+                        <button @click="assignResellerModalOpen = !assignResellerModalOpen"
+                            class="px-4 py-2 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary/90 transition shadow-lg shadow-primary/20">
+                            + Assign Reseller
+                        </button>
+                    </div>
+
+                    <!-- Reseller Assignment Form -->
+                    <div x-show="assignResellerModalOpen" @click.away="assignResellerModalOpen = false" x-transition
+                        class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <form action="{{ route('admin.events.assign-reseller', $event) }}" method="POST"
+                            class="flex gap-4 items-end">
+                            @csrf
+                            <div class="flex-1">
+                                <label for="reseller_id" class="block text-sm font-bold text-gray-700 mb-1">Select
+                                    Reseller</label>
+                                <div class="relative">
+                                    <select name="reseller_id" id="reseller_id" required
+                                        class="w-full appearance-none bg-white border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-xl leading-tight focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-medium">
+                                        <option value="">-- Choose a reseller --</option>
+                                        @foreach($resellers as $reseller)
+                                            <option value="{{ $reseller->id }}">{{ $reseller->name }}
+                                                ({{ $reseller->email }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div
+                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20">
+                                            <path
+                                                d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit"
+                                class="px-6 py-2 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25">
+                                Assign
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr
+                                    class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="px-6 py-4 rounded-tl-xl text-dark">Reseller Name</th>
+                                    <th class="px-6 py-4 text-dark">Email</th>
+                                    <th class="px-6 py-4 text-dark">Assigned At</th>
+                                    <th class="px-6 py-4 text-dark text-right rounded-tr-xl">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @forelse($event->resellers as $reseller)
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-gray-900">{{ $reseller->name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-600">
+                                            {{ $reseller->email }}
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-500 text-sm">
+                                            {{ $reseller->pivot->created_at->format('M d, Y H:i') }}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <form
+                                                action="{{ route('admin.events.unassign-reseller', [$event, $reseller]) }}"
+                                                method="POST" @submit.prevent="formToSubmit = $el; deleteModalOpen = true"
+                                                class="inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                    title="Remove Access">
+                                                    <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-8 text-center text-gray-400 italic">
+                                            No resellers assigned to this event yet.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Sidebar (Right) -->
             <div class="lg:col-span-4 space-y-8">
                 <!-- Ticket Info Card -->
                 <div
-                    class="bg-gradient-to-b from-blue-600 to-blue-500 rounded-3xl shadow-xl shadow-blue-500/20 p-8 text-white relative overflow-hidden">
+                    class="bg-gradient-to-b from-primary to-primary/80 rounded-3xl shadow-xl shadow-primary/20 p-8 text-white relative overflow-hidden">
                     <!-- Subtle background decoration -->
                     <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
 
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-blue-100 mb-1">Entry Ticket</h3>
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-white/80 mb-1">Entry Ticket</h3>
+
+                    @php
+                        // Get the first ticket to display details, or finding the 'cheapest' one might be better?
+                        // For now, let's grab the first one to fix the 'No tickets' bug.
+                        $featuredTicket = $event->tickets->first();
+                    @endphp
+
                     <div class="flex items-baseline gap-2 mb-8">
-                        @if($event->ticket)
+                        @if($featuredTicket)
                             <span class="text-4xl font-extrabold tracking-tight">
-                                {{ $event->ticket->price == 0 ? 'Free Entry' : 'Rp. ' . number_format($event->ticket->price, 0, ',', '.') }}
+                                {{ $featuredTicket->price == 0 ? 'Free Entry' : 'Rp. ' . number_format($featuredTicket->price, 0, ',', '.') }}
                             </span>
+                            @if($event->tickets->count() > 1)
+                                <span class="text-sm text-white/60 font-medium">starts from</span>
+                            @endif
                         @else
-                            <span class="text-2xl font-bold text-blue-200/60 italic">No tickets added yet</span>
+                            <span class="text-2xl font-bold text-white/60 italic">No tickets added yet</span>
                         @endif
                     </div>
 
-                    @if($event->ticket)
+                    @if($featuredTicket)
                         <div class="space-y-5 mb-8">
                             <div class="flex items-center gap-4">
                                 <div
                                     class="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center border border-white/10">
-                                    <svg class="w-5 h-5 text-blue-100" fill="none" stroke="currentColor"
+                                    <svg class="w-5 h-5 text-white/90" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z">
@@ -344,14 +471,17 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-bold text-blue-200 uppercase tracking-wide">Ticket Type</p>
-                                    <p class="text-lg font-bold">{{ $event->ticket->name }}</p>
+                                    <p class="text-xs font-bold text-white/60 uppercase tracking-wide">Ticket Type</p>
+                                    <p class="text-lg font-bold">{{ $featuredTicket->name }}</p>
+                                    @if($event->tickets->count() > 1)
+                                        <p class="text-xs text-white/50">+ {{ $event->tickets->count() - 1 }} other types</p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="flex items-center gap-4">
                                 <div
                                     class="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center border border-white/10">
-                                    <svg class="w-5 h-5 text-blue-100" fill="none" stroke="currentColor"
+                                    <svg class="w-5 h-5 text-white/90" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -359,19 +489,19 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-bold text-blue-200 uppercase tracking-wide">Remaining Quota</p>
-                                    <p class="text-lg font-bold">{{ $event->ticket->quota }} <span
-                                            class="text-sm font-medium text-blue-100">tickets left</span></p>
+                                    <p class="text-xs font-bold text-white/60 uppercase tracking-wide">Remaining Quota</p>
+                                    <p class="text-lg font-bold">{{ $featuredTicket->quota }} <span
+                                            class="text-sm font-medium text-white/60">tickets left</span></p>
                                 </div>
                             </div>
                         </div>
-                        <a href="{{ route('admin.tickets.edit', $event->ticket) }}"
-                            class="block w-full py-4 bg-white text-blue-600 font-bold rounded-2xl text-center hover:bg-blue-50 transition-all shadow-lg active:scale-[0.98]">
+                        <a href="{{ route('admin.tickets.edit', $featuredTicket) }}"
+                            class="block w-full py-4 bg-white text-primary font-bold rounded-2xl text-center hover:bg-gray-50 transition-all shadow-lg active:scale-[0.98]">
                             Edit Ticket Pricing
                         </a>
                     @else
                         <a href="{{ route('admin.events.tickets.create', $event) }}"
-                            class="block w-full py-4 bg-white text-blue-600 font-bold rounded-2xl text-center hover:bg-blue-50 transition-all shadow-lg active:scale-[0.98]">
+                            class="block w-full py-4 bg-white text-primary font-bold rounded-2xl text-center hover:bg-gray-50 transition-all shadow-lg active:scale-[0.98]">
                             Add First Ticket
                         </a>
                     @endif
@@ -384,7 +514,7 @@
                     <div class="space-y-6">
                         <div class="flex items-start gap-4">
                             <div
-                                class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                                class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
@@ -402,7 +532,7 @@
 
                         <div class="flex items-start gap-4">
                             <div
-                                class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 flex-shrink-0">
+                                class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
@@ -417,7 +547,7 @@
 
                         <div class="flex items-start gap-4">
                             <div
-                                class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600 flex-shrink-0">
+                                class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
@@ -437,6 +567,52 @@
                                 @else
                                     <p class="font-bold text-gray-900 italic opacity-50">Not specified</p>
                                 @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fees & Commission Card -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Fees & Commission</h4>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400 font-medium font-bold mb-1">Reseller Fee</p>
+                                <p class="font-bold text-gray-900">
+                                    {{ number_format($event->reseller_fee_value, 0, ',', '.') }}
+                                    <span class="text-xs text-gray-500 font-medium">
+                                        {{ $event->reseller_fee_type === 'percent' ? '%' : 'IDR' }}
+                                    </span>
+                                </p>
+                                <p class="text-xs text-gray-500 font-medium">Type:
+                                    {{ ucfirst($event->reseller_fee_type) }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400 font-medium font-bold mb-1">Organizer Fee</p>
+                                <p class="font-bold text-gray-900">
+                                    {{ number_format($event->organizer_fee, 0, ',', '.') }} <span
+                                        class="text-xs text-gray-500 font-medium">IDR</span></p>
                             </div>
                         </div>
                     </div>
