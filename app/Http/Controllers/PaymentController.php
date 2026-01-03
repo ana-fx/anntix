@@ -4,13 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentSuccess;
+use App\Mail\PaymentRequired;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
     public function show(Transaction $transaction)
     {
+        // Send Payment Required email if pending, not a reseller transaction, and not already sent in this session
+        if (!$transaction->reseller_id && $transaction->status === 'pending' && !session()->has('payment_mail_sent_' . $transaction->id)) {
+            try {
+                Mail::to($transaction->email)->send(new PaymentRequired($transaction));
+                session()->put('payment_mail_sent_' . $transaction->id, true);
+            } catch (\Exception $e) {
+                logger()->error('Failed to send payment required email from payment page: ' . $e->getMessage());
+            }
+        }
+
         return view('payment.show', compact('transaction'));
     }
 
@@ -138,17 +151,28 @@ class PaymentController extends Controller
     public function resellerComplete(Request $request, Transaction $transaction)
     {
         // 1. Authorization
-        if (!auth()->check() || auth()->id() !== $transaction->reseller_id) {
+        if (!Auth::check() || Auth::id() !== $transaction->reseller_id) {
             abort(403, 'Unauthorized. Only the assigned reseller can confirm this payment.');
         }
 
+        /** @var \App\Models\User $reseller */
+        $reseller = Auth::user();
+
         // 2. Mark as Paid
         if ($transaction->status !== 'paid') {
-            $transaction->update([
-                'status' => 'paid',
-                'payment_type' => 'reseller_manual', // Or 'cash'
-                'midtrans_transaction_id' => 'RES-' . strtoupper(\Illuminate\Support\Str::random(10)), // Generate a dummy ID
-            ]);
+            // Check balance check removed as per request to allow negative balance/credit
+
+            DB::transaction(function () use ($transaction, $reseller) {
+                // Deduct balance
+                $reseller->decrement('balance', $transaction->total_price);
+
+                // Update transaction
+                $transaction->update([
+                    'status' => 'paid',
+                    'payment_type' => 'reseller_deposit',
+                    'midtrans_transaction_id' => 'RES-' . strtoupper(\Illuminate\Support\Str::random(10)),
+                ]);
+            });
 
             // 3. Send Email
             try {
@@ -191,7 +215,7 @@ class PaymentController extends Controller
         // We need to extract ANNTIX-RANDOM
 
         $parts = explode('-', $order_id);
-        // Assuming format is ANNTIX-RANDOMSTRING-TIMESTAMP (3 parts) 
+        // Assuming format is ANNTIX-RANDOMSTRING-TIMESTAMP (3 parts)
         // OR ANNTIX-RANDOMSTRING (2 parts, old format)
         // Let's rely on finding the DB record that matches the code prefix
 
@@ -236,7 +260,6 @@ class PaymentController extends Controller
             try {
                 Mail::to($trx->email)->send(new PaymentSuccess($trx));
             } catch (\Exception $e) {
-                logger()->error('Failed to send payment success email: ' . $e->getMessage());
             }
         }
     }

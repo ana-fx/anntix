@@ -3,8 +3,8 @@
 
         <!-- Main Banner Carousel -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-32">
-            <div x-data="{ 
-                    activeSlide: 0, 
+            <div x-data="{
+                    activeSlide: 0,
                     slides: {{ $banners->map(fn($b) => [
     'img' => asset('storage/' . $b->image_path),
     'title' => $b->title,
@@ -73,7 +73,7 @@
                         class="block group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Landscape Image -->
                         <div class="aspect-video relative overflow-hidden">
-                            <img src="{{ $event->banner_path ? Storage::url($event->banner_path) : ($event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/1280x720') }}"
+                            <img src="{{ Str::startsWith($event->banner_path, ['http', 'https']) ? $event->banner_path : (file_exists(public_path($event->banner_path)) ? asset($event->banner_path) : asset('storage/' . $event->banner_path)) }}"
                                 alt="{{ $event->name }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 

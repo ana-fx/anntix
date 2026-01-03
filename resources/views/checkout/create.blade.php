@@ -9,8 +9,8 @@
                     <div class="relative rounded-3xl overflow-hidden shadow-2xl group">
                         <!-- Background Image with Overlay -->
                         <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/30 transition-colors z-10"></div>
-                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/600x600' }}"
-                            class="w-full aspect-square object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
+                        <img src="{{ Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path)) }}"
+                            alt="{{ $event->name }}" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
 
                         <!-- Content Overlay -->
                         <div class="absolute inset-0 z-20 p-8 flex flex-col justify-between text-white">
@@ -89,7 +89,7 @@
                         selectedTicketId: null,
                         selectedTicket: null,
                         quantity: 1,
-                        
+
                         init() {
                              const available = this.tickets.find(t => t.quota > 0);
                              if(available) this.selectTicket(available.id);
@@ -101,9 +101,11 @@
                             this.quantity = 1;
                         },
 
-                        get total() { 
-                            return this.selectedTicket ? ((this.selectedTicket.price + this.handlingFee) * this.quantity) : 0; 
-                        }
+                        get total() {
+                            return this.selectedTicket ? ((this.selectedTicket.price + this.handlingFee) * this.quantity) : 0;
+                        },
+                        agreeTerms: false,
+                        confirmData: false
                     }' class="space-y-10">
                         @csrf
                         <input type="hidden" name="ticket_id" :value="selectedTicketId">
@@ -211,19 +213,63 @@
                                 <div class="group">
                                     <label
                                         class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">Gender</label>
-                                    <div class="relative">
-                                        <select name="gender"
-                                            class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white appearance-none cursor-pointer"
-                                            required>
-                                            <option value="" disabled selected>Select Gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                        </select>
-                                        <svg class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-black/70 pointer-events-none"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 9l-7 7-7-7" />
-                                        </svg>
+                                    <div class="relative" x-data="{
+                                        open: false,
+                                        selected: '',
+                                        label: 'Select Gender',
+                                         options: [
+                                            { value: 'male', label: 'Male' },
+                                            { value: 'female', label: 'Female' }
+                                        ],
+                                        select(value, label) {
+                                            this.selected = value;
+                                            this.label = label;
+                                            this.open = false;
+                                        }
+                                    }" @click.outside="open = false">
+
+                                        <!-- Hidden Input -->
+                                        <input type="hidden" name="gender" :value="selected" required>
+
+                                        <!-- Trigger -->
+                                        <button type="button" @click="open = !open"
+                                            class="relative w-full bg-white border-b-2 border-gray-100 pl-4 pr-10 py-3 text-left font-medium transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
+                                            :class="selected ? 'text-dark' : 'text-gray-400'">
+                                            <span x-text="label" class="block truncate mr-2"></span>
+                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                                                    :class="open ? 'rotate-180' : ''"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+                                        </button>
+
+                                        <!-- Clean Card Dropdown -->
+                                        <div x-show="open"
+                                            x-transition:enter="transition ease-out duration-200"
+                                            x-transition:enter-start="opacity-0 translate-y-2"
+                                            x-transition:enter-end="opacity-100 translate-y-0"
+                                            x-transition:leave="transition ease-in duration-150"
+                                            x-transition:leave-start="opacity-100 translate-y-0"
+                                            x-transition:leave-end="opacity-0 translate-y-2"
+                                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-[0_10px_40px_-5px_rgba(0,0,0,0.1)] border border-gray-100 z-50 overflow-hidden"
+                                            style="display: none;">
+
+                                            <!-- Static Header -->
+                                            <div class="px-5 py-3 text-gray-400 text-sm font-bold uppercase tracking-wider border-b border-gray-50 bg-gray-50/50">
+                                                Select Gender
+                                            </div>
+
+                                            <div class="py-1">
+                                                <template x-for="option in options" :key="option.value">
+                                                    <div @click="select(option.value, option.label)"
+                                                        class="px-5 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between group transition-colors">
+                                                        <span class="text-dark font-medium group-hover:text-primary transition-colors" x-text="option.label"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -270,6 +316,42 @@
                             </div>
                         </div>
 
+
+                        <!-- Terms & Confirmation -->
+                        <div class="space-y-4 pt-4 border-t border-gray-100">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <div class="relative flex-shrink-0 mt-0.5 w-5 h-5">
+                                    <input type="checkbox" x-model="agreeTerms" required
+                                        class="peer w-full h-full border-2 border-gray-300 rounded-md checked:bg-primary checked:border-primary transition-all appearance-none cursor-pointer">
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">
+                                        <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-500 leading-relaxed group-hover:text-gray-700 transition-colors pt-0.5">
+                                    I agree to the <a href="{{ route('pages.terms') }}" target="_blank" class="font-bold text-primary hover:underline">Terms of Service</a> and <a href="{{ route('pages.privacy') }}" target="_blank" class="font-bold text-primary hover:underline">Privacy Policy</a>.
+                                </span>
+                            </label>
+
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <div class="relative flex-shrink-0 mt-0.5 w-5 h-5">
+                                    <input type="checkbox" x-model="confirmData" required
+                                        class="peer w-full h-full border-2 border-gray-300 rounded-md checked:bg-primary checked:border-primary transition-all appearance-none cursor-pointer">
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none">
+                                        <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-500 leading-relaxed group-hover:text-gray-700 transition-colors pt-0.5">
+                                    I confirm that the data provided is accurate and correct.
+                                </span>
+                            </label>
+
+                            <input type="hidden" name="terms_agreed" :value="agreeTerms ? 1 : 0">
+                        </div>
+
                         <!-- Footer / Pay -->
                         <div
                             class="pt-8 mt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0">
@@ -291,8 +373,8 @@
                                     </span>
                                 </div>
                             </div>
-                            <button type="submit" :disabled="!selectedTicket"
-                                :class="!selectedTicket ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90 hover:scale-105 active:scale-95'"
+                            <button type="submit" :disabled="!selectedTicket || !agreeTerms || !confirmData"
+                                :class="(!selectedTicket || !agreeTerms || !confirmData) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90 hover:scale-105 active:scale-95'"
                                 class="w-full sm:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-2">
                                 <span>Complete Order</span>
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -302,12 +384,7 @@
                             </button>
                         </div>
 
-                        <p class="text-center text-xs text-gray-400 mt-4">
-                            By continuing, you agree to the <a href="{{ route('pages.terms') }}"
-                                class="underline hover:text-dark">Terms of
-                                Service</a> and <a href="{{ route('pages.privacy') }}"
-                                class="underline hover:text-dark">Privacy Policy</a>.
-                        </p>
+
 
                     </form>
                 </div>

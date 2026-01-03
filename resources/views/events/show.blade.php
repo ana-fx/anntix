@@ -11,7 +11,7 @@
                         <!-- Premium Thumbnail -->
                         <div
                             class="aspect-square w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-gray-200/50 bg-gray-50 border border-gray-100">
-                            <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/1000x1000' }}"
+                            <img src="{{ Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path)) }}"
                                 class="w-full h-full object-cover" alt="{{ $event->name }}">
                         </div>
                         <div class="mb-16">
@@ -128,7 +128,7 @@
                                 </div>
                             @endif
                             <a href="{{ route('checkout.create', $event) }}"
-                                class="block w-full py-6 bg-dark text-white text-center font-black rounded-2xl shadow-2xl hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-3 relative z-10">
+                                class="w-full py-6 bg-dark text-white text-center font-black rounded-2xl shadow-2xl hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-3 relative z-10">
                                 Reserve Tickets
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -175,15 +175,24 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div
                         class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-16 flex items-center gap-4">
-                        Expanding Horizons
+                        Related Events
                         <div class="h-px flex-1 bg-gray-200"></div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
                         @foreach($relatedEvents as $related)
+                            @php
+                                $img = $related->banner_path ?? $related->thumbnail_path;
+                                $src = 'https://via.placeholder.com/1280x720';
+                                if ($img) {
+                                    $src = Str::startsWith($img, ['http', 'https'])
+                                        ? $img
+                                        : (file_exists(public_path($img)) ? asset($img) : asset('storage/' . $img));
+                                }
+                            @endphp
                             <a href="{{ route('events.show', $related) }}" class="group block">
                                 <div class="relative aspect-video rounded-[2rem] overflow-hidden shadow-2xl mb-8">
-                                    <img src="{{ $related->banner_path ? Storage::url($related->banner_path) : ($related->thumbnail_path ? Storage::url($related->thumbnail_path) : 'https://via.placeholder.com/1280x720') }}"
+                                    <img src="{{ $src }}"
                                         class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
                                     <div class="absolute inset-0 bg-dark/20 group-hover:bg-dark/10 transition-colors"></div>
                                     <div class="absolute bottom-10 left-10 right-10 text-white">

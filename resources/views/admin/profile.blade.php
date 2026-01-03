@@ -51,7 +51,7 @@
                     <div class="flex items-center gap-6 pb-8 border-b border-gray-100 mb-8">
                         <div class="shrink-0 relative">
                             @if($user->profile_photo_path)
-                                <img src="{{ Storage::url($user->profile_photo_path) }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover ring-4 ring-gray-50">
+                                <img src="{{ Str::startsWith($user->profile_photo_path, ['http', 'https']) ? $user->profile_photo_path : (file_exists(public_path($user->profile_photo_path)) ? asset($user->profile_photo_path) : asset('storage/' . $user->profile_photo_path)) }}" alt="{{ $user->name }}" class="w-24 h-24 rounded-full object-cover ring-4 ring-gray-50">
                             @else
                                  <div class="w-24 h-24 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-3xl font-bold ring-4 ring-gray-50">
                                     {{ $user->initials() }}

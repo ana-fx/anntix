@@ -97,6 +97,12 @@ class EventController extends Controller
             $validated['organizer_logo_path'] = $request->file('organizer_logo')->store('events/organizers', 'public');
         }
 
+        // Set defaults for fee fields if they are null (because DB columns are not nullable)
+        $validated['reseller_fee_type'] = $validated['reseller_fee_type'] ?? 'fixed';
+        $validated['reseller_fee_value'] = $validated['reseller_fee_value'] ?? 0;
+        $validated['organizer_fee_type'] = $validated['organizer_fee_type'] ?? 'fixed';
+        $validated['organizer_fee'] = $validated['organizer_fee'] ?? 0;
+
         $event = Event::create($validated);
 
         return redirect()->route('admin.events.tickets.create', $event)->with('success', 'Event created successfully. Now please add tickets.');
@@ -248,6 +254,12 @@ class EventController extends Controller
             }
             $validated['organizer_logo_path'] = $request->file('organizer_logo')->store('events/organizers', 'public');
         }
+
+        // Set defaults for fee fields if they are null
+        $validated['reseller_fee_type'] = $validated['reseller_fee_type'] ?? 'fixed';
+        $validated['reseller_fee_value'] = $validated['reseller_fee_value'] ?? 0;
+        $validated['organizer_fee_type'] = $validated['organizer_fee_type'] ?? 'fixed';
+        $validated['organizer_fee'] = $validated['organizer_fee'] ?? 0;
 
         $event->update($validated);
 

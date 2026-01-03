@@ -44,6 +44,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Resellers
     Route::resource('resellers', \App\Http\Controllers\Admin\ResellerController::class)->except(['show']);
+    Route::get('resellers/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'deposits'])->name('resellers.deposits');
+    Route::post('resellers/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'storeDeposit'])->name('resellers.deposits.store');
 
     // Settings
     Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');

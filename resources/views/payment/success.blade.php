@@ -35,7 +35,12 @@
 
                     <div class="space-y-2 text-lg text-black/70 mb-8">
                         <p>You will receive an order confirmation email with details of your order.</p>
-                        <p>Your order # is: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
+                        <div class="flex flex-col gap-1">
+                            <p>Your order # is: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
+                            @if($transaction->reseller_id)
+                                <p>Processed by: <span class="font-bold text-dark">{{ $transaction->reseller->name }}</span></p>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="flex flex-wrap gap-4 mb-16">
@@ -47,7 +52,13 @@
 
                     <!-- Banner / Promo Area (Mimicking the image) -->
                     <div class="relative rounded-xl overflow-hidden group mb-12">
-                        <img src="{{ $transaction->event->thumbnail_path ? Storage::url($transaction->event->thumbnail_path) : 'https://via.placeholder.com/800x400' }}"
+                        <img src="{{
+                            Str::startsWith($transaction->event->thumbnail_path, 'http')
+                            ? $transaction->event->thumbnail_path
+                            : (file_exists(public_path($transaction->event->thumbnail_path))
+                                ? asset($transaction->event->thumbnail_path)
+                                : asset('storage/' . $transaction->event->thumbnail_path))
+                        }}"
                             class="w-full h-64 object-cover brightness-75 group-hover:brightness-50 transition-all duration-500">
                         <div class="absolute inset-0 flex items-center justify-center">
                             <h3 class="text-4xl font-heading font-bold text-white tracking-widest uppercase">
@@ -154,7 +165,7 @@
                         <!-- Billing / Ticket Holder -->
                         <div>
                             <h3 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">
-                                Customer Details</h3>
+                                Buyer Details</h3>
 
                             <div class="space-y-4">
                                 <!-- Table Header -->

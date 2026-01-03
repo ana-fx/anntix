@@ -23,7 +23,13 @@
                 <!-- Event Info (Left) -->
                 <div class="lg:col-span-4">
                     <div class="rounded-2xl overflow-hidden shadow-lg mb-6">
-                        <img src="{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/600x600' }}"
+                        <img src="{{
+                            Str::startsWith($event->thumbnail_path, 'http')
+                            ? $event->thumbnail_path
+                            : (file_exists(public_path($event->thumbnail_path))
+                                ? asset($event->thumbnail_path)
+                                : asset('storage/' . $event->thumbnail_path))
+                        }}"
                             class="w-full aspect-square object-cover">
                     </div>
                     <div class="space-y-4">
@@ -74,7 +80,7 @@
                         selectedTicketId: null,
                         selectedTicket: null,
                         quantity: 1,
-                        
+
                         init() {
                              const available = this.tickets.find(t => t.quota > 0);
                              if(available) this.selectTicket(available.id);
@@ -86,8 +92,8 @@
                             this.quantity = 1;
                         },
 
-                        get total() { 
-                            return this.selectedTicket ? ((this.selectedTicket.price + this.handlingFee) * this.quantity) : 0; 
+                        get total() {
+                            return this.selectedTicket ? ((this.selectedTicket.price + this.handlingFee) * this.quantity) : 0;
                         }
                     }' class="space-y-8">
                         @csrf
@@ -161,12 +167,11 @@
                             </div>
                         </div>
 
-                        <!-- Basic Customer Details -->
+                        <!-- Basic Buyer Details -->
                         <div class="space-y-6">
                             <div>
-                                <h3 class="font-bold text-dark mb-4">3. Customer Details</h3>
-                                <p class="text-xs text-primary mb-4">Enter the details of the customer who will This is
-                                    a test
+                                <h3 class="font-bold text-dark mb-4">3. Buyer Details</h3>
+                                <p class="text-xs text-primary mb-4">Enter the details of the buyer who will
                                     receive the ticket.</p>
                             </div>
 
@@ -184,19 +189,61 @@
                                 <div class="group">
                                     <label
                                         class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Gender</label>
-                                    <div class="relative">
-                                        <select name="gender"
-                                            class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl appearance-none cursor-pointer"
-                                            required>
-                                            <option value="" disabled selected>Select Gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                        </select>
-                                        <svg class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 9l-7 7-7-7" />
-                                        </svg>
+                                    <div class="relative" x-data="{
+                                        open: false,
+                                        selected: '{{ old('gender') }}',
+                                        label: '{{ old('gender') ? ucfirst(old('gender')) : 'Select Gender' }}',
+                                         options: [
+                                            { value: 'male', label: 'Male' },
+                                            { value: 'female', label: 'Female' }
+                                        ],
+                                        select(value, label) {
+                                            this.selected = value;
+                                            this.label = label;
+                                            this.open = false;
+                                        }
+                                    }" @click.outside="open = false">
+                                        <!-- Hidden Input -->
+                                        <input type="hidden" name="gender" :value="selected" required>
+
+                                        <!-- Trigger -->
+                                        <button type="button" @click="open = !open"
+                                            class="relative w-full bg-gray-50 border-none px-4 py-3 text-left font-bold transition-all rounded-xl hover:bg-white focus:bg-white"
+                                            :class="selected ? 'text-dark' : 'text-gray-400'">
+                                            <span x-text="label" class="block truncate mr-2"></span>
+                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                                <svg class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                                                    :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+                                        </button>
+
+                                        <!-- Dropdown Menu -->
+                                        <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                                            x-transition:enter-start="opacity-0 translate-y-2"
+                                            x-transition:enter-end="opacity-100 translate-y-0"
+                                            x-transition:leave="transition ease-in duration-150"
+                                            x-transition:leave-start="opacity-100 translate-y-0"
+                                            x-transition:leave-end="opacity-0 translate-y-2"
+                                            class="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-2xl shadow-primary/10 border border-gray-100 overflow-hidden py-1">
+                                            <template x-for="option in options" :key="option.value">
+                                                <button type="button" @click="select(option.value, option.label)"
+                                                    class="w-full text-left px-5 py-3 text-sm font-bold transition-colors"
+                                                    :class="selected === option.value ? 'bg-primary/5 text-primary' : 'text-dark hover:bg-gray-50'">
+                                                    <div class="flex items-center justify-between">
+                                                        <span x-text="option.label"></span>
+                                                        <svg x-show="selected === option.value" class="w-4 h-4"
+                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    </div>
+                                                </button>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -249,6 +296,9 @@
                                         Payment</p>
                                     <p class="text-3xl font-black text-primary tracking-tight">
                                         Rp <span x-text="new Intl.NumberFormat('id-ID').format(total)"></span>
+                                    </p>
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase mt-1" x-show="selectedTicket">
+                                        Incl. Fee Rp <span x-text="new Intl.NumberFormat('id-ID').format(handlingFee * quantity)"></span>
                                     </p>
                                 </div>
                                 <button type="submit" :disabled="!selectedTicket"

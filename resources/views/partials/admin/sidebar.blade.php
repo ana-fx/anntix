@@ -78,7 +78,6 @@
                 x-transition:leave="transition ease-in duration-75"
                 x-transition:leave-start="transform opacity-100 scale-100"
                 x-transition:leave-end="transform opacity-0 scale-95" class="pl-4 space-y-1 mt-1">
-
                 <a href="{{ route('admin.reports.index') }}"
                     class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
                     <span
@@ -102,13 +101,23 @@
             </div>
         </div>
 
+        <!-- Resellers (Direct Link) -->
+        <a href="{{ route('admin.resellers.index', ['view' => 'financial']) }}"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->get('view') === 'financial' && request()->routeIs('admin.resellers.index') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+            <svg class="w-5 h-5 {{ request()->get('view') === 'financial' && request()->routeIs('admin.resellers.index') ? 'opacity-100' : 'opacity-70' }}"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Reseller Management
+        </a>
+
         <!-- User Management (Dropdown) -->
         <div
-            x-data="{ open: {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.*') ? 'true' : 'false' }} }">
+            x-data="{ open: {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.index') ? 'true' : 'false' }} }">
             <button @click="open = !open"
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.*') ? 'opacity-100' : 'opacity-70' }}"
+                    <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.index') ? 'opacity-100' : 'opacity-70' }}"
                         viewBox="0 0 20 20" fill="currentColor">
                         <path
                             d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
@@ -144,10 +153,10 @@
                 </a>
 
                 <!-- Resellers -->
-                <a href="{{ route('admin.resellers.index') }}"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.resellers.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                <a href="{{ route('admin.resellers.index', ['view' => 'standard']) }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->get('view', 'standard') === 'standard' && request()->routeIs('admin.resellers.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
                     <span
-                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.resellers.*') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                        class="w-1.5 h-1.5 rounded-full {{ request()->get('view', 'standard') === 'standard' && request()->routeIs('admin.resellers.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     Resellers
                 </a>
             </div>
@@ -192,7 +201,7 @@
 
     <!-- User Section / Logout -->
     <div class="p-4 border-t border-white/10">
-        <form action="{{ route('admin.logout') }}" method="POST">
+        <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit"
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-teal-50 hover:bg-white/10 hover:text-white transition-colors">

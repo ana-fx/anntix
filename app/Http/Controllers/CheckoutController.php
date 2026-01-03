@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 use App\Models\Transaction;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\PaymentRequired;
 
 class CheckoutController extends Controller
 {
@@ -93,14 +91,6 @@ class CheckoutController extends Controller
             'total_price' => $totalPrice,
             'status' => 'pending',
         ]);
-
-        // Send Payment Required Email
-        try {
-            Mail::to($transaction->email)->send(new PaymentRequired($transaction));
-        } catch (\Exception $e) {
-            // Log error but continue to payment
-            logger()->error('Failed to send payment required email: ' . $e->getMessage());
-        }
 
         return redirect()->route('payment.show', $transaction->code);
     }

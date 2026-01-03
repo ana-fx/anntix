@@ -6,14 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class ResellerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $resellers = User::where('role', 'reseller')->latest()->paginate(10);
-        return view('admin.resellers.index', compact('resellers'));
+        $view = $request->query('view', 'standard');
+        $resellers = User::where('role', 'reseller')
+            ->withSum(['resellerTransactions as total_sales_sum' => function ($query) {
+                $query->where('status', 'paid');
+            }], 'total_price')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.resellers.index', compact('resellers', 'view'));
     }
 
     public function create()
@@ -105,5 +114,39 @@ class ResellerController extends Controller
 
         $reseller->delete();
         return redirect()->route('admin.resellers.index')->with('success', 'Reseller deleted successfully.');
+    }
+
+    public function deposits(User $reseller)
+    {
+        if ($reseller->role !== 'reseller') {
+            return back()->with('error', 'Invalid reseller.');
+        }
+
+        $deposits = $reseller->deposits()->with('creator')->latest()->paginate(20);
+        return view('admin.resellers.deposits', compact('reseller', 'deposits'));
+    }
+
+    public function storeDeposit(Request $request, User $reseller)
+    {
+        if ($reseller->role !== 'reseller') {
+            return back()->with('error', 'Invalid reseller.');
+        }
+
+        $validated = $request->validate([
+            'amount' => ['required', 'numeric', 'min:1'],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        DB::transaction(function () use ($reseller, $validated) {
+            $reseller->deposits()->create([
+                'amount' => $validated['amount'],
+                'note' => $validated['note'],
+                'created_by' => Auth::id(),
+            ]);
+
+            $reseller->increment('balance', $validated['amount']);
+        });
+
+        return back()->with('success', 'Deposit added successfully.');
     }
 }

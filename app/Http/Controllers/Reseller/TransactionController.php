@@ -7,14 +7,16 @@ use App\Models\Event;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\PaymentRequired;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
     public function create(Event $event)
     {
-        if (!auth()->user()->resellerEvents->contains($event)) {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (!$user->resellerEvents->contains($event)) {
             abort(403, 'Unauthorized access to this event.');
         }
 
@@ -47,7 +49,10 @@ class TransactionController extends Controller
 
     public function store(Request $request, Event $event)
     {
-        if (!auth()->user()->resellerEvents->contains($event)) {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (!$user->resellerEvents->contains($event)) {
             abort(403, 'Unauthorized access to this event.');
         }
 
@@ -111,18 +116,9 @@ class TransactionController extends Controller
             'quantity' => $validated['quantity'],
             'total_price' => $totalPrice,
             'status' => 'pending',
-            'reseller_id' => auth()->id(), // Track reseller
+            'reseller_id' => Auth::id(), // Track reseller
         ]);
 
-        // Send Payment Required Email (to customer)
-        try {
-            Mail::to($transaction->email)->send(new PaymentRequired($transaction));
-        } catch (\Exception $e) {
-            logger()->error('Failed to send payment required email: ' . $e->getMessage());
-        }
-
-        // Redirect to payment page (or maybe show success to reseller and let them handle payment link?)
-        // Standard flow: redirect to payment page
         return redirect()->route('payment.show', $transaction->code);
     }
 }

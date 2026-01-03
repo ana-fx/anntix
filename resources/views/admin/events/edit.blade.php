@@ -43,8 +43,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Banner -->
-                    <div
-                        x-data="{ bannerPreview: '{{ $event->banner_path ? Storage::url($event->banner_path) : '' }}' }">
+                    <div x-data="{ bannerPreview: '{{ $event->banner_path ? (Str::startsWith($event->banner_path, ['http', 'https']) ? $event->banner_path : (file_exists(public_path($event->banner_path)) ? asset($event->banner_path) : asset('storage/' . $event->banner_path))) : '' }}' }">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Banner <span
                                 class="text-xs font-normal text-gray-500 ml-1">(16:9, Max 2MB)</span></label>
                         <div
@@ -70,8 +69,7 @@
                     </div>
 
                     <!-- Thumbnail -->
-                    <div
-                        x-data="{ thumbPreview: '{{ $event->thumbnail_path ? Storage::url($event->thumbnail_path) : '' }}' }">
+                    <div x-data="{ thumbPreview: '{{ $event->thumbnail_path ? (Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path))) : '' }}' }">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Thumbnail <span
                                 class="text-xs font-normal text-gray-500 ml-1">(1:1, Max 2MB)</span></label>
                         <div
@@ -113,24 +111,27 @@
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Category</label>
-                        <select name="category"
-                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white">
-                            <option value="Concert" @selected($event->category == 'Concert')>Concert</option>
-                            <option value="Conference" @selected($event->category == 'Conference')>Conference</option>
-                            <option value="Exhibition" @selected($event->category == 'Exhibition')>Exhibition</option>
-                            <option value="Workshop" @selected($event->category == 'Workshop')>Workshop</option>
-                        </select>
+                        <input type="text" name="category" value="{{ old('category', $event->category) }}" placeholder="Enter Category"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                         @error('category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Status</label>
-                        <select name="status"
-                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white">
-                            <option value="draft" @selected($event->status == 'draft')>Draft</option>
-                            <option value="active" @selected($event->status == 'active')>Active</option>
-                            <option value="ended" @selected($event->status == 'ended')>Ended</option>
-                        </select>
+                        <div class="flex gap-4 items-center h-[46px]">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="status" value="draft" @checked(old('status', $event->status) == 'draft') class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                <span class="text-sm font-medium text-gray-700">Draft</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="status" value="active" @checked(old('status', $event->status) == 'active') class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                <span class="text-sm font-medium text-gray-700">Active</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="status" value="ended" @checked(old('status', $event->status) == 'ended') class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                                <span class="text-sm font-medium text-gray-700">Ended</span>
+                            </label>
+                        </div>
                         @error('status') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -247,7 +248,7 @@
                 <div class="space-y-6">
                     <div>
                         <div
-                            x-data="{ organizerLogoPreview: '{{ $event->organizer_logo_path ? Storage::url($event->organizer_logo_path) : '' }}' }">
+                            x-data="{ organizerLogoPreview: '{{ $event->organizer_logo_path ? asset('storage/' . $event->organizer_logo_path) : '' }}' }">
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Logo <span
                                     class="text-xs font-normal text-gray-500 ml-1">(Max 2MB)</span></label>
                             <div

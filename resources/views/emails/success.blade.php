@@ -146,6 +146,9 @@
 
 <body>
     <div class="wrapper">
+        <div style="margin-bottom: 40px;">
+            <img src="{{ $message->embed(public_path('logo.png')) }}" alt="Logo" style="height: 32px; display: block;">
+        </div>
         <div class="status-badge">Confirmed</div>
 
         <h1 class="title">You're in.</h1>
@@ -159,20 +162,8 @@
         <div class="section-title">Access Pass</div>
 
         <div class="qr-container">
-            @php
-                $qrCode = (new Endroid\QrCode\Builder\Builder(
-                    writer: new Endroid\QrCode\Writer\SvgWriter(),
-                    validateResult: false,
-                    data: $transaction->code,
-                    encoding: new Endroid\QrCode\Encoding\Encoding('UTF-8'),
-                    errorCorrectionLevel: Endroid\QrCode\ErrorCorrectionLevel::High,
-                    size: 160,
-                    margin: 0,
-                    foregroundColor: new Endroid\QrCode\Color\Color(0, 0, 0)
-                ))->build();
-            @endphp
             <div class="qr-code">
-                <img src="{{ $qrCode->getDataUri() }}" width="160" height="160" style="display: block;">
+                <img src="{{ $message->embedData($qrString, 'qr-code.png', 'image/png') }}" width="160" height="160" style="display: block;">
             </div>
             <p
                 style="font-size: 12px; color: rgba(0,0,0,0.4); margin-top: 16px; font-weight: 700; text-transform: uppercase;">
@@ -190,6 +181,12 @@
                 <div class="label">Ticket</div>
                 <div class="value">{{ $transaction->ticket->name }} &times; {{ $transaction->quantity }}</div>
             </div>
+            @if($transaction->reseller_id)
+                <div class="data-row">
+                    <div class="label">Reseller</div>
+                    <div class="value">{{ $transaction->reseller->name }}</div>
+                </div>
+            @endif
             <div class="data-row" style="border: none;">
                 <div class="label">Amount Paid</div>
                 <div class="total-amount">Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</div>

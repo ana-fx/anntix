@@ -33,31 +33,31 @@
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div
-                class="bg-gradient-to-br from-primary to-[#108c8d] rounded-2xl p-6 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
-                <div
-                    class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-110 transition-transform">
-                </div>
-                <p class="text-teal-100 font-bold uppercase tracking-wider text-xs mb-1">Total Revenue</p>
-                <h3 class="text-3xl font-black tracking-tight">Rp {{ number_format($totalSales, 0, ',', '.') }}</h3>
+                class="bg-gradient-to-br from-primary to-[#108c8d] rounded-2xl p-5 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
+                <p class="text-teal-100 font-bold uppercase tracking-wider text-[10px] mb-1">Total Revenue</p>
+                <h3 class="text-2xl font-black tracking-tight">Rp {{ number_format($totalSales, 0, ',', '.') }}</h3>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
-                <div
-                    class="absolute right-0 top-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl transform translate-x-8 -translate-y-8">
-                </div>
-                <p class="text-gray-400 font-bold uppercase tracking-wider text-xs mb-1">Tickets Sold</p>
-                <h3 class="text-3xl font-black text-dark tracking-tight">{{ number_format($totalTickets) }}</h3>
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Total Earned</p>
+                <h3 class="text-2xl font-black text-primary tracking-tight">Rp {{ number_format($totalCommission, 0, ',', '.') }}</h3>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
-                <!-- Placeholder for Commission if needed later -->
-                <div
-                    class="absolute right-0 top-0 w-24 h-24 bg-orange-50 rounded-full blur-2xl transform translate-x-8 -translate-y-8">
-                </div>
-                <p class="text-gray-400 font-bold uppercase tracking-wider text-xs mb-1">Events Active</p>
-                <h3 class="text-3xl font-black text-dark tracking-tight">{{ $events->count() }}</h3>
+            <div class="bg-gradient-to-br from-primary to-[#108c8d] rounded-2xl p-5 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
+                <p class="text-teal-100 font-bold uppercase tracking-wider text-[10px] mb-1">Must Deposited</p>
+                <h3 class="text-2xl font-black tracking-tight">Rp {{ number_format($totalNet, 0, ',', '.') }}</h3>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Tickets Sold</p>
+                <h3 class="text-2xl font-black text-dark tracking-tight">{{ number_format($totalTickets) }}</h3>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Total Top-up</p>
+                <h3 class="text-2xl font-black text-dark tracking-tight">Rp {{ number_format($totalDeposit, 0, ',', '.') }}</h3>
             </div>
         </div>
 
@@ -75,8 +75,9 @@
                             <th class="px-8 py-4">Transaction ID</th>
                             <th class="px-8 py-4">Event</th>
                             <th class="px-8 py-4">Customer</th>
-                            <th class="px-8 py-4">Details</th>
-                            <th class="px-8 py-4 text-right">Amount</th>
+                            <th class="px-8 py-4">Qty</th>
+                            <th class="px-8 py-4 text-right">Net Total</th>
+                            <th class="px-8 py-4 text-right">Commission</th>
                             <th class="px-8 py-4">Date</th>
                         </tr>
                     </thead>
@@ -97,23 +98,27 @@
                                 </td>
                                 <td class="px-8 py-4">
                                     <span
-                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-bold">
-                                        {{ $trx->quantity }} Tickets
+                                        class="inline-flex items-center px-2 py-1 rounded-lg bg-gray-100 text-gray-600 text-[10px] font-black uppercase">
+                                        {{ $trx->quantity }} Tix
                                     </span>
                                 </td>
                                 <td class="px-8 py-4 text-right">
-                                    <span class="font-bold text-primary">Rp
-                                        {{ number_format($trx->total_price, 0, ',', '.') }}</span>
+                                    <span class="font-bold text-dark text-sm">Rp
+                                        {{ number_format($trx->total_price - $trx->commission, 0, ',', '.') }}</span>
+                                </td>
+                                <td class="px-8 py-4 text-right">
+                                    <span class="font-black text-primary text-sm">Rp
+                                        {{ number_format($trx->commission, 0, ',', '.') }}</span>
                                 </td>
                                 <td class="px-8 py-4">
-                                    <span class="text-xs font-bold text-gray-400">
-                                        {{ $trx->created_at->format('d M Y, H:i') }}
+                                    <span class="text-[10px] font-bold text-gray-400">
+                                        {{ $trx->created_at->format('d/m/y H:i') }}
                                     </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-8 py-12 text-center text-gray-400 font-medium">
+                                <td colspan="7" class="px-8 py-12 text-center text-gray-400 font-medium">
                                     No sales transactions found.
                                 </td>
                             </tr>

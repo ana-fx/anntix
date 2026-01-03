@@ -4,20 +4,29 @@ namespace App\Http\Controllers\Reseller;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Dummy data for reseller dashboard
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Data for reseller dashboard
+        $paidTransactions = $user->resellerTransactions()->where('status', 'paid')->get();
+        $totalSales = $paidTransactions->sum('total_price');
+        $totalCommission = $paidTransactions->sum('commission');
+
         $stats = [
-            'total_sales' => \App\Models\Transaction::where('reseller_id', auth()->id())->where('status', 'paid')->sum('total_price'),
-            'total_commission' => 0, // Implement commission logic later if needed
-            'active_events' => auth()->user()->resellerEvents()->where('status', 'active')->count(),
-            'tickets_sold' => \App\Models\Transaction::where('reseller_id', auth()->id())->where('status', 'paid')->sum('quantity'),
+            'total_sales' => $totalSales,
+            'total_commission' => $totalCommission,
+            'must_deposited' => $totalSales - $totalCommission,
+            'current_balance' => $user->balance,
+            'tickets_sold' => $paidTransactions->sum('quantity'),
         ];
 
-        $events = auth()->user()->resellerEvents()
+        $events = $user->resellerEvents()
             ->where('status', 'active')
             ->where('end_date', '>=', now())
             ->get();

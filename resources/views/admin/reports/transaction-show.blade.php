@@ -212,7 +212,7 @@
                         <div
                             class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] border-8 border-white bg-gray-50">
                             @if($transaction->event && $transaction->event->thumbnail_path)
-                                <img src="{{ Storage::url($transaction->event->thumbnail_path) }}"
+                                <img src="{{ Str::startsWith($transaction->event->thumbnail_path, ['http', 'https']) ? $transaction->event->thumbnail_path : (file_exists(public_path($transaction->event->thumbnail_path)) ? asset($transaction->event->thumbnail_path) : asset('storage/' . $transaction->event->thumbnail_path)) }}"
                                     class="w-full h-full object-cover">
                             @else
                                 <div class="w-full h-full flex flex-col items-center justify-center opacity-20 bg-gray-100">

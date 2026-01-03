@@ -73,7 +73,7 @@
                 <a href="{{ route('events.show', $event) }}"
                     class="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <div class="relative aspect-video overflow-hidden">
-                        <img src="{{ $event->banner_path ? Storage::url($event->banner_path) : ($event->thumbnail_path ? Storage::url($event->thumbnail_path) : 'https://via.placeholder.com/1280x720') }}"
+                        <img src="{{ Str::startsWith($event->banner_path, ['http', 'https']) ? $event->banner_path : (file_exists(public_path($event->banner_path)) ? asset($event->banner_path) : asset('storage/' . $event->banner_path)) }}"
                             alt="{{ $event->name }}"
                             class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         <div

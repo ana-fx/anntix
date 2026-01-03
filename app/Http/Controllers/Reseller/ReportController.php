@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Transaction::where('reseller_id', auth()->id())
+        $query = Transaction::where('reseller_id', Auth::id())
             ->where('status', 'paid')
             ->with(['event', 'ticket'])
             ->latest();
@@ -32,11 +34,16 @@ class ReportController extends Controller
 
         // Stats for cards
         $totalSales = $query->sum('total_price');
+        $totalCommission = $query->get()->sum('commission');
+        $totalNet = $totalSales - $totalCommission;
         $totalTickets = $query->sum('quantity');
 
         // Events list for filter
-        $events = auth()->user()->resellerEvents;
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $totalDeposit = $user->deposits()->sum('amount');
+        $events = $user->resellerEvents;
 
-        return view('reseller.reports.index', compact('transactions', 'totalSales', 'totalTickets', 'events'));
+        return view('reseller.reports.index', compact('transactions', 'totalSales', 'totalCommission', 'totalNet', 'totalTickets', 'totalDeposit', 'events'));
     }
 }

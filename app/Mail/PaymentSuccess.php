@@ -39,8 +39,22 @@ class PaymentSuccess extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
+        $qrCode = (new \Endroid\QrCode\Builder\Builder(
+            writer: new \Endroid\QrCode\Writer\PngWriter(),
+            validateResult: false,
+            data: $this->transaction->code,
+            encoding: new \Endroid\QrCode\Encoding\Encoding('UTF-8'),
+            errorCorrectionLevel: \Endroid\QrCode\ErrorCorrectionLevel::High,
+            size: 160,
+            margin: 0,
+            foregroundColor: new \Endroid\QrCode\Color\Color(0, 0, 0)
+        ))->build();
+
         return new Content(
             view: 'emails.success',
+            with: [
+                'qrString' => $qrCode->getString(),
+            ],
         );
     }
 

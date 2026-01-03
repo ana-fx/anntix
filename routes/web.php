@@ -72,3 +72,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/verify', [\App\Http\Controllers\Scanner\ScanController::class, 'verify'])->name('verify');
     });
 });
+
+Route::get('/test/email', function () {
+    try {
+        \Illuminate\Support\Facades\Mail::to('aanjr38@gmail.com')->send(new App\Mail\TestMail());
+        return 'Email sent successfully to aanjr38@gmail.com';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});

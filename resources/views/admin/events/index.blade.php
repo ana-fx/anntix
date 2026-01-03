@@ -34,7 +34,13 @@
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-6 py-4">
                                 @if($event->thumbnail_path)
-                                    <img src="{{ Storage::url($event->thumbnail_path) }}"
+                                    <img src="{{
+                                        Str::startsWith($event->thumbnail_path, 'http')
+                                        ? $event->thumbnail_path
+                                        : (file_exists(public_path($event->thumbnail_path))
+                                            ? asset($event->thumbnail_path)
+                                            : asset('storage/' . $event->thumbnail_path))
+                                    }}"
                                         class="w-16 h-10 object-cover rounded-lg" alt="">
                                 @else
                                     <div
@@ -99,11 +105,14 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span
-                                    class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                                                                    @if($event->status === 'active') bg-green-100 text-green-700
-                                                                                                                                    @elseif($event->status === 'draft') bg-gray-100 text-gray-600
-                                                                                                                                    @else bg-red-100 text-red-700 @endif">
+                                @php
+                                    $badgeClass = match($event->status) {
+                                        'active' => 'bg-green-100 text-green-700',
+                                        'draft' => 'bg-gray-100 text-gray-600',
+                                        default => 'bg-red-100 text-red-700',
+                                    };
+                                @endphp
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold {{ $badgeClass }}">
                                     {{ ucfirst($event->status) }}
                                 </span>
                             </td>

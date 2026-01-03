@@ -52,7 +52,12 @@
 
                     <div class="space-y-2 text-lg text-black/70 mb-8">
                         <p>To secure your tickets, please complete the payment using your preferred method.</p>
-                        <p>Transaction ID: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
+                        <div class="flex flex-col gap-1">
+                            <p>Transaction ID: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
+                            @if($transaction->reseller_id)
+                                <p>Processed by: <span class="font-bold text-dark">{{ $transaction->reseller->name }}</span></p>
+                            @endif
+                        </div>
                     </div>
 
                     @if(auth()->check() && $transaction->reseller_id && auth()->id() == $transaction->reseller_id)
@@ -60,8 +65,14 @@
                         <div class="mb-12 p-6 bg-primary/5 rounded-2xl border border-primary/20"
                             x-data="{ showModal: false }">
                             <h3 class="font-bold text-dark text-lg uppercase mb-2">Reseller Payment Mode</h3>
+                            <div class="flex items-center justify-between mb-6 p-4 bg-white/50 rounded-xl border border-primary/10">
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Your Balance</p>
+                                    <p class="text-xl font-black text-primary">Rp{{ number_format(Auth::user()->balance) }}</p>
+                                </div>
+                            </div>
                             <p class="text-sm text-black/60 mb-6">You are processing this transaction as a reseller. Please
-                                collect the cash from the customer and confirm below.</p>
+                                collect the cash from the customer. The amount will be deducted from your deposit balance.</p>
 
                             <!-- Warning Notification -->
                             <div class="mb-6 p-4 bg-yellow-50 border border-yellow-100 rounded-xl flex items-start gap-3">
@@ -84,11 +95,11 @@
                                 x-ref="resellerForm">
                                 @csrf
                                 <button type="button" @click="showModal = true"
-                                    class="w-full px-12 py-5 bg-primary text-white font-black rounded-2xl shadow-xl hover:bg-primary-dark transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-lg flex items-center justify-center gap-3">
-                                    Confirm Cash Received
+                                    class="w-full px-12 py-5 bg-primary hover:bg-primary-dark shadow-xl hover:-translate-y-1 text-white font-black rounded-2xl transition-all duration-300 transform active:scale-95 text-lg flex items-center justify-center gap-3">
+                                    Confirm & Buy with Deposit
                                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7" />
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                 </button>
                             </form>
@@ -118,8 +129,8 @@
                                         <h3 class="text-2xl font-black text-dark uppercase tracking-tight">Confirm Payment?
                                         </h3>
                                         <p class="text-gray-500 mt-2">
-                                            Are you sure you have received the cash? This action cannot be undone and the
-                                            ticket will be sent immediately.
+                                            <strong>Rp{{ number_format($baseTotal) }}</strong> will be deducted from your deposit balance.
+                                            This action cannot be undone and the ticket will be sent immediately.
                                         </p>
                                     </div>
 
@@ -210,7 +221,13 @@
 
                     <!-- Event Banner -->
                     <div class="relative rounded-xl overflow-hidden group mb-12">
-                        <img src="{{ $transaction->event->thumbnail_path ? Storage::url($transaction->event->thumbnail_path) : 'https://via.placeholder.com/800x400' }}"
+                        <img src="{{
+                            Str::startsWith($transaction->event->thumbnail_path, 'http')
+                            ? $transaction->event->thumbnail_path
+                            : (file_exists(public_path($transaction->event->thumbnail_path))
+                                ? asset($transaction->event->thumbnail_path)
+                                : asset('storage/' . $transaction->event->thumbnail_path))
+                        }}"
                             class="w-full h-80 object-cover brightness-75 group-hover:brightness-50 transition-all duration-500">
                         <div class="absolute inset-0 flex items-center justify-center p-8 text-center">
                             <h3
@@ -305,7 +322,7 @@
 
                     <!-- Customer Identity -->
                     <div>
-                        <h3 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">Holder
+                        <h3 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">Buyer
                             Details</h3>
 
                         <div class="space-y-4">

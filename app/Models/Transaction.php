@@ -56,4 +56,20 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class, 'reseller_id');
     }
+
+    public function getCommissionAttribute()
+    {
+        if (!$this->reseller_id || !$this->event || !$this->ticket) {
+            return 0;
+        }
+
+        $feePerTicket = 0;
+        if ($this->event->reseller_fee_type === 'fixed') {
+            $feePerTicket = $this->event->reseller_fee_value;
+        } else {
+            $feePerTicket = ($this->ticket->price * ($this->event->reseller_fee_value / 100));
+        }
+
+        return $feePerTicket * $this->quantity;
+    }
 }

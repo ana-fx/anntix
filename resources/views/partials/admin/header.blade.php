@@ -45,13 +45,15 @@
                     <p class="text-xs text-gray-500 truncate">{{ auth()->user()->email }}</p>
                 </div>
 
-                <a href="{{ route('admin.profile') }}"
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Profile</a>
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'super_admin')
+                    <a href="{{ route('admin.profile') }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Profile</a>
+                @endif
 
 
                 <div class="border-t border-gray-50 my-1"></div>
 
-                <form method="POST" action="{{ route('admin.logout') }}">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
                         class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">

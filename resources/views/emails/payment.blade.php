@@ -130,6 +130,9 @@
 
 <body>
     <div class="wrapper">
+        <div style="margin-bottom: 40px;">
+            <img src="{{ $message->embed(public_path('logo.png')) }}" alt="Logo" style="height: 32px; display: block;">
+        </div>
         <div class="status-badge">Payment Required</div>
 
         <h1 class="title">Complete<br>Your Order.</h1>

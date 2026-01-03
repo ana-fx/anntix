@@ -29,7 +29,7 @@
                 <div class="flex items-center gap-6 pb-8 border-b border-gray-100 mb-8">
                     <div class="shrink-0 relative">
                         @if($admin->profile_photo_path)
-                            <img src="{{ Storage::url($admin->profile_photo_path) }}" alt="{{ $admin->name }}"
+                            <img src="{{ Str::startsWith($admin->profile_photo_path, ['http', 'https']) ? $admin->profile_photo_path : (file_exists(public_path($admin->profile_photo_path)) ? asset($admin->profile_photo_path) : asset('storage/' . $admin->profile_photo_path)) }}" alt="{{ $admin->name }}"
                                 class="w-24 h-24 rounded-full object-cover ring-4 ring-gray-50">
                         @else
                             <div

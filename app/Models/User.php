@@ -6,8 +6,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\Models\Event;
 
 class User extends Authenticatable
 {
@@ -28,6 +30,7 @@ class User extends Authenticatable
         'phone',
         'address',
         'bio',
+        'balance',
     ];
 
     /**
@@ -96,5 +99,15 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    public function deposits()
+    {
+        return $this->hasMany(ResellerDeposit::class);
+    }
+
+    public function resellerTransactions()
+    {
+        return $this->hasMany(Transaction::class, 'reseller_id');
     }
 }

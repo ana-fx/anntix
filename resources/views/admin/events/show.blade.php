@@ -8,7 +8,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
-                    <span class="text-gray-900 font-medium font-bold">Event Details</span>
+                    <span class="text-gray-900 font-bold">Event Details</span>
                 </nav>
                 <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">{{ $event->name }}</h2>
             </div>
@@ -36,7 +36,7 @@
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden group">
                     <div class="aspect-video relative overflow-hidden bg-gray-100">
                         @if($event->banner_path)
-                            <img src="{{ Storage::url($event->banner_path) }}"
+                            <img src="{{ Str::startsWith($event->banner_path, ['http', 'https']) ? $event->banner_path : (file_exists(public_path($event->banner_path)) ? asset($event->banner_path) : asset('storage/' . $event->banner_path)) }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                 alt="{{ $event->name }}">
                         @else
@@ -53,10 +53,12 @@
 
                         <!-- Status Badge -->
                         <div class="absolute top-6 left-6">
-                            <span class="inline-flex px-4 py-1.5 rounded-full text-sm font-bold shadow-lg backdrop-blur-md
-                                @if($event->status === 'active') bg-green-500/90 text-white
-                                @elseif($event->status === 'draft') bg-gray-500/90 text-white
-                                @else bg-red-500/90 text-white @endif">
+                            <span @class([
+                                'inline-flex px-4 py-1.5 rounded-full text-sm font-bold shadow-lg backdrop-blur-md text-white',
+                                'bg-green-500/90' => $event->status === 'active',
+                                'bg-gray-500/90' => $event->status === 'draft',
+                                'bg-red-500/90' => !in_array($event->status, ['active', 'draft'])
+                            ])>
                                 {{ ucfirst($event->status) }}
                             </span>
                         </div>
@@ -167,7 +169,7 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <span
-                                                class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold 
+                                                class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
                                                                                                                                         {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                                 {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
                                             </span>
@@ -522,7 +524,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-400 font-medium font-bold mb-1">Date & Time</p>
+                                <p class="text-sm text-gray-400 font-bold mb-1">Date & Time</p>
                                 <p class="font-bold text-gray-900">{{ $event->start_date->format('l, d M Y') }}</p>
                                 <p class="text-sm text-gray-500 font-bold">{{ $event->start_date->format('H:i') }} -
                                     {{ $event->end_date->format('H:i') }}
@@ -540,7 +542,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-400 font-medium font-bold mb-1">Category</p>
+                                <p class="text-sm text-gray-400 font-bold mb-1">Category</p>
                                 <p class="font-bold text-gray-900">{{ $event->category }}</p>
                             </div>
                         </div>
@@ -555,11 +557,11 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-400 font-medium font-bold mb-1">Organizer</p>
+                                <p class="text-sm text-gray-400 font-bold mb-1">Organizer</p>
                                 @if($event->organizer_name)
                                     <div class="flex items-center gap-2">
                                         @if($event->organizer_logo_path)
-                                            <img src="{{ Storage::url($event->organizer_logo_path) }}"
+                                            <img src="{{ Str::startsWith($event->organizer_logo_path, ['http', 'https']) ? $event->organizer_logo_path : (file_exists(public_path($event->organizer_logo_path)) ? asset($event->organizer_logo_path) : asset('storage/' . $event->organizer_logo_path)) }}"
                                                 class="w-6 h-6 rounded-full object-cover">
                                         @endif
                                         <p class="font-bold text-gray-900">{{ $event->organizer_name }}</p>
@@ -587,7 +589,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-400 font-medium font-bold mb-1">Reseller Fee</p>
+                                <p class="text-sm text-gray-400 font-bold mb-1">Reseller Fee</p>
                                 <p class="font-bold text-gray-900">
                                     {{ number_format($event->reseller_fee_value, 0, ',', '.') }}
                                     <span class="text-xs text-gray-500 font-medium">
@@ -609,7 +611,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-400 font-medium font-bold mb-1">Organizer Fee</p>
+                                <p class="text-sm text-gray-400 font-bold mb-1">Organizer Fee</p>
                                 <p class="font-bold text-gray-900">
                                     {{ number_format($event->organizer_fee, 0, ',', '.') }} <span
                                         class="text-xs text-gray-500 font-medium">IDR</span></p>
