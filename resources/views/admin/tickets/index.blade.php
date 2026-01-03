@@ -21,13 +21,22 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <!-- Table Header Controls (Search/Show) - Placeholder for visual matching -->
             <div class="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
+                <div class="flex items-center gap-3 text-sm text-gray-400 font-bold" x-data="{ open: false, selected: '10' }">
                     <span>Show</span>
-                    <select class="border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary">
-                        <option>10</option>
-                        <option>25</option>
-                        <option>50</option>
-                    </select>
+                    <div class="relative">
+                        <button type="button" @click="open = !open" @click.away="open = false"
+                            class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center gap-2 text-dark hover:bg-white transition-all">
+                            <span x-text="selected"></span>
+                            <svg class="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" class="absolute top-full left-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1 min-w-[60px]" style="display: none;">
+                            <button type="button" @click="selected = '10'; open = false" class="w-full px-4 py-2 text-left hover:bg-gray-50 text-dark">10</button>
+                            <button type="button" @click="selected = '25'; open = false" class="w-full px-4 py-2 text-left hover:bg-gray-50 text-dark">25</button>
+                            <button type="button" @click="selected = '50'; open = false" class="w-full px-4 py-2 text-left hover:bg-gray-50 text-dark">50</button>
+                        </div>
+                    </div>
                     <span>entries</span>
                 </div>
                 <div class="flex items-center gap-2 text-sm text-gray-600 w-full md:w-auto">

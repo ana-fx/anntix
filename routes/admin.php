@@ -47,6 +47,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('resellers/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'deposits'])->name('resellers.deposits');
     Route::post('resellers/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'storeDeposit'])->name('resellers.deposits.store');
 
+    // Reseller Management (Financial/Performance)
+    Route::get('reseller-management', [\App\Http\Controllers\Admin\ResellerManagementController::class, 'index'])->name('reseller-management.index');
+
     // Settings
     Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');

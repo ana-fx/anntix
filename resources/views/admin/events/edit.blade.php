@@ -116,27 +116,37 @@
                         @error('category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div>
+                    <div x-data="{
+                        open: false,
+                        selected: '{{ old('status', $event->status) }}',
+                        label: '{{ old('status', $event->status) == 'active' ? 'Active' : (old('status', $event->status) == 'ended' ? 'Ended' : 'Draft') }}'
+                    }" class="relative">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Status</label>
-                        <div class="flex gap-4 items-center h-[46px]">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="status" value="draft" @checked(old('status', $event->status) == 'draft') class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
-                                <span class="text-sm font-medium text-gray-700">Draft</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="status" value="active" @checked(old('status', $event->status) == 'active') class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
-                                <span class="text-sm font-medium text-gray-700">Active</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="status" value="ended" @checked(old('status', $event->status) == 'ended') class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
-                                <span class="text-sm font-medium text-gray-700">Ended</span>
-                            </label>
+                        <input type="hidden" name="status" :value="selected">
+                        <button type="button" @click="open = !open" @click.away="open = false"
+                            class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
+                            <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                            <div class="py-1">
+                                <button type="button" @click="selected = 'draft'; label = 'Draft'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Draft</button>
+                                <button type="button" @click="selected = 'active'; label = 'Active'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Active</button>
+                                <button type="button" @click="selected = 'ended'; label = 'Ended'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Ended</button>
+                            </div>
                         </div>
                         @error('status') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div x-data
-                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, defaultDate: '{{ old('start_date', $event->start_date->format('Y-m-d H:i')) }}' })">
+                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, defaultDate: '{{ old('start_date', $event->start_date->format('Y-m-d H:i')) }}', altInput: true, altFormat: 'd M Y, H:i' })">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Start Date</label>
                         <input x-ref="picker" type="text" name="start_date"
                             value="{{ old('start_date', $event->start_date->format('Y-m-d H:i')) }}"
@@ -145,7 +155,7 @@
                     </div>
 
                     <div x-data
-                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, defaultDate: '{{ old('end_date', $event->end_date->format('Y-m-d H:i')) }}' })">
+                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, defaultDate: '{{ old('end_date', $event->end_date->format('Y-m-d H:i')) }}', altInput: true, altFormat: 'd M Y, H:i' })">
                         <label class="block text-sm font-bold text-gray-700 mb-2">End Date</label>
                         <input x-ref="picker" type="text" name="end_date"
                             value="{{ old('end_date', $event->end_date->format('Y-m-d H:i')) }}"
@@ -287,24 +297,31 @@
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
+                        <div x-data="{
+                            open: false,
+                            selected: '{{ old('reseller_fee_type', $event->reseller_fee_type) }}',
+                            label: '{{ old('reseller_fee_type', $event->reseller_fee_type) == 'percent' ? 'Percent (%)' : 'Fixed' }}'
+                        }" class="relative">
                             <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Type</label>
-                            <div class="flex gap-4 items-center h-[46px]">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="reseller_fee_type" value="fixed"
-                                        @checked(old('reseller_fee_type', $event->reseller_fee_type) == 'fixed')
-                                        class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
-                                    <span class="text-sm font-medium text-gray-700">Fixed</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="reseller_fee_type" value="percent"
-                                        @checked(old('reseller_fee_type', $event->reseller_fee_type) == 'percent')
-                                        class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
-                                    <span class="text-sm font-medium text-gray-700">Percent (%)</span>
-                                </label>
+                            <input type="hidden" name="reseller_fee_type" :value="selected">
+                            <button type="button" @click="open = !open" @click.away="open = false"
+                                class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
+                                <span x-text="label"></span>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                                <div class="py-1">
+                                    <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
+                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
+                                    <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
+                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent (%)</button>
+                                </div>
                             </div>
-                            @error('reseller_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                            @enderror
+                            @error('reseller_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
@@ -319,24 +336,31 @@
 
                         <div class="col-span-1 md:col-span-2 border-t border-gray-100"></div>
 
-                        <div>
+                        <div x-data="{
+                            open: false,
+                            selected: '{{ old('organizer_fee_type', $event->organizer_fee_type) }}',
+                            label: '{{ old('organizer_fee_type', $event->organizer_fee_type) == 'percent' ? 'Percent (%)' : 'Fixed' }}'
+                        }" class="relative">
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee Type</label>
-                            <div class="flex gap-4 items-center h-[46px]">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="organizer_fee_type" value="fixed"
-                                        @checked(old('organizer_fee_type', $event->organizer_fee_type) == 'fixed')
-                                        class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
-                                    <span class="text-sm font-medium text-gray-700">Fixed</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="organizer_fee_type" value="percent"
-                                        @checked(old('organizer_fee_type', $event->organizer_fee_type) == 'percent')
-                                        class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
-                                    <span class="text-sm font-medium text-gray-700">Percent (%)</span>
-                                </label>
+                            <input type="hidden" name="organizer_fee_type" :value="selected">
+                            <button type="button" @click="open = !open" @click.away="open = false"
+                                class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
+                                <span x-text="label"></span>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                                <div class="py-1">
+                                    <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
+                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
+                                    <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
+                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent (%)</button>
+                                </div>
                             </div>
-                            @error('organizer_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                            @enderror
+                            @error('organizer_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div>

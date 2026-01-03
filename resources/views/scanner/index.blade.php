@@ -28,18 +28,32 @@
             <div class="space-y-1.5">
                 <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Current
                     Event</label>
-                <div class="relative group">
-                    <select x-model="selectedEventId" @change="stopScanner()"
-                        class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-5 pr-12 text-sm font-bold text-slate-900 appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm">
-                        <option value="">Select an Event...</option>
-                        @foreach($events as $event)
-                            <option value="{{ $event->id }}">{{ $event->name }}</option>
-                        @endforeach
-                    </select>
-                    <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <div class="relative" x-data="{ open: false }">
+                    <button type="button" @click="open = !open" @click.away="open = false"
+                        class="w-full flex items-center justify-between bg-white border border-slate-200 rounded-2xl py-4 px-6 text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm">
+                        <span x-text="selectedEventId ? document.querySelector('[data-event-id=\''+selectedEventId+'\']')?.innerText : 'Select an Event...'"
+                              :class="!selectedEventId ? 'text-slate-400' : 'text-slate-900'"></span>
+                        <svg class="w-5 h-5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                         </svg>
+                    </button>
+
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-3xl border border-slate-100 overflow-hidden">
+                        <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select Event to Scan</span>
+                        </div>
+                        <div class="py-2 max-h-60 overflow-y-auto">
+                            <button type="button" @click="selectedEventId = ''; stopScanner(); open = false"
+                                class="w-full px-6 py-3.5 text-left hover:bg-slate-50 text-sm font-bold text-slate-400">None / Stop Scanner</button>
+                            @foreach($events as $event)
+                                <button type="button" data-event-id="{{ $event->id }}"
+                                    @click="selectedEventId = '{{ $event->id }}'; stopScanner(); open = false"
+                                    class="w-full px-6 py-3.5 text-left hover:bg-primary/5 text-sm font-bold text-slate-900 border-l-4 border-transparent hover:border-primary transition-all">
+                                    {{ $event->name }}
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>

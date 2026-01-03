@@ -20,14 +20,8 @@
                     <tr
                         class="bg-gray-50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-bold">
                         <th class="px-6 py-4">Name</th>
-                        @if($view === 'financial')
-                            <th class="px-6 py-4">Created At</th>
-                            <th class="px-6 py-4 text-center">Total Sales</th>
-                            <th class="px-6 py-4 text-center">Deposit</th>
-                        @else
                             <th class="px-6 py-4">Email</th>
                             <th class="px-6 py-4">Joined</th>
-                        @endif
                         <th class="px-6 py-4 text-right">Action</th>
                     </tr>
                 </thead>
@@ -36,41 +30,17 @@
                         <tr class="hover:bg-gray-50/50 transition-colors">
                              <td class="px-6 py-4">
                                 <div class="font-bold text-dark">{{ $reseller->name }}</div>
-                                @if($view === 'financial')
-                                    <div class="text-[10px] text-gray-400 font-medium">{{ $reseller->email }}</div>
-                                @endif
                             </td>
 
-                            @if($view === 'financial')
-                                <td class="px-6 py-4 text-xs text-gray-500">
-                                    {{ $reseller->created_at->format('d/m/y') }}
-                                </td>
-                                <td class="px-6 py-4 text-center font-bold text-sm text-dark">
-                                    Rp{{ number_format($reseller->total_sales_sum ?? 0) }}
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="px-3 py-1.5 bg-green-50 text-green-700 font-black rounded-lg text-xs uppercase tracking-tight">
-                                        Rp{{ number_format($reseller->balance) }}
-                                    </span>
-                                </td>
-                            @else
-                                <td class="px-6 py-4 text-sm text-gray-500">
-                                    {{ $reseller->email }}
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-500">
-                                    {{ $reseller->created_at->format('M d, Y') }}
-                                </td>
-                            @endif
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ $reseller->email }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ $reseller->created_at->format('M d, Y') }}
+                            </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.resellers.deposits', $reseller) }}"
-                                        class="p-2 text-primary rounded-lg hover:bg-primary/5 transition-colors"
-                                        title="Manage Deposits">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </a>
+
                                     <a href="{{ route('admin.resellers.edit', $reseller) }}"
                                         class="p-2 text-gray-400 rounded-lg hover:text-primary hover:bg-primary/5 transition-colors"
                                         title="Edit">

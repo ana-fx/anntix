@@ -13,4 +13,7 @@ Route::middleware(['auth', 'reseller'])->group(function () {
 
     // Reports
     Route::get('reports', [App\Http\Controllers\Reseller\ReportController::class, 'index'])->name('reports.index');
+
+    // Deposits
+    Route::get('deposits', [App\Http\Controllers\Reseller\DepositController::class, 'index'])->name('deposits.index');
 });

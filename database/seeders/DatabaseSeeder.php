@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
             ResellerSeeder::class,
             EventSeeder::class,
             SettingsSeeder::class,
-            ReferenceEventSeeder::class,
+
         ]);
     }
 }

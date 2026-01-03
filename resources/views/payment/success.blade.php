@@ -137,11 +137,13 @@
                                     <span class="font-medium text-dark">Rp
                                         {{ number_format($subtotal, 0, ',', '.') }}</span>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-black/70">{{ $transaction->reseller_id ? 'Reseller Fee' : 'Handling Fee' }}</span>
-                                    <span class="font-medium text-dark">Rp
-                                        {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
-                                </div>
+                                @if($handlingFee * $transaction->quantity > 0)
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-black/70">{{ $transaction->reseller_id ? 'Reseller Fee' : 'Handling Fee' }}</span>
+                                        <span class="font-medium text-dark">Rp
+                                            {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
+                                    </div>
+                                @endif
                                 @if($serviceFee > 0)
                                     <div class="flex justify-between text-sm">
                                         <span class="text-black/70">Service Fee</span>

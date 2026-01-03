@@ -76,7 +76,9 @@
         "quota" => max(0, $available)
     ];
 })->toJson() }},
-                        handlingFee: {{ (int) \App\Models\Setting::getValue("handling_fee", 0) }},
+                        handlingFee: 0,
+                        resellerFeeType: "{{ $event->reseller_fee_type }}",
+                        resellerFeeValue: {{ (float) $event->reseller_fee_value }},
                         selectedTicketId: null,
                         selectedTicket: null,
                         quantity: 1,
@@ -90,6 +92,19 @@
                             this.selectedTicketId = id;
                             this.selectedTicket = this.tickets.find(t => t.id === id);
                             this.quantity = 1;
+                            this.calculateFee();
+                        },
+
+                        calculateFee() {
+                            if (!this.selectedTicket) {
+                                this.handlingFee = 0;
+                                return;
+                            }
+                            if (this.resellerFeeType === "percent") {
+                                this.handlingFee = this.selectedTicket.price * (this.resellerFeeValue / 100);
+                            } else {
+                                this.handlingFee = this.resellerFeeValue;
+                            }
                         },
 
                         get total() {
@@ -297,7 +312,7 @@
                                     <p class="text-3xl font-black text-primary tracking-tight">
                                         Rp <span x-text="new Intl.NumberFormat('id-ID').format(total)"></span>
                                     </p>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase mt-1" x-show="selectedTicket">
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase mt-1" x-show="handlingFee > 0">
                                         Incl. Fee Rp <span x-text="new Intl.NumberFormat('id-ID').format(handlingFee * quantity)"></span>
                                     </p>
                                 </div>

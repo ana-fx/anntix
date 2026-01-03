@@ -145,6 +145,24 @@
 </head>
 
 <body>
+    @php
+        $subtotal = $transaction->ticket->price * $transaction->quantity;
+
+        // Handling/Reseller Fee Logic
+        $isReseller = $transaction->reseller_id ? true : false;
+        $handlingFee = 0;
+
+        if ($isReseller) {
+            // Reseller Commission / Fee
+            if ($transaction->event->reseller_fee_type === 'percent') {
+                $handlingFee = ($transaction->ticket->price * ($transaction->event->reseller_fee_value / 100));
+            } else {
+                $handlingFee = (float) $transaction->event->reseller_fee_value;
+            }
+        } else {
+            $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+        }
+    @endphp
     <div class="wrapper">
         <div style="margin-bottom: 40px;">
             <img src="{{ $message->embed(public_path('logo.png')) }}" alt="Logo" style="height: 32px; display: block;">
@@ -187,6 +205,18 @@
                     <div class="value">{{ $transaction->reseller->name }}</div>
                 </div>
             @endif
+
+            @if($handlingFee * $transaction->quantity > 0)
+                <div class="data-row">
+                    <div class="label">Subtotal</div>
+                    <div class="value">Rp {{ number_format($subtotal, 0, ',', '.') }}</div>
+                </div>
+                <div class="data-row">
+                    <div class="label">{{ $transaction->reseller_id ? 'Reseller Fee' : 'Handling Fee' }}</div>
+                    <div class="value">Rp {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</div>
+                </div>
+            @endif
+
             <div class="data-row" style="border: none;">
                 <div class="label">Amount Paid</div>
                 <div class="total-amount">Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</div>

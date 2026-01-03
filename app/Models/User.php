@@ -106,6 +106,18 @@ class User extends Authenticatable
         return $this->hasMany(ResellerDeposit::class);
     }
 
+    public function deposit(float $amount, ?string $note = null, ?int $adminId = null)
+    {
+        DB::transaction(function () use ($amount, $note, $adminId) {
+            $this->increment('balance', $amount);
+            $this->deposits()->create([
+                'amount' => $amount,
+                'note' => $note,
+                'created_by' => $adminId
+            ]);
+        });
+    }
+
     public function resellerTransactions()
     {
         return $this->hasMany(Transaction::class, 'reseller_id');

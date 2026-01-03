@@ -92,6 +92,18 @@ class ReportController extends Controller
             $query->where('status', $status);
         }
 
+        if ($request->has('reseller_id')) {
+            $query->where('reseller_id', $request->reseller_id);
+        }
+
+        if ($request->has('source')) {
+            if ($request->source === 'reseller') {
+                $query->whereNotNull('reseller_id');
+            } elseif ($request->source === 'online') {
+                $query->whereNull('reseller_id');
+            }
+        }
+
         $transactions = $query->paginate(15)->withQueryString();
         $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
 

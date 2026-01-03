@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
             $table->text('bio')->nullable();
+            $table->decimal('balance', 16, 2)->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

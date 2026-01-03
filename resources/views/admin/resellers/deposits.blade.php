@@ -44,7 +44,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-6 lg:gap-8">
         <!-- New Deposit Form -->
         <div class="lg:col-span-4">
             <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-8 sticky top-28">
@@ -84,7 +84,6 @@
                 </form>
             </div>
 
-            </div>
         </div>
 
         <!-- Deposit History -->
@@ -100,8 +99,8 @@
                             <tr class="bg-gray-50/50 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                 <th class="px-8 py-4">Date</th>
                                 <th class="px-8 py-4">Amount</th>
-                                <th class="px-8 py-4">Note</th>
-                                <th class="px-8 py-4">Added By</th>
+                                <th class="px-8 py-4 hidden md:table-cell">Note</th>
+                                <th class="px-8 py-4 hidden md:table-cell">Added By</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
@@ -116,10 +115,10 @@
                                             + Rp{{ number_format($deposit->amount) }}
                                         </div>
                                     </td>
-                                    <td class="px-8 py-6">
+                                    <td class="px-8 py-6 hidden md:table-cell">
                                         <p class="text-sm text-gray-500 italic">"{{ $deposit->note ?? 'No note' }}"</p>
                                     </td>
-                                    <td class="px-8 py-6">
+                                    <td class="px-8 py-6 hidden md:table-cell">
                                         <div class="flex items-center gap-2">
                                             <div class="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary">
                                                 {{ $deposit->creator->initials() }}

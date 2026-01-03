@@ -70,16 +70,40 @@
                         </div>
 
                         <!-- Event Select -->
-                        <div x-show="linkType === 'event'">
-                            <select name="event_id"
-                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white">
-                                <option value="">Select an Event</option>
-                                @foreach($events as $event)
-                                    <option value="{{ route('events.show', $event) }}">{{ $event->name }}</option>
-                                @endforeach
-                            </select>
-                            <p class="text-xs text-gray-500 mt-1">Selecting an event will automatically set the banner
-                                link.</p>
+                        <div x-show="linkType === 'event'" x-data="{
+                            open: false,
+                            selected: '{{ old('event_id') ?: '' }}',
+                            label: 'Select an Event'
+                        }" x-init="
+                            @if(old('event_id'))
+                                @php $oldEvent = $events->firstWhere('id', old('event_id')); @endphp
+                                @if($oldEvent) label = '{{ $oldEvent->name }}'; @endif
+                            @endif
+                        ">
+                            <input type="hidden" name="event_id" :value="selected">
+                            <div class="relative">
+                                <button type="button" @click="open = !open" @click.away="open = false"
+                                    class="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 text-sm font-bold border border-gray-100 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all text-dark">
+                                    <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+
+                                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                    class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                                    <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100">
+                                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Destination Event</span>
+                                    </div>
+                                    <div class="py-2 max-h-60 overflow-y-auto custom-scrollbar">
+                                        <button type="button" @click="selected = ''; label = 'Select an Event'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">None (Clear Selection)</button>
+                                        @foreach($events as $event)
+                                            <button type="button" @click="selected = '{{ $event->id }}'; label = '{{ addslashes($event->name) }}'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">{{ $event->name }}</button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2 ml-1">Selecting an event will automatically set the banner link destination.</p>
                         </div>
 
                         <!-- Custom URL Input -->

@@ -9,31 +9,56 @@
 
             <!-- Filters -->
             <form method="GET" class="flex flex-wrap items-center gap-3">
-                <select name="event_id"
-                    class="pl-4 pr-10 py-2.5 rounded-xl border-gray-100 bg-white text-sm font-bold focus:ring-primary focus:border-primary">
-                    <option value="">All Events</option>
-                    @foreach($events as $event)
-                        <option value="{{ $event->id }}" {{ request('event_id') == $event->id ? 'selected' : '' }}>
-                            {{ $event->name }}
-                        </option>
-                    @endforeach
-                </select>
+            <!-- Event Filter -->
+            <div x-data="{
+                open: false,
+                selected: '{{ request('event_id') ?: '' }}',
+                label: '{{ request('event_id') ? ($events->firstWhere('id', request('event_id'))->name ?? 'All Events') : 'All Events' }}'
+            }">
+                <input type="hidden" name="event_id" :value="selected">
+                <div class="relative min-w-[200px]">
+                    <button type="button" @click="open = !open" @click.away="open = false"
+                        class="w-full flex items-center justify-between px-5 py-2.5 rounded-xl bg-white text-sm font-bold border border-gray-100 focus:ring-4 focus:ring-primary/10 transition-all text-dark">
+                        <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
 
-                <input type="date" name="start_date" value="{{ request('start_date') }}"
-                    class="px-4 py-2.5 rounded-xl border-gray-100 bg-white text-sm font-bold focus:ring-primary focus:border-primary">
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+                        <div class="px-5 py-3 bg-gray-50/50 border-b border-gray-100">
+                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Select Event</span>
+                        </div>
+                        <div class="py-1 max-h-48 overflow-y-auto custom-scrollbar">
+                            <button type="button" @click="selected = ''; label = 'All Events'; open = false" class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">All Events</button>
+                            @foreach($events as $event)
+                                <button type="button" @click="selected = '{{ $event->id }}'; label = '{{ addslashes($event->name) }}'; open = false" class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">{{ $event->name }}</button>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <input type="date" name="end_date" value="{{ request('end_date') }}"
-                    class="px-4 py-2.5 rounded-xl border-gray-100 bg-white text-sm font-bold focus:ring-primary focus:border-primary">
+                <div x-data x-init="flatpickr($refs.startPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y' })">
+                    <input x-ref="startPicker" type="text" name="start_date" value="{{ request('start_date') }}" placeholder="Start Date"
+                        class="px-4 py-2.5 rounded-xl border-none bg-white text-sm font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none">
+                </div>
+
+                <div x-data x-init="flatpickr($refs.endPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y' })">
+                    <input x-ref="endPicker" type="text" name="end_date" value="{{ request('end_date') }}" placeholder="End Date"
+                        class="px-4 py-2.5 rounded-xl border-none bg-white text-sm font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none">
+                </div>
 
                 <button type="submit"
-                    class="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20">
+                    class="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20 active:scale-95">
                     Filter
                 </button>
             </form>
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div
                 class="bg-gradient-to-br from-primary to-[#108c8d] rounded-2xl p-5 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
                 <p class="text-teal-100 font-bold uppercase tracking-wider text-[10px] mb-1">Total Revenue</p>
@@ -45,19 +70,14 @@
                 <h3 class="text-2xl font-black text-primary tracking-tight">Rp {{ number_format($totalCommission, 0, ',', '.') }}</h3>
             </div>
 
-            <div class="bg-gradient-to-br from-primary to-[#108c8d] rounded-2xl p-5 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
-                <p class="text-teal-100 font-bold uppercase tracking-wider text-[10px] mb-1">Must Deposited</p>
-                <h3 class="text-2xl font-black tracking-tight">Rp {{ number_format($totalNet, 0, ',', '.') }}</h3>
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Deposit Balance</p>
+                <h3 class="text-2xl font-black text-primary tracking-tight">Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }}</h3>
             </div>
 
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative overflow-hidden group">
                 <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Tickets Sold</p>
                 <h3 class="text-2xl font-black text-dark tracking-tight">{{ number_format($totalTickets) }}</h3>
-            </div>
-
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 relative overflow-hidden group">
-                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Total Top-up</p>
-                <h3 class="text-2xl font-black text-dark tracking-tight">Rp {{ number_format($totalDeposit, 0, ',', '.') }}</h3>
             </div>
         </div>
 

@@ -15,6 +15,11 @@
                     <h2 class="text-4xl font-black text-dark tracking-tighter">Transaction Dossier</h2>
                     <span
                         class="px-3 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-primary/10">ID:{{ $transaction->id }}</span>
+                    @if($transaction->reseller_id)
+                        <span class="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-purple-100">Reseller: {{ $transaction->reseller->name }}</span>
+                    @else
+                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-blue-100">Online Checkout</span>
+                    @endif
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">RECORD REFERENCE</span>

@@ -21,13 +21,22 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <!-- Table Header Controls -->
             <div class="p-4 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
+                <div class="flex items-center gap-3 text-sm text-gray-400 font-bold" x-data="{ open: false, selected: '10' }">
                     <span>Show</span>
-                    <select class="border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary">
-                        <option>10</option>
-                        <option>25</option>
-                        <option>50</option>
-                    </select>
+                    <div class="relative">
+                        <button type="button" @click="open = !open" @click.away="open = false"
+                            class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center gap-2 text-dark hover:bg-white transition-all">
+                            <span x-text="selected"></span>
+                            <svg class="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="open" class="absolute top-full left-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 py-1 min-w-[60px]" style="display: none;">
+                            <button type="button" @click="selected = '10'; open = false" class="w-full px-4 py-2 text-left hover:bg-gray-50 text-dark">10</button>
+                            <button type="button" @click="selected = '25'; open = false" class="w-full px-4 py-2 text-left hover:bg-gray-50 text-dark">25</button>
+                            <button type="button" @click="selected = '50'; open = false" class="w-full px-4 py-2 text-left hover:bg-gray-50 text-dark">50</button>
+                        </div>
+                    </div>
                     <span>entries</span>
                 </div>
                 <div class="flex items-center gap-2 text-sm text-gray-600 w-full md:w-auto">
@@ -121,14 +130,37 @@
                     <div class="mb-4">
                         <label for="reseller_id" class="block text-sm font-medium text-gray-700 mb-1">Select
                             Reseller</label>
-                        <select name="reseller_id" id="reseller_id"
-                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-primary focus:ring-primary">
-                            @forelse($availableResellers as $reseller)
-                                <option value="{{ $reseller->id }}">{{ $reseller->name }} ({{ $reseller->email }})</option>
-                            @empty
-                                <option value="" disabled selected>No available resellers found</option>
-                            @endforelse
-                        </select>
+                        <div class="relative" x-data="{
+                            open: false,
+                            selected: '{{ $availableResellers->first()->id ?? '' }}',
+                            label: '{{ $availableResellers->first() ? $availableResellers->first()->name : 'No available resellers' }}'
+                        }">
+                            <input type="hidden" name="reseller_id" :value="selected" required>
+                            <button type="button" @click="open = !open" @click.away="open = false"
+                                class="w-full flex items-center justify-between appearance-none bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-xl leading-tight focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-medium">
+                                <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark font-bold'"></span>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+
+                            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+                                <div class="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Select Reseller</span>
+                                </div>
+                                <div class="py-1 max-h-48 overflow-y-auto">
+                                    @forelse($availableResellers as $reseller)
+                                        <button type="button" @click="selected = '{{ $reseller->id }}'; label = '{{ addslashes($reseller->name) }}'; open = false"
+                                            class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">
+                                            {{ $reseller->name }} <span class="text-[10px] text-gray-400 font-medium ml-1">({{ $reseller->email }})</span>
+                                        </button>
+                                    @empty
+                                        <div class="px-5 py-3 text-sm text-gray-400">No available resellers found</div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex justify-end">
                         <button type="submit"

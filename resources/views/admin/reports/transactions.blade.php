@@ -25,9 +25,8 @@
     <div class="bg-white rounded-[2.5rem] shadow-xl shadow-primary/5 border border-gray-100 p-8 mb-10">
         <form action="{{ route('admin.reports.transactions') }}" method="GET"
             class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
-            <div class="md:col-span-5">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Search
-                    Identifier</label>
+            <div class="md:col-span-3">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Search</label>
                 <div class="relative group">
                     <div
                         class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
@@ -37,31 +36,81 @@
                         </svg>
                     </div>
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Invoice code, customer name or email..."
+                        placeholder="Search..."
                         class="w-full pl-12 pr-4 py-4 rounded-2xl border-none bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-medium placeholder:text-gray-400">
                 </div>
             </div>
 
-            <div class="md:col-span-3">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Payment
-                    Status</label>
-                <select name="status"
-                    class="w-full px-5 py-4 rounded-2xl border-none bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-bold text-dark appearance-none cursor-pointer">
-                    <option value="">All Transactions</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Waiting for Payment
-                    </option>
-                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Confirmed Paid</option>
-                    <option value="failed" {{ request('status') == 'failed' ? 'selected' : '' }}>Failed / Expired</option>
-                </select>
+            <!-- Source Filter -->
+            <div class="md:col-span-3" x-data="{
+                open: false,
+                selected: '{{ request('source') ?: '' }}',
+                label: '{{ request('source') == 'online' ? 'Online' : (request('source') == 'reseller' ? 'Reseller' : 'All Sources') }}'
+            }">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Source</label>
+                <input type="hidden" name="source" :value="selected">
+                <div class="relative">
+                    <button type="button" @click="open = !open" @click.away="open = false"
+                        class="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 text-sm font-bold border-none focus:ring-4 focus:ring-primary/10 transition-all text-dark">
+                        <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Source</span>
+                        </div>
+                        <div class="py-2">
+                            <button type="button" @click="selected = ''; label = 'All Sources'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">All Sources</button>
+                            <button type="button" @click="selected = 'online'; label = 'Online'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Online</button>
+                            <button type="button" @click="selected = 'reseller'; label = 'Reseller'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Reseller</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="md:col-span-4 flex gap-3">
+            <!-- Status Filter -->
+            <div class="md:col-span-3" x-data="{
+                open: false,
+                selected: '{{ request('status') ?: '' }}',
+                label: '{{ request('status') == 'pending' ? 'Pending' : (request('status') == 'paid' ? 'Paid' : (request('status') == 'failed' ? 'Failed' : 'All Status')) }}'
+            }">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Status</label>
+                <input type="hidden" name="status" :value="selected">
+                <div class="relative">
+                    <button type="button" @click="open = !open" @click.away="open = false"
+                        class="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 text-sm font-bold border-none focus:ring-4 focus:ring-primary/10 transition-all text-dark">
+                        <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                        <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Status</span>
+                        </div>
+                        <div class="py-2">
+                            <button type="button" @click="selected = ''; label = 'All Status'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">All Status</button>
+                            <button type="button" @click="selected = 'pending'; label = 'Pending'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Pending</button>
+                            <button type="button" @click="selected = 'paid'; label = 'Paid'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Paid</button>
+                            <button type="button" @click="selected = 'failed'; label = 'Failed'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Failed</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-3 flex gap-2">
                 <button type="submit"
                     class="flex-1 py-4 bg-dark text-white font-black rounded-2xl hover:opacity-90 transition-all shadow-lg active:scale-95 uppercase tracking-widest text-xs">
-                    Apply Filter
+                    Apply
                 </button>
                 <a href="{{ route('admin.reports.transactions') }}"
-                    class="px-6 py-4 bg-gray-100 text-dark font-black rounded-2xl hover:bg-gray-200 transition-all active:scale-95 uppercase tracking-widest text-xs">
+                    class="px-5 py-4 bg-gray-100 text-dark font-black rounded-2xl hover:bg-gray-200 transition-all active:scale-95 uppercase tracking-widest text-xs">
                     Reset
                 </a>
             </div>
@@ -78,8 +127,8 @@
                             Transaction</th>
                         <th class="px-8 py-5">Customer
                         </th>
-                        <th class="px-8 py-5">Event
-                            Detail</th>
+                        <th class="px-8 py-5">Source</th>
+                        <th class="px-8 py-5">Event Detail</th>
                         <th
                             class="px-8 py-5 text-right">
                             Amount Breakout</th>
@@ -117,6 +166,18 @@
                                     <a href="mailto:{{ $transaction->email }}" class="text-[10px] font-bold text-secondary hover:text-primary transition-colors">{{ $transaction->email }}</a>
                                     <a href="tel:{{ $transaction->phone }}" class="text-[10px] font-black text-primary hover:opacity-70 transition-opacity">{{ $transaction->phone }}</a>
                                 </div>
+                            </td>
+                            <td class="px-8 py-7">
+                                @if($transaction->reseller_id)
+                                    <div class="flex flex-col">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-600 border border-purple-100 w-max mb-1 uppercase tracking-tighter">Reseller</span>
+                                        <div class="text-[10px] font-black text-dark truncate max-w-[120px]" title="{{ $transaction->reseller->name ?? 'Deleted' }}">
+                                            {{ $transaction->reseller->name ?? 'Deleted' }}
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 w-max uppercase tracking-tighter">Online</span>
+                                @endif
                             </td>
                             <td class="px-8 py-7">
                                 <span

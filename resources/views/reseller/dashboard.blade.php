@@ -12,7 +12,7 @@
         </div>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Total Sales -->
             <div
                 class="bg-gradient-to-br from-primary to-[#108c8d] rounded-2xl p-5 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
@@ -33,15 +33,7 @@
                 </div>
             </div>
 
-            <!-- Must Deposited -->
-            <div
-                class="bg-gradient-to-br from-primary to-[#108c8d] rounded-2xl p-5 text-white shadow-xl shadow-primary/20 relative overflow-hidden group">
-                <p class="text-teal-100 font-bold uppercase tracking-wider text-[10px] mb-1">Must Deposited</p>
-                <h3 class="text-2xl font-black tracking-tight">Rp {{ number_format($stats['must_deposited']) }}</h3>
-                <div class="mt-4 flex items-center gap-2">
-                    <span class="text-[10px] text-teal-50 font-medium">Total net cost</span>
-                </div>
-            </div>
+
 
             <!-- Deposit Balance -->
             <div

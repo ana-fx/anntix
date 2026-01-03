@@ -30,13 +30,15 @@ class EventSeeder extends Seeder
                 'city' => 'Pekalongan',
                 'zip' => '51111',
                 'google_map_embed' => '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.025400123456!2d109.67!3d-6.89!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTMnMjQuMCJTIDEwO0DCs0MCcxMi4wIkU!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>',
+                'seo_title' => 'Tiket Gelombang Cinta Fest Pekalongan #4 - Denny Caknan | Anntix',
+                'seo_description' => 'Dapatkan tiket resmi Gelombang Cinta Fest Pekalongan #4. Nikmati konser musik ambyar dengan bintang tamu Denny Caknan dan lainnya. Beli tiket online  mudah dan aman hanya di Anntix.',
                 'organizer_name' => 'AL Organizer',
                 'banner_path' => 'event.jpeg',
                 'thumbnail_path' => 'event.jpeg',
                 // Reseller Commission / Fee
                 'reseller_fee_type' => 'fixed',
-                'reseller_fee_value' => 5000,
-                'organizer_fee' => 2000,
+                'reseller_fee_value' => 0,
+                'organizer_fee' => 5000,
             ]
         );
 
