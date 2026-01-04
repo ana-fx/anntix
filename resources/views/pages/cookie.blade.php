@@ -83,14 +83,14 @@
                             <div class="p-8 border-t border-gray-100 hover:bg-gray-50/50 transition-colors">
                                 <h4 class="text-primary font-black text-xs uppercase tracking-widest mb-4">Functional
                                 </h4>
-                                <h5 class="text-xl font-bold text-dark mb-4 text-black">Essential operations</h5>
+                                <h5 class="text-xl font-bold text-dark mb-4">Essential operations</h5>
                                 <p class="text-gray-500 text-sm leading-relaxed">Necessary for the website to function
                                     properly. Includes security, session management, and authentication.</p>
                             </div>
                             <div class="p-8 border-t border-gray-100 hover:bg-gray-50/50 transition-colors">
                                 <h4 class="text-primary font-black text-xs uppercase tracking-widest mb-4">Analytical
                                 </h4>
-                                <h5 class="text-xl font-bold text-dark mb-4 text-black">Performance tracking</h5>
+                                <h5 class="text-xl font-bold text-dark mb-4">Performance tracking</h5>
                                 <p class="text-gray-500 text-sm leading-relaxed">Allows us to recognize and count
                                     visitors while observing how they navigate the platform to improve UX.</p>
                             </div>
@@ -122,8 +122,8 @@
                             <div>
                                 <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Enquiries
                                 </div>
-                                <a href="mailto:hello@anntix.com"
-                                    class="text-lg font-bold hover:text-primary transition-colors">hello@anntix.com</a>
+                                <a href="mailto:hallo@anntix.id"
+                                    class="text-lg font-bold hover:text-primary transition-colors">hallo@anntix.id</a>
                             </div>
                         </div>
                         <div class="md:text-right">

@@ -1,4 +1,9 @@
-<x-layouts.app>
+<x-layouts.app :seo="[
+    'title' => $event->seo_title ?? $event->name,
+    'description' => $event->seo_description ?? Str::limit(strip_tags($event->description), 160),
+    'image' => $event->banner_path ?? $event->thumbnail_path,
+    'type' => 'website'
+]">
     <div class="bg-white min-h-screen pt-32">
 
         <!-- Content Split (7/5 Ratio) -->

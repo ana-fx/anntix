@@ -7,17 +7,57 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>
-        @if(isset($title))
+        @if(isset($seo['title']))
+            {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | ' . $seo['title'] }}
+        @elseif(isset($title))
             {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | ' . $title }}
         @else
             {{ $global_settings['seo_title'] ?? ($global_settings['site_name'] ?? config('app.name', 'Laravel')) }}
         @endif
     </title>
-    @if(isset($global_settings['seo_description']))
-        <meta name="description" content="{{ $global_settings['seo_description'] }}">
-    @endif
+
+    <meta name="description" content="{{ $seo['description'] ?? ($global_settings['seo_description'] ?? '') }}">
+
     @if(isset($global_settings['site_icon']))
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
+    @endif
+
+    <!-- SEO & Social Sharing -->
+    <meta name="keywords" content="{{ $seo['keywords'] ?? ($global_settings['seo_keywords'] ?? 'events, tickets, concert, festival, anntix') }}">
+    <meta name="author" content="{{ $global_settings['site_name'] ?? 'Anntix' }}">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{{ $seo['type'] ?? 'website' }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{ $global_settings['site_name'] ?? config('app.name') }}">
+    <meta property="og:title" content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
+    <meta property="og:description" content="{{ $seo['description'] ?? ($global_settings['seo_description'] ?? '') }}">
+
+    @php
+        $ogImage = null;
+        if (isset($seo['image']) && $seo['image']) {
+             $ogImage = Str::startsWith($seo['image'], ['http', 'https'])
+                ? $seo['image']
+                : asset('storage/' . $seo['image']);
+        } elseif (isset($global_settings['seo_image'])) {
+             $ogImage = asset('storage/' . $global_settings['seo_image']);
+        } elseif (isset($global_settings['site_icon'])) {
+             $ogImage = asset('storage/' . $global_settings['site_icon']);
+        }
+    @endphp
+
+    @if($ogImage)
+        <meta property="og:image" content="{{ $ogImage }}">
+    @endif
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
+    <meta property="twitter:description" content="{{ $seo['description'] ?? ($global_settings['seo_description'] ?? '') }}">
+    @if($ogImage)
+        <meta property="twitter:image" content="{{ $ogImage }}">
     @endif
 
     <!-- Scripts -->

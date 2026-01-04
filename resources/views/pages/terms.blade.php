@@ -118,8 +118,8 @@
                             <div>
                                 <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Legal Desk
                                 </div>
-                                <a href="mailto:legal@anntix.com"
-                                    class="text-xl font-bold hover:text-primary transition-colors">legal@anntix.com</a>
+                                <a href="mailto:hallo@anntix.id"
+                                    class="text-xl font-bold hover:text-primary transition-colors">hallo@anntix.id</a>
                             </div>
                         </div>
                         <p class="text-gray-400 text-sm font-medium tracking-tight whitespace-nowrap">

@@ -110,8 +110,8 @@
                         <div>
                             <div class="text-xs text-gray-400 uppercase tracking-widest mb-2 font-bold">Contact
                                 Representative</div>
-                            <a href="mailto:privacy@anntix.com"
-                                class="text-2xl font-black hover:text-primary transition-colors">privacy@anntix.com</a>
+                            <a href="mailto:hallo@anntix.id"
+                                class="text-2xl font-black hover:text-primary transition-colors">hallo@anntix.id</a>
                         </div>
                         <div class="text-right">
                             <div class="text-xs text-gray-400 uppercase tracking-widest mb-2 font-bold">Last Update
