@@ -30,6 +30,7 @@ Route::get('/errors/503', function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event}', [HomeController::class, 'show'])->name('events.show');
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 
 // Static Pages
 Route::get('/terms', [PageController::class, 'terms'])->name('pages.terms');

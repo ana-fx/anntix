@@ -62,6 +62,23 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Anntix",
+      "alternateName": "Anntix.id",
+      "url": "{{ url('/') }}",
+      "logo": "{{ isset($global_settings['site_logo']) ? asset('storage/' . $global_settings['site_logo']) : asset('logo.png') }}",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "",
+        "contactType": "customer support",
+        "email": "hallo@anntix.id"
+      }
+    }
+    </script>
 </head>
 
 <body class="theme-event font-sans text-gray-900 antialiased bg-gray-50">
