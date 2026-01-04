@@ -25,7 +25,7 @@
         </div>
 
         <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-600">
+            <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                 <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
@@ -37,7 +37,7 @@
         </div>
 
         <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-600">
+            <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                 <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
@@ -56,7 +56,6 @@
                     <tr
                         class="bg-gray-50 border-b border-gray-100 text-[10px] uppercase tracking-wider text-gray-400 font-black">
                         <th class="px-6 py-5">Reseller Name</th>
-                        <th class="px-6 py-5 text-center">Active Balance</th>
                         <th class="px-6 py-5 text-center">Total Deposited</th>
                         <th class="px-6 py-5 text-center">Sales Generated</th>
                         <th class="px-6 py-5 text-right">Action</th>
@@ -70,11 +69,6 @@
                                 <div class="text-[10px] text-gray-400 font-medium tracking-wide">{{ $reseller->email }}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <span class="px-3 py-1.5 bg-green-50 text-green-700 font-black rounded-lg text-xs uppercase tracking-tight">
-                                    Rp{{ number_format($reseller->balance) }}
-                                </span>
-                            </td>
-                             <td class="px-6 py-4 text-center">
                                 <span class="font-bold text-gray-600 text-sm">
                                     Rp{{ number_format($reseller->total_deposit_sum ?? 0) }}
                                 </span>

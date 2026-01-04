@@ -118,7 +118,7 @@
     </div>
 
     <!-- Main Table Container -->
-    <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden" x-data="{ confirmModalOpen: false, actionUrl: '' }">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse" id="transaction-table">
                 <thead>
@@ -144,17 +144,24 @@
                     @forelse($transactions as $index => $transaction)
                         @php
                             $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
-                            $handlingTotal = $transaction->quantity * $handlingFeeValue;
-                            $serviceFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal);
-                            if ($serviceFee < 0)
-                                $serviceFee = 0;
+
+                            // Adjust Fee Logic based on Source
+                            if($transaction->reseller_id) {
+                                $handlingTotal = 0; // Resellers don't have Handling Fee
+                                $extraFee = (float) $transaction->total_price - $ticketSales; // Remaining is Reseller Fee
+                            } else {
+                                $handlingTotal = $transaction->quantity * $handlingFeeValue;
+                                $extraFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal); // Remaining is Service Fee
+                            }
+
+                            if ($extraFee < 0) $extraFee = 0;
                         @endphp
                         <tr class="group hover:bg-primary/[0.02] transition-colors">
                             <td class="px-8 py-7 leading-none">
                                 <a href="{{ route('admin.reports.transactions.show', $transaction->id) }}"
                                     class="block group/item">
                                     <div
-                                        class="font-mono text-[11px] font-black text-primary tracking-tighter mb-1 select-all underline decoration-dotted decoration-primary/30 underline-offset-4 group-hover/item:text-dark transition-colors">
+                                        class="font-mono text-[11px] font-black text-gray-600 tracking-tighter mb-1 select-all underline decoration-dotted decoration-gray-300 underline-offset-4 group-hover/item:text-dark transition-colors">
                                         {{ $transaction->code }}</div>
                                 </a>
                                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -164,19 +171,19 @@
                                 <div class="text-sm font-black text-dark mb-0.5">{{ $transaction->name }}</div>
                                 <div class="flex flex-col gap-0.5">
                                     <a href="mailto:{{ $transaction->email }}" class="text-[10px] font-bold text-secondary hover:text-primary transition-colors">{{ $transaction->email }}</a>
-                                    <a href="tel:{{ $transaction->phone }}" class="text-[10px] font-black text-primary hover:opacity-70 transition-opacity">{{ $transaction->phone }}</a>
+                                    <a href="tel:{{ $transaction->phone }}" class="text-[10px] font-black text-gray-500 hover:opacity-70 transition-opacity">{{ $transaction->phone }}</a>
                                 </div>
                             </td>
                             <td class="px-8 py-7">
                                 @if($transaction->reseller_id)
                                     <div class="flex flex-col">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-600 border border-purple-100 w-max mb-1 uppercase tracking-tighter">Reseller</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100/80 text-gray-500 border border-gray-100 w-max mb-1 uppercase tracking-tighter">Reseller</span>
                                         <div class="text-[10px] font-black text-dark truncate max-w-[120px]" title="{{ $transaction->reseller->name ?? 'Deleted' }}">
                                             {{ $transaction->reseller->name ?? 'Deleted' }}
                                         </div>
                                     </div>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-100 w-max uppercase tracking-tighter">Online</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100/80 text-gray-500 border border-gray-100 w-max uppercase tracking-tighter">Online</span>
                                 @endif
                             </td>
                             <td class="px-8 py-7">
@@ -184,17 +191,22 @@
                                     class="inline-block text-xs font-black text-dark bg-gray-100 px-2.5 py-1 rounded-lg mb-1">{{ $transaction->event->name ?? 'Deleted Event' }}</span>
                                 <div class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
                                     {{ $transaction->ticket->name ?? 'N/A' }} <span
-                                        class="text-primary italic mx-1">x{{ $transaction->quantity }}</span></div>
+                                        class="text-gray-400 italic mx-1">x{{ $transaction->quantity }}</span></div>
                             </td>
                             <td class="px-8 py-7 text-right">
                                 <div class="text-base font-black text-dark tracking-tight mb-0.5">Rp
                                     {{ number_format($transaction->total_price, 0, ',', '.') }}</div>
                                 <div class="flex items-center justify-end gap-2">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Svc:
-                                        {{ number_format($serviceFee, 0, ',', '.') }}</span>
-                                    <span class="w-1 h-1 rounded-full bg-gray-200"></span>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Hdl:
-                                        {{ number_format($handlingTotal, 0, ',', '.') }}</span>
+                                    @if($transaction->reseller_id)
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Fee:
+                                            {{ number_format($extraFee, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Svc:
+                                            {{ number_format($extraFee, 0, ',', '.') }}</span>
+                                        <span class="w-1 h-1 rounded-full bg-gray-200"></span>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Hdl:
+                                            {{ number_format($handlingTotal, 0, ',', '.') }}</span>
+                                    @endif
                                 </div>
                             </td>
                             <td class="px-8 py-7 text-center">
@@ -219,16 +231,26 @@
                                 @endif
                             </td>
                             <td class="px-8 py-7 text-right">
-                                <a href="{{ route('admin.reports.transactions.show', $transaction->id) }}"
-                                    class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-secondary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                        </path>
-                                    </svg>
-                                </a>
+                                <div class="flex items-center justify-end gap-2">
+                                    <button type="button"
+                                        @click="confirmModalOpen = true; actionUrl = '{{ route('admin.reports.resend-email', $transaction->id) }}'"
+                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="Resend Success Email">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                        </svg>
+                                    </button>
+
+                                    <a href="{{ route('admin.reports.transactions.show', $transaction->id) }}"
+                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-primary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="View Details">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -261,6 +283,41 @@
                 {{ $transactions->links() }}
             </div>
         @endif
+
+        <!-- Confirmation Modal -->
+        <div x-show="confirmModalOpen" style="display: none;"
+            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            x-transition>
+            <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 relative border border-gray-100"
+                @click.away="confirmModalOpen = false">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+
+                    <h3 class="text-2xl font-black text-dark mb-2 tracking-tight">Resend Confirmation?</h3>
+                    <p class="text-sm font-medium text-gray-500 mb-8 leading-relaxed">
+                        You are about to resend the success email to the customer. This action cannot be undone.
+                    </p>
+
+                    <div class="flex gap-4 w-full">
+                        <button type="button" @click="confirmModalOpen = false"
+                            class="flex-1 py-3.5 rounded-xl text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors uppercase tracking-wider">
+                            Cancel
+                        </button>
+                        <form :action="actionUrl" method="POST" class="flex-1">
+                            @csrf
+                            <button type="submit"
+                                class="w-full py-3.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-700 shadow-lg shadow-primary/30 transition-all active:scale-95 uppercase tracking-wider">
+                                Confirm Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     @push('scripts')

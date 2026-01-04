@@ -141,20 +141,20 @@
                     </div>
 
                     <div x-data
-                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, minDate: 'today', altInput: true, altFormat: 'd M Y, H:i' })">
+                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, minDate: 'today', altInput: true, altFormat: 'd M Y, H:i', altInputClass: 'w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer' })">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Start Date</label>
                         <input x-ref="picker" type="text" name="start_date" value="{{ old('start_date') }}"
                             placeholder="Select Start Date"
-                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
+                            class="hidden">
                         @error('start_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div x-data
-                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, minDate: 'today', altInput: true, altFormat: 'd M Y, H:i' })">
+                        x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, minDate: 'today', altInput: true, altFormat: 'd M Y, H:i', altInputClass: 'w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer' })">
                         <label class="block text-sm font-bold text-gray-700 mb-2">End Date</label>
                         <input x-ref="picker" type="text" name="end_date" value="{{ old('end_date') }}"
                             placeholder="Select End Date"
-                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
+                            class="hidden">
                         @error('end_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 

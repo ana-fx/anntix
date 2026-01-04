@@ -40,14 +40,14 @@
                 </div>
             </div>
 
-                <div x-data x-init="flatpickr($refs.startPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y' })">
+                <div x-data x-init="flatpickr($refs.startPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y', altInputClass: 'px-6 py-2.5 min-w-[150px] rounded-xl border border-gray-100 bg-white text-sm font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none text-dark cursor-pointer' })">
                     <input x-ref="startPicker" type="text" name="start_date" value="{{ request('start_date') }}" placeholder="Start Date"
-                        class="px-4 py-2.5 rounded-xl border-none bg-white text-sm font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none">
+                        class="hidden">
                 </div>
 
-                <div x-data x-init="flatpickr($refs.endPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y' })">
+                <div x-data x-init="flatpickr($refs.endPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y', altInputClass: 'px-6 py-2.5 min-w-[150px] rounded-xl border border-gray-100 bg-white text-sm font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none text-dark cursor-pointer' })">
                     <input x-ref="endPicker" type="text" name="end_date" value="{{ request('end_date') }}" placeholder="End Date"
-                        class="px-4 py-2.5 rounded-xl border-none bg-white text-sm font-bold focus:ring-4 focus:ring-primary/10 transition-all outline-none">
+                        class="hidden">
                 </div>
 
                 <button type="submit"

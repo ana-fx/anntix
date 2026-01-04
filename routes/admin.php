@@ -11,7 +11,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('logout', [AdminLoginController::class, 'destroy'])->name('logout');
-    Route::view('dashboard', 'admin.dashboard')->name('dashboard');
+    Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
     Route::put('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
@@ -28,12 +28,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('events/{event}/unassign-reseller/{reseller}', [\App\Http\Controllers\Admin\EventController::class, 'unassignReseller'])->name('events.unassign-reseller');
     Route::resource('events.tickets', \App\Http\Controllers\Admin\TicketController::class)->shallow();
     Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
+    Route::get('events/{event}/withdrawals/create', [\App\Http\Controllers\Admin\WithdrawalController::class, 'create'])->name('events.withdrawals.create');
+    Route::post('events/{event}/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'store'])->name('events.withdrawals.store');
 
     // Report
     Route::get('reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/transactions', [\App\Http\Controllers\Admin\ReportController::class, 'transactions'])->name('reports.transactions');
     Route::get('reports/scanner', [\App\Http\Controllers\Admin\ReportController::class, 'scanner'])->name('reports.scanner');
     Route::get('reports/transactions/{transaction:id}', [\App\Http\Controllers\Admin\ReportController::class, 'showTransaction'])->name('reports.transactions.show');
+    Route::post('reports/transactions/{transaction}/resend-email', [\App\Http\Controllers\Admin\ReportController::class, 'resendEmail'])->name('reports.resend-email');
 
     // Scanners
     // Scanners

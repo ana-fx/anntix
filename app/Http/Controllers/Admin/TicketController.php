@@ -19,6 +19,26 @@ class TicketController extends Controller
 
         $tickets = $event->tickets()
             ->withSum([
+                'transactions as online_qty_paid' => function ($query) {
+                    $query->where('status', 'paid')->whereNull('reseller_id');
+                }
+            ], 'quantity')
+            ->withSum([
+                'transactions as reseller_qty_paid' => function ($query) {
+                    $query->where('status', 'paid')->whereNotNull('reseller_id');
+                }
+            ], 'quantity')
+            ->withSum([
+                'transactions as online_total_paid' => function ($query) {
+                    $query->where('status', 'paid')->whereNull('reseller_id');
+                }
+            ], 'total_price')
+            ->withSum([
+                'transactions as reseller_total_paid' => function ($query) {
+                    $query->where('status', 'paid')->whereNotNull('reseller_id');
+                }
+            ], 'total_price')
+            ->withSum([
                 'transactions as transactions_sum_quantity_paid' => function ($query) {
                     $query->where('status', 'paid');
                 }
@@ -29,11 +49,6 @@ class TicketController extends Controller
                         ->where('created_at', '>=', now()->subDay());
                 }
             ], 'quantity')
-            ->withSum([
-                'transactions as transactions_sum_total_price' => function ($query) {
-                    $query->where('status', 'paid');
-                }
-            ], 'total_price')
             ->latest()
             ->paginate(10);
 
@@ -44,7 +59,42 @@ class TicketController extends Controller
             ->take(10)
             ->get();
 
-        return view('admin.tickets.index', compact('event', 'tickets', 'recentSales', 'handlingFeeValue'));
+        // Calculate Global Totals for this Event
+        $allTickets = $event->tickets()
+            ->withSum(['transactions as online_qty' => fn($q) => $q->where('status', 'paid')->whereNull('reseller_id')], 'quantity')
+            ->withSum(['transactions as reseller_qty' => fn($q) => $q->where('status', 'paid')->whereNotNull('reseller_id')], 'quantity')
+            ->get();
+
+        $totalTicketRevenue = 0;
+        $totalOrgTax = 0;
+
+        foreach ($allTickets as $t) {
+            $qPaid = ($t->online_qty ?? 0) + ($t->reseller_qty ?? 0);
+            $tRevenue = $qPaid * $t->price;
+
+            $orgFeeUnit = $event->organizer_fee_type === 'percent'
+                ? $t->price * ($event->organizer_fee / 100)
+                : $event->organizer_fee;
+
+            $totalTicketRevenue += $tRevenue;
+            $totalOrgTax += ($qPaid * $orgFeeUnit);
+        }
+
+        $totalSaldo = $totalTicketRevenue - $totalOrgTax;
+        $totalWithdrawn = $event->withdrawals()->sum('amount');
+        $availableSaldo = $totalSaldo - $totalWithdrawn;
+
+        return view('admin.tickets.index', compact(
+            'event',
+            'tickets',
+            'recentSales',
+            'handlingFeeValue',
+            'totalTicketRevenue',
+            'totalOrgTax',
+            'totalSaldo',
+            'totalWithdrawn',
+            'availableSaldo'
+        ));
     }
 
     public function create(Event $event)

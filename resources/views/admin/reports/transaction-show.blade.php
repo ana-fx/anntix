@@ -289,6 +289,7 @@
                             <span class="text-base font-bold text-teal-50">Rp
                                 {{ number_format($transaction->quantity * ($transaction->ticket->price ?? 0), 0, ',', '.') }}</span>
                         </div>
+                        @if(!$transaction->reseller_id)
                         <div class="flex justify-between items-center group">
                             <span
                                 class="text-[10px] font-black text-teal-100/30 uppercase tracking-[0.2em] group-hover:text-teal-400 transition-colors">Handling
@@ -296,6 +297,7 @@
                             <span class="text-base font-bold text-teal-50">Rp
                                 {{ number_format($handlingTotal, 0, ',', '.') }}</span>
                         </div>
+                        @endif
                         <div class="flex justify-between items-center group/item">
                             <span
                                 class="text-[10px] font-black text-teal-100/30 uppercase tracking-[0.2em] group-hover/item:text-teal-400 transition-colors">Gateway
@@ -315,12 +317,28 @@
                         </div>
                     </div>
 
-                    <div class="p-6 bg-white/[0.03] rounded-3xl text-center border border-white/5">
-                        <div class="text-[9px] font-black text-teal-500 uppercase tracking-widest mb-1 italic">Channel
-                            Strategy</div>
-                        <div class="text-sm font-black text-white/90 uppercase tracking-widest">
-                            {{ $transaction->payment_type ?? 'PENDING' }}</div>
-                    </div>
+                    @if($transaction->reseller_id)
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-6 bg-white/[0.03] rounded-3xl text-center border border-white/5">
+                                <div class="text-[9px] font-black text-teal-500 uppercase tracking-widest mb-1 italic">Reseller Agent</div>
+                                <div class="text-xs font-black text-white/90 uppercase tracking-widest truncate" title="{{ $transaction->reseller->name }}">
+                                    {{ Str::limit($transaction->reseller->name, 15) }}
+                                </div>
+                            </div>
+                            <div class="p-6 bg-white/[0.03] rounded-3xl text-center border border-white/5">
+                                <div class="text-[9px] font-black text-teal-500 uppercase tracking-widest mb-1 italic">Channel</div>
+                                <div class="text-xs font-black text-white/90 uppercase tracking-widest">
+                                    {{ $transaction->payment_type ?? 'MANUAL' }}</div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="p-6 bg-white/[0.03] rounded-3xl text-center border border-white/5">
+                            <div class="text-[9px] font-black text-teal-500 uppercase tracking-widest mb-1 italic">Channel
+                                Strategy</div>
+                            <div class="text-sm font-black text-white/90 uppercase tracking-widest">
+                                {{ $transaction->payment_type ?? 'PENDING' }}</div>
+                        </div>
+                    @endif
                 </div>
             </div>
 

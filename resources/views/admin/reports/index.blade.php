@@ -5,16 +5,18 @@
             <h2 class="text-4xl font-black text-dark tracking-tight">Performance Analytics</h2>
             <p class="text-gray-500 mt-1 font-medium">Deep dive into your sales data and event performance.</p>
         </div>
-        
+
         <!-- Date Filter Form -->
         <form action="{{ route('admin.reports.index') }}" method="GET" class="flex items-center gap-2 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm focus-within:shadow-md transition-shadow">
-            <div class="flex items-center px-3 gap-2">
+            <div class="flex items-center px-4 gap-2" x-data x-init="flatpickr($refs.startPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y', altInputClass: 'bg-transparent border-none p-0 text-sm font-bold text-dark focus:ring-0 cursor-pointer w-28 uppercase tracking-widest' })">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                <input type="date" name="start_date" value="{{ $startDate }}" class="bg-transparent border-none p-0 text-sm font-bold text-dark focus:ring-0 cursor-pointer">
+                <input x-ref="startPicker" type="text" name="start_date" value="{{ $startDate }}"
+                    class="hidden">
             </div>
             <div class="w-px h-6 bg-gray-100"></div>
-            <div class="flex items-center px-3 gap-2">
-                <input type="date" name="end_date" value="{{ $endDate }}" class="bg-transparent border-none p-0 text-sm font-bold text-dark focus:ring-0 cursor-pointer">
+            <div class="flex items-center px-4 gap-2" x-data x-init="flatpickr($refs.endPicker, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd M Y', altInputClass: 'bg-transparent border-none p-0 text-sm font-bold text-dark focus:ring-0 cursor-pointer w-28 uppercase tracking-widest' })">
+                <input x-ref="endPicker" type="text" name="end_date" value="{{ $endDate }}"
+                    class="hidden">
             </div>
             <button type="submit" class="p-3 bg-dark text-white rounded-xl hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-dark/10">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,26 +150,25 @@
                     <span class="text-[10px] font-black text-primary uppercase tracking-widest">Live Pulse</span>
                 </div>
             </div>
-            
+
             <div class="flex-1 flex items-end gap-3 h-64 px-2">
                 @if($chartRevenue->count() > 0)
                     @php $maxRevenue = $chartRevenue->max(); @endphp
                     @foreach($dailyRevenue as $day)
-                        @php 
-                            $height = $maxRevenue > 0 ? ($day->revenue / $maxRevenue) * 100 : 0; 
+                        @php
+                            $height = $maxRevenue > 0 ? ($day->revenue / $maxRevenue) * 100 : 0;
                         @endphp
                         <div class="flex-1 flex flex-col items-center group relative h-full justify-end">
                             <!-- Tooltip -->
                             <div class="absolute bottom-full mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 bg-dark text-white text-[10px] font-black rounded-lg py-2 px-3 whitespace-nowrap z-10 pointer-events-none shadow-xl uppercase tracking-widest">
                                 Rp {{ number_format($day->revenue, 0, ',', '.') }}
                             </div>
-                            
+
                             <!-- Bar -->
                             <div class="w-full bg-primary/[0.08] rounded-2xl hover:bg-primary transition-all duration-500 relative cursor-pointer" style="height: {{ max($height, 5) }}%">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             </div>
-                            <!-- Date Label -->
-                            <div class="mt-4 text-[9px] font-black text-gray-300 group-hover:text-primary transition-colors uppercase transition-all rotate-45 md:rotate-0 origin-left">{{ \Carbon\Carbon::parse($day->date)->format('d M') }}</div>
+                            <div class="mt-4 text-[9px] font-black text-gray-300 group-hover:text-primary uppercase transition-all rotate-45 md:rotate-0 origin-left">{{ \Carbon\Carbon::parse($day->date)->format('d M') }}</div>
                         </div>
                     @endforeach
                 @else

@@ -146,4 +146,13 @@ class ReportController extends Controller
 
         return view('admin.reports.scanner', compact('transactions'));
     }
+    public function resendEmail(Transaction $transaction)
+    {
+        try {
+            \Illuminate\Support\Facades\Mail::to($transaction->email)->send(new \App\Mail\PaymentSuccess($transaction));
+            return back()->with('success', 'Payment success email has been resent to ' . $transaction->email);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to resend email: ' . $e->getMessage());
+        }
+    }
 }
