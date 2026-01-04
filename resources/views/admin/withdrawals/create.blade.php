@@ -2,7 +2,7 @@
     <div class="max-w-5xl mx-auto space-y-8 pb-12">
         <!-- Back Link -->
         <div>
-            <a href="{{ route('admin.events.tickets.index', $event) }}" class="inline-flex items-center text-sm font-bold text-gray-400 hover:text-primary transition-colors gap-2">
+            <a href="{{ route('admin.events.tickets-report.index', $event) }}" class="inline-flex items-center text-sm font-bold text-gray-400 hover:text-primary transition-colors gap-2">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>

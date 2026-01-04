@@ -5,10 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PageController; // Added this line
-use App\Http\Controllers\SiteAccessController;
 
-Route::get('/site-access', [SiteAccessController::class, 'index'])->name('site-access.index');
-Route::post('/site-access/unlock', [SiteAccessController::class, 'unlock'])->name('site-access.unlock');
 
 // Error Page Previews
 Route::get('/errors/403', function () {
@@ -22,6 +19,12 @@ Route::get('/errors/419', function () {
 });
 Route::get('/errors/500', function () {
     abort(500);
+});
+Route::get('/errors/429', function () {
+    abort(429);
+});
+Route::get('/errors/503', function () {
+    abort(503);
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -52,7 +55,9 @@ Route::post('/payment/{transaction}/reseller-complete', [PaymentController::clas
 Route::get('/payment/success/{transaction}', [PaymentController::class, 'success'])->name('payment.success');
 Route::post('/midtrans/notification', [PaymentController::class, 'notification'])->name('midtrans.notification');
 
-Route::view('dashboard', 'admin.dashboard')
+use App\Http\Controllers\Admin\DashboardController;
+
+Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'admin'])
     ->name('dashboard');
 

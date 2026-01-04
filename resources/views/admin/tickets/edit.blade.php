@@ -2,7 +2,7 @@
     <div class="max-w-3xl mx-auto">
         <h2 class="text-3xl font-bold text-gray-900 mb-8">Edit Ticket for {{ $event->name }}</h2>
 
-        <form action="{{ route('admin.tickets.update', $ticket) }}" method="POST" class="space-y-8">
+        <form action="{{ route('admin.tickets-report.update', $ticket) }}" method="POST" class="space-y-8">
             @csrf
             @method('PUT')
 

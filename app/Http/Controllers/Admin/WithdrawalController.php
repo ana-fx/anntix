@@ -81,6 +81,6 @@ class WithdrawalController extends Controller
             'note' => $validated['note'],
         ]);
 
-        return redirect()->route('admin.events.tickets.index', $event)->with('success', 'Withdrawal recorded successfully.');
+        return redirect()->route('admin.events.tickets-report.index', $event)->with('success', 'Withdrawal recorded successfully.');
     }
 }

@@ -26,7 +26,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('events/{event}/resellers', [\App\Http\Controllers\Admin\EventController::class, 'resellers'])->name('events.resellers.index');
     Route::post('events/{event}/assign-reseller', [\App\Http\Controllers\Admin\EventController::class, 'assignReseller'])->name('events.assign-reseller');
     Route::delete('events/{event}/unassign-reseller/{reseller}', [\App\Http\Controllers\Admin\EventController::class, 'unassignReseller'])->name('events.unassign-reseller');
-    Route::resource('events.tickets', \App\Http\Controllers\Admin\TicketController::class)->shallow();
+    Route::resource('events.tickets-report', \App\Http\Controllers\Admin\TicketController::class)
+        ->shallow()
+        ->parameters(['tickets-report' => 'ticket']);
     Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
     Route::get('events/{event}/withdrawals/create', [\App\Http\Controllers\Admin\WithdrawalController::class, 'create'])->name('events.withdrawals.create');
     Route::post('events/{event}/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'store'])->name('events.withdrawals.store');

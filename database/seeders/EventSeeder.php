@@ -50,7 +50,7 @@ class EventSeeder extends Seeder
                 'quota' => 1000,
                 'start_date' => now(),
                 'end_date' => Carbon::parse('2026-03-27 12:00:00'),
-                'description' => 'Tiket Festival Stand Up',
+                'description' => 'Tiket Festival',
                 'max_purchase_per_user' => 5,
             ]
         );
@@ -62,15 +62,11 @@ class EventSeeder extends Seeder
                 'quota' => 200,
                 'start_date' => now(),
                 'end_date' => Carbon::parse('2026-03-27 12:00:00'),
-                'description' => 'Tiket VIP dengan akses eksklusif',
+                'description' => 'Tiket VIP',
                 'max_purchase_per_user' => 2,
             ]
         );
 
-        // Attach Reseller
-        $reseller = \App\Models\User::where('email', 'reseller@anntix.com')->first();
-        if ($reseller) {
-            $event->resellers()->syncWithoutDetaching([$reseller->id]);
-        }
+
     }
 }

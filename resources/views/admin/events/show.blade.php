@@ -129,7 +129,7 @@
                             $latestTicket = $event->tickets->sortByDesc('end_date')->first();
                             $nextStartDate = $latestTicket ? $latestTicket->end_date->addDay()->format('Y-m-d H:i') : null;
                         @endphp
-                        <a href="{{ route('admin.events.tickets.create', ['event' => $event, 'min_start_date' => $nextStartDate]) }}"
+                        <a href="{{ route('admin.events.tickets-report.create', ['event' => $event, 'min_start_date' => $nextStartDate]) }}"
                             class="text-sm font-bold text-primary hover:text-primary-700 transition-colors">
                             + Add Ticket
                         </a>
@@ -176,7 +176,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
-                                                <a href="{{ route('admin.tickets.edit', $ticket) }}"
+                                                <a href="{{ route('admin.tickets-report.edit', $ticket) }}"
                                                     class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                                                     title="Edit Ticket">
                                                     <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -185,7 +185,7 @@
                                                     </svg>
                                                 </a>
 
-                                                <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST"
+                                                <form action="{{ route('admin.tickets-report.destroy', $ticket) }}" method="POST"
                                                     @submit.prevent="formToSubmit = $el; deleteModalOpen = true"
                                                     class="inline-block">
                                                     @csrf
@@ -518,12 +518,12 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="{{ route('admin.tickets.edit', $featuredTicket) }}"
+                        <a href="{{ route('admin.tickets-report.edit', $featuredTicket) }}"
                             class="block w-full py-4 bg-white text-primary font-bold rounded-2xl text-center hover:bg-gray-50 transition-all shadow-lg active:scale-[0.98]">
                             Edit Ticket Pricing
                         </a>
                     @else
-                        <a href="{{ route('admin.events.tickets.create', $event) }}"
+                        <a href="{{ route('admin.events.tickets-report.create', $event) }}"
                             class="block w-full py-4 bg-white text-primary font-bold rounded-2xl text-center hover:bg-gray-50 transition-all shadow-lg active:scale-[0.98]">
                             Add First Ticket
                         </a>

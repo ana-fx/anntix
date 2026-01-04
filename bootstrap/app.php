@@ -23,9 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [
-            \App\Http\Middleware\SiteAccessMiddleware::class,
-        ]);
+
         $middleware->validateCsrfTokens(except: [
             'midtrans/notification',
         ]);
@@ -42,10 +40,14 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
         $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, \Illuminate\Http\Request $request) {
-            if ($e->getStatusCode() === 403) {
-                if ($request->is('admin/*') || $request->is('dashboard')) {
+            $status = $e->getStatusCode();
+            if ($request->is('admin/*') || $request->is('dashboard')) {
+                if ($status === 403)
                     return response()->view('errors.403-admin', [], 403);
-                }
+                if ($status === 429)
+                    return response()->view('errors.429-admin', [], 429);
+                if ($status === 503)
+                    return response()->view('errors.503-admin', [], 503);
             }
         });
     })->create();

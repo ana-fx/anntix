@@ -57,7 +57,7 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center">
-                                    <a href="{{ route('admin.events.tickets.index', $event) }}"
+                                    <a href="{{ route('admin.events.tickets-report.index', $event) }}"
                                         class="group flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100"
                                         title="Manage Tickets">
                                         <div class="flex items-baseline gap-0.5">

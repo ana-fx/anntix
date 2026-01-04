@@ -2,7 +2,7 @@
     <div class="max-w-3xl mx-auto">
         <h2 class="text-3xl font-bold text-gray-900 mb-8">Create Ticket for {{ $event->name }}</h2>
 
-        <form action="{{ route('admin.events.tickets.store', $event) }}" method="POST" class="space-y-8">
+        <form action="{{ route('admin.events.tickets-report.store', $event) }}" method="POST" class="space-y-8">
             @csrf
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">

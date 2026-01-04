@@ -4,12 +4,12 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-black text-dark uppercase tracking-tight">Global Settings</h1>
-                <p class="text-secondary mt-1">Configure your website's identity, SEO, and contact information.</p>
+                <p class="text-gray-400 mt-1">Configure your website's identity, SEO, and contact information.</p>
             </div>
         </div>
 
         @if($errors->any())
-            <div class="p-4 bg-red-50 border border-red-100 text-red-700 rounded-2xl animate-fade-in">
+            <div class="p-4 bg-gray-50 border border-gray-100 text-gray-500 rounded-2xl animate-fade-in">
                 <ul class="list-disc list-inside text-sm font-bold">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -20,7 +20,7 @@
 
         @if(session('success'))
             <div
-                class="p-4 bg-green-50 border border-green-100 text-green-700 rounded-2xl flex items-center gap-3 animate-fade-in">
+                class="p-4 bg-green-50 border border-gray-100 text-dark rounded-2xl flex items-center gap-3 animate-fade-in">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
@@ -50,8 +50,8 @@
             @method('PUT')
 
             <!-- Identity & Branding -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-5 py-3 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -60,12 +60,12 @@
                     </div>
                     <h2 class="text-xl font-black text-dark uppercase tracking-tight">Site Identity</h2>
                 </div>
-                <div class="p-8 space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-5 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="space-y-2">
                             <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Site Name</label>
                             <input type="text" name="site_name" value="{{ $settings['site_name'] ?? '' }}"
-                                class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium">
+                                class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium">
                         </div>
                     </div>
 
@@ -130,9 +130,9 @@
             </div>
 
             <!-- SEO Settings -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-5 py-3 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 text-dark flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -140,27 +140,27 @@
                     </div>
                     <h2 class="text-xl font-black text-dark uppercase tracking-tight">SEO Configuration</h2>
                 </div>
-                <div class="p-8 space-y-6">
+                <div class="p-5 space-y-6">
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Meta Title</label>
                         <input type="text" name="seo_title" value="{{ $settings['seo_title'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="Primary title for search engines">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Meta
                             Description</label>
                         <textarea name="seo_description" rows="3"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="Briefly describe what your site is about...">{{ $settings['seo_description'] ?? '' }}</textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Contact Information -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-5 py-3 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 text-dark flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -168,32 +168,32 @@
                     </div>
                     <h2 class="text-xl font-black text-dark uppercase tracking-tight">Contact Information</h2>
                 </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Contact Email</label>
                         <input type="email" name="contact_email" value="{{ $settings['contact_email'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium">
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">WhatsApp Info</label>
                         <input type="text" name="contact_whatsapp" value="{{ $settings['contact_whatsapp'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="e.g. +62 812 3456 7890">
                     </div>
                     <div class="md:col-span-2 space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Physical
                             Location</label>
                         <textarea name="contact_location" rows="2"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="Full address of the office or venue...">{{ $settings['contact_location'] ?? '' }}</textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Social Media -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-5 py-3 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 text-dark flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
@@ -203,38 +203,38 @@
                     </div>
                     <h2 class="text-xl font-black text-dark uppercase tracking-tight">Social Media</h2>
                 </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Facebook URL</label>
                         <input type="text" name="social_facebook" value="{{ $settings['social_facebook'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="https://facebook.com/your-page">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Twitter URL</label>
                         <input type="text" name="social_twitter" value="{{ $settings['social_twitter'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="https://twitter.com/your-profile">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Instagram URL</label>
                         <input type="text" name="social_instagram" value="{{ $settings['social_instagram'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="https://instagram.com/your-profile">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">TikTok URL</label>
                         <input type="text" name="social_tiktok" value="{{ $settings['social_tiktok'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="https://tiktok.com/@your-profile">
                     </div>
                 </div>
             </div>
 
             <!-- Payment Configuration -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-5 py-3 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 text-dark flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -242,13 +242,13 @@
                     </div>
                     <h2 class="text-xl font-black text-dark uppercase tracking-tight">Payment Configuration</h2>
                 </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">QRIS Fee (%)</label>
                         <p class="text-xs text-gray-500 px-1 mb-2">Percentage fee for QRIS (e.g. 0.7%)</p>
                         <input type="number" step="0.01" name="fee_qris_percent"
                             value="{{ $settings['fee_qris_percent'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="0.7">
                     </div>
                     <div class="space-y-2">
@@ -256,14 +256,14 @@
                             Fee</label>
                         <p class="text-xs text-gray-500 px-1 mb-2">Fixed fee for Bank (e.g. 4000)</p>
                         <input type="number" name="fee_bank_fixed" value="{{ $settings['fee_bank_fixed'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="4000">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-black text-dark uppercase tracking-widest px-1">Handling Fee</label>
                         <p class="text-xs text-gray-500 px-1 mb-2">Platform fee per transaction (IDR)</p>
                         <input type="number" name="handling_fee" value="{{ $settings['handling_fee'] ?? '' }}"
-                            class="w-full px-5 py-4 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
+                            class="w-full px-4 py-3 bg-gray-50 border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all font-medium"
                             placeholder="e.g. 5000">
                     </div>
                 </div>

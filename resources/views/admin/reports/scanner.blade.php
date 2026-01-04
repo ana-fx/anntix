@@ -1,7 +1,7 @@
 <x-layouts.admin title="Scanner Report">
-    <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h2 class="text-4xl font-black text-dark tracking-tight">Scanner</h2>
+            <h2 class="text-3xl font-black text-dark tracking-tight">Scanner</h2>
             <p class="text-gray-500 mt-1 font-medium">Real-time log of ticket redemptions and entry points.</p>
         </div>
 
@@ -18,53 +18,53 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm shadow-primary/5 border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead>
                     <tr
                         class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
-                        <th class="px-8 py-5">Ticket & Event</th>
-                        <th class="px-8 py-5">Customer</th>
-                        <th class="px-8 py-5">Status</th>
-                        <th class="px-8 py-5">Created Date</th>
-                        <th class="px-8 py-5">Scanned Date</th>
-                        <th class="px-8 py-5">Scanned By</th>
+                        <th class="px-4 py-3">Ticket & Event</th>
+                        <th class="px-4 py-3">Customer</th>
+                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Created Date</th>
+                        <th class="px-4 py-3">Scanned Date</th>
+                        <th class="px-4 py-3">Scanned By</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse($transactions as $trx)
-                        <tr class="group hover:bg-primary/[0.02] transition-colors">
-                            <td class="px-8 py-6">
+                        <tr class="group hover:hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3">
                                 <div class="text-sm font-black text-dark mb-1">{{ $trx->ticket->name ?? 'N/A' }}</div>
-                                <div class="text-[10px] font-bold text-primary uppercase tracking-widest">
+                                <div class="text-[10px] font-bold text-gray-400 group-hover:text-primary transition-colors uppercase tracking-widest">
                                     {{ $trx->event->name ?? 'N/A' }}</div>
                             </td>
-                            <td class="px-8 py-6">
+                            <td class="px-4 py-3">
                                 <div class="text-sm font-black text-dark">{{ $trx->name }}</div>
-                                <div class="text-xs text-secondary font-medium">{{ $trx->email }}</div>
+                                <div class="text-xs text-gray-400 font-medium">{{ $trx->email }}</div>
                             </td>
-                            <td class="px-8 py-6">
+                            <td class="px-4 py-3">
                                 <span
-                                    class="inline-flex px-3 py-1 pb-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700">
+                                    class="inline-flex px-3 py-1 pb-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary">
                                     Redeemed
                                 </span>
                             </td>
-                            <td class="px-8 py-6">
+                            <td class="px-4 py-3">
                                 <div class="text-xs font-bold text-dark">{{ $trx->created_at->format('d M Y') }}</div>
-                                <div class="text-[10px] text-secondary font-medium uppercase tracking-widest">
+                                <div class="text-[10px] text-gray-400 font-medium uppercase tracking-widest">
                                     {{ $trx->created_at->format('H:i:s') }}</div>
                             </td>
-                            <td class="px-8 py-6">
-                                <div class="text-xs font-bold text-emerald-600 font-black">
+                            <td class="px-4 py-3">
+                                <div class="text-xs font-bold text-dark font-black">
                                     {{ $trx->redeemed_at->format('d M Y') }}</div>
-                                <div class="text-[10px] text-emerald-500/60 font-black uppercase tracking-widest">
+                                <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">
                                     {{ $trx->redeemed_at->format('H:i:s') }}</div>
                             </td>
-                            <td class="px-8 py-6 text-sm font-black text-dark italic uppercase tracking-tighter">
+                            <td class="px-4 py-3 text-sm font-black text-primary italic uppercase tracking-tighter">
                                 <div class="flex items-center gap-2">
                                     <div
-                                        class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-400 not-italic">
+                                        class="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center text-[10px] text-gray-400 not-italic">
                                         {{ substr($trx->scanner->name ?? '?', 0, 1) }}
                                     </div>
                                     {{ $trx->scanner->name ?? 'System' }}
@@ -73,7 +73,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-8 py-20 text-center">
+                            <td colspan="6" class="px-4 py-20 text-center">
                                 <div class="flex flex-col items-center">
                                     <svg class="w-12 h-12 text-gray-200 mb-4" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -90,7 +90,7 @@
             </table>
         </div>
         @if($transactions->hasPages())
-            <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+            <div class="px-4 py-3 bg-gray-50/50 border-t border-gray-100">
                 {{ $transactions->links() }}
             </div>
         @endif

@@ -14,40 +14,23 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@admin.com'],
+            ['email' => 'halllo@anntix.id'],
             [
                 'name' => 'System Admin',
-                'password' => Hash::make('admin@admin.com'),
+                'password' => Hash::make('Anntix.2026'),
                 'role' => 'admin',
             ]
         );
 
         User::updateOrCreate(
-            ['email' => 'admin2@admin.com'],
+            ['email' => 'andreananntixx@gmail.com'],
             [
-                'name' => 'Second Admin',
-                'password' => Hash::make('admin2@admin.com'),
+                'name' => 'Andrea',
+                'password' => Hash::make('Anntix.2026'),
                 'role' => 'admin',
             ]
         );
 
-        // Scanners
-        User::updateOrCreate(
-            ['email' => 'officer1@anntix.com'],
-            [
-                'name' => 'Scanner Officer 1',
-                'password' => Hash::make('officer1@anntix.com'),
-                'role' => 'scanner',
-            ]
-        );
 
-        User::updateOrCreate(
-            ['email' => 'officer2@anntix.com'],
-            [
-                'name' => 'Scanner Officer 2',
-                'password' => Hash::make('officer2@anntix.com'),
-                'role' => 'scanner',
-            ]
-        );
     }
 }

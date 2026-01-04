@@ -1,8 +1,8 @@
 <x-layouts.admin title="Dashboard">
     <!-- Header -->
-    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-            <h2 class="text-4xl font-black text-dark tracking-tight">Dashboard Overview</h2>
+            <h2 class="text-3xl font-black text-dark tracking-tight">Dashboard Overview</h2>
             <p class="text-gray-500 mt-1 font-medium">Real-time insight into your event performance.</p>
         </div>
         <div class="text-sm font-bold text-gray-400 font-mono bg-gray-100 px-4 py-2 rounded-xl">
@@ -11,14 +11,14 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         <!-- Revenue Card -->
-        <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-primary/5 border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
             <div>
                 <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Total Revenue</p>
                 <p class="text-2xl font-black text-dark tracking-tight">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
             </div>
-            <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg shadow-primary/20">
+            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg ">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
@@ -26,12 +26,12 @@
         </div>
 
         <!-- Tickets Sold -->
-        <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-primary/5 border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
             <div>
                 <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Tickets Sold</p>
                 <p class="text-2xl font-black text-dark tracking-tight">{{ number_format($ticketsSold) }}</p>
             </div>
-            <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg shadow-primary/20">
+            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg ">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                 </svg>
@@ -39,12 +39,12 @@
         </div>
 
         <!-- Active Events -->
-        <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-primary/5 border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
             <div>
                 <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Active Events</p>
                 <p class="text-2xl font-black text-dark tracking-tight">{{ number_format($activeEvents) }}</p>
             </div>
-            <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg shadow-primary/20">
+            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg ">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
@@ -52,12 +52,12 @@
         </div>
 
         <!-- Resellers -->
-        <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-primary/5 border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group hover:scale-[1.02] transition-transform duration-300">
             <div>
                 <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Resellers</p>
                 <p class="text-2xl font-black text-dark tracking-tight">{{ number_format($totalResellers) }}</p>
             </div>
-            <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg shadow-primary/20">
+            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-lg ">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
@@ -66,9 +66,9 @@
     </div>
 
     <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
         <!-- Chart Section -->
-        <div class="lg:col-span-2 bg-white rounded-[2.5rem] shadow-xl shadow-primary/5 border border-gray-100 p-8">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h3 class="text-xl font-black text-dark tracking-tight">Revenue Analytics</h3>
@@ -86,13 +86,13 @@
         </div>
 
         <!-- Recent Transactions -->
-        <div class="bg-white rounded-[2.5rem] shadow-xl shadow-primary/5 border border-gray-100 p-8 flex flex-col h-full">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex flex-col h-full">
             <h3 class="text-xl font-black text-dark tracking-tight mb-6">Recent Activity</h3>
 
             <div class="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar">
                 @forelse($recentTransactions as $transaction)
                     <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-primary/5 transition-colors border border-gray-50 group">
-                        <div class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-emerald-500 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-dark shadow-sm">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -102,7 +102,7 @@
                                 <p class="text-sm font-black text-dark truncate">{{ $transaction->name }}</p>
                                 <span class="text-[10px] font-bold text-gray-400">{{ $transaction->created_at->diffForHumans(null, true, true) }}</span>
                             </div>
-                            <p class="text-xs font-medium text-gray-500 truncate">
+                            <p class="text-xs font-medium text-gray-500 group-hover:text-primary transition-colors truncate">
                                 {{ $transaction->event->name }}
                                 <span class="text-primary font-bold">• Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</span>
                             </p>

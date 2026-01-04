@@ -1,18 +1,8 @@
 <x-layouts.app title="Contact">
     <!-- Header -->
-    <div class="bg-dark pt-32 pb-20 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-20">
-            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M0 100 L100 0 L100 100 Z" fill="white"></path>
-            </svg>
-        </div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-            <h1 class="text-4xl md:text-6xl font-heading font-black mb-4">Get in Touch</h1>
-            <p class="text-xl text-gray-300 max-w-2xl mx-auto">Have questions? We're here to help.</p>
-        </div>
-    </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
             <!-- Contact Info -->
@@ -117,6 +107,17 @@
                         <textarea name="message" id="message" rows="5" required
                             class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"></textarea>
                     </div>
+
+                    <div class="space-y-2">
+                        <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.key') }}"></div>
+                        @error('cf-turnstile-response')
+                            <p class="text-sm text-red-600 font-bold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    @push('scripts')
+                        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                    @endpush
 
                     <button type="submit"
                         class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/30 hover:-translate-y-1">

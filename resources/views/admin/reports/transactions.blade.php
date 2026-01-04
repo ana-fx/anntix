@@ -9,7 +9,7 @@
             <button onclick="exportToExcel()"
                 class="group px-6 py-3.5 bg-white text-dark font-bold rounded-2xl hover:bg-gray-50 transition-all shadow-sm border border-gray-100 flex items-center gap-3 active:scale-95">
                 <div
-                    class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                    class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-dark group-hover:scale-110 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Filter & Statistics Card -->
-    <div class="bg-white rounded-[2.5rem] shadow-xl shadow-primary/5 border border-gray-100 p-8 mb-10">
+    <div class="bg-white rounded-2xl shadow-sm shadow-primary/5 border border-gray-100 p-5 mb-10">
         <form action="{{ route('admin.reports.transactions') }}" method="GET"
             class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
             <div class="md:col-span-3">
@@ -118,25 +118,25 @@
     </div>
 
     <!-- Main Table Container -->
-    <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden" x-data="{ confirmModalOpen: false, actionUrl: '' }">
+    <div class="bg-white rounded-2xl shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden" x-data="{ confirmModalOpen: false, actionUrl: '' }">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse" id="transaction-table">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
-                        <th class="px-8 py-5">
+                        <th class="px-4 py-3">
                             Transaction</th>
-                        <th class="px-8 py-5">Customer
+                        <th class="px-4 py-3">Customer
                         </th>
-                        <th class="px-8 py-5">Source</th>
-                        <th class="px-8 py-5">Event Detail</th>
+                        <th class="px-4 py-3">Source</th>
+                        <th class="px-4 py-3">Event Detail</th>
                         <th
-                            class="px-8 py-5 text-right">
+                            class="px-4 py-3 text-right">
                             Amount Breakout</th>
                         <th
-                            class="px-8 py-5 text-center">
+                            class="px-4 py-3 text-center">
                             Status</th>
                         <th
-                            class="px-8 py-5 text-right">
+                            class="px-4 py-3 text-right">
                             Action</th>
                     </tr>
                 </thead>
@@ -157,8 +157,8 @@
                             if ($extraFee < 0) $extraFee = 0;
                         @endphp
                         <tr class="group hover:bg-primary/[0.02] transition-colors">
-                            <td class="px-8 py-7 leading-none">
-                                <a href="{{ route('admin.reports.transactions.show', $transaction->id) }}"
+                            <td class="px-4 py-3 leading-none">
+                                <a href="{{ route('admin.reports.transactions.show', $transaction) }}"
                                     class="block group/item">
                                     <div
                                         class="font-mono text-[11px] font-black text-gray-600 tracking-tighter mb-1 select-all underline decoration-dotted decoration-gray-300 underline-offset-4 group-hover/item:text-dark transition-colors">
@@ -167,14 +167,14 @@
                                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                                     {{ $transaction->created_at->format('d M Y, H:i') }}</div>
                             </td>
-                            <td class="px-8 py-7">
+                            <td class="px-4 py-3">
                                 <div class="text-sm font-black text-dark mb-0.5">{{ $transaction->name }}</div>
                                 <div class="flex flex-col gap-0.5">
-                                    <a href="mailto:{{ $transaction->email }}" class="text-[10px] font-bold text-secondary hover:text-primary transition-colors">{{ $transaction->email }}</a>
+                                    <a href="mailto:{{ $transaction->email }}" class="text-[10px] font-bold text-primary hover:text-primary transition-colors">{{ $transaction->email }}</a>
                                     <a href="tel:{{ $transaction->phone }}" class="text-[10px] font-black text-gray-500 hover:opacity-70 transition-opacity">{{ $transaction->phone }}</a>
                                 </div>
                             </td>
-                            <td class="px-8 py-7">
+                            <td class="px-4 py-3">
                                 @if($transaction->reseller_id)
                                     <div class="flex flex-col">
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100/80 text-gray-500 border border-gray-100 w-max mb-1 uppercase tracking-tighter">Reseller</span>
@@ -183,17 +183,17 @@
                                         </div>
                                     </div>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100/80 text-gray-500 border border-gray-100 w-max uppercase tracking-tighter">Online</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary border border-primary/10 w-max uppercase tracking-tighter">Online</span>
                                 @endif
                             </td>
-                            <td class="px-8 py-7">
+                            <td class="px-4 py-3">
                                 <span
-                                    class="inline-block text-xs font-black text-dark bg-gray-100 px-2.5 py-1 rounded-lg mb-1">{{ $transaction->event->name ?? 'Deleted Event' }}</span>
-                                <div class="text-[10px] font-bold text-secondary uppercase tracking-wider ml-1">
+                                    class="inline-block text-xs font-black text-gray-500 group-hover:text-primary transition-colors bg-gray-100 px-2.5 py-1 rounded-lg mb-1">{{ $transaction->event->name ?? 'Deleted Event' }}</span>
+                                <div class="text-[10px] font-bold text-primary uppercase tracking-wider ml-1">
                                     {{ $transaction->ticket->name ?? 'N/A' }} <span
                                         class="text-gray-400 italic mx-1">x{{ $transaction->quantity }}</span></div>
                             </td>
-                            <td class="px-8 py-7 text-right">
+                            <td class="px-4 py-3 text-right">
                                 <div class="text-base font-black text-dark tracking-tight mb-0.5">Rp
                                     {{ number_format($transaction->total_price, 0, ',', '.') }}</div>
                                 <div class="flex items-center justify-end gap-2">
@@ -209,38 +209,38 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-8 py-7 text-center">
+                            <td class="px-4 py-3 text-center">
                                 @if($transaction->status === 'paid')
                                     <span
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm shadow-emerald-500/10">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-gray-50 text-dark border border-gray-100 shadow-sm ">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
                                         Accepted
                                     </span>
                                 @elseif($transaction->status === 'pending')
                                     <span
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-100 shadow-sm shadow-amber-500/10">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-gray-50 text-gray-500 border border-gray-100 shadow-sm ">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-pulse"></div>
                                         Pending
                                     </span>
                                 @else
                                     <span
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-rose-50 text-rose-600 border border-rose-100 opacity-60">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-gray-50 text-gray-400 border border-gray-100 opacity-60">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                                         Failed
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-8 py-7 text-right">
+                            <td class="px-4 py-3 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <button type="button"
-                                        @click="confirmModalOpen = true; actionUrl = '{{ route('admin.reports.resend-email', $transaction->id) }}'"
+                                        @click="confirmModalOpen = true; actionUrl = '{{ route('admin.reports.resend-email', $transaction) }}'"
                                         class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="Resend Success Email">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                         </svg>
                                     </button>
 
-                                    <a href="{{ route('admin.reports.transactions.show', $transaction->id) }}"
+                                    <a href="{{ route('admin.reports.transactions.show', $transaction) }}"
                                         class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-primary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="View Details">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -255,7 +255,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-8 py-32 text-center">
+                            <td colspan="5" class="px-4 py-32 text-center">
                                 <div class="flex flex-col items-center justify-center opacity-30 group">
                                     <div
                                         class="w-20 h-20 rounded-[2rem] bg-gray-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
@@ -267,7 +267,7 @@
                                         </svg>
                                     </div>
                                     <p class="text-xl font-black text-dark tracking-tight">Empty Vault</p>
-                                    <p class="text-sm font-medium text-secondary mt-1">No transaction records match your
+                                    <p class="text-sm font-medium text-primary mt-1">No transaction records match your
                                         criteria.</p>
                                 </div>
                             </td>
@@ -279,7 +279,7 @@
 
         <!-- Premium Pagination -->
         @if($transactions->hasPages())
-            <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100">
+            <div class="px-4 py-6 bg-gray-50/50 border-t border-gray-100">
                 {{ $transactions->links() }}
             </div>
         @endif
@@ -288,7 +288,7 @@
         <div x-show="confirmModalOpen" style="display: none;"
             class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
             x-transition>
-            <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 relative border border-gray-100"
+            <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-5 relative border border-gray-100"
                 @click.away="confirmModalOpen = false">
                 <div class="flex flex-col items-center text-center">
                     <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">

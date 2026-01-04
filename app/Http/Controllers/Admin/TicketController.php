@@ -67,6 +67,7 @@ class TicketController extends Controller
 
         $totalTicketRevenue = 0;
         $totalOrgTax = 0;
+        $totalHandling = 0;
 
         foreach ($allTickets as $t) {
             $qPaid = ($t->online_qty ?? 0) + ($t->reseller_qty ?? 0);
@@ -78,11 +79,13 @@ class TicketController extends Controller
 
             $totalTicketRevenue += $tRevenue;
             $totalOrgTax += ($qPaid * $orgFeeUnit);
+            $totalHandling += (($t->online_qty ?? 0) * $handlingFeeValue);
         }
 
         $totalSaldo = $totalTicketRevenue - $totalOrgTax;
         $totalWithdrawn = $event->withdrawals()->sum('amount');
         $availableSaldo = $totalSaldo - $totalWithdrawn;
+        $totalPlatformRevenue = $totalOrgTax + $totalHandling;
 
         return view('admin.tickets.index', compact(
             'event',
@@ -93,7 +96,8 @@ class TicketController extends Controller
             'totalOrgTax',
             'totalSaldo',
             'totalWithdrawn',
-            'availableSaldo'
+            'availableSaldo',
+            'totalPlatformRevenue'
         ));
     }
 
