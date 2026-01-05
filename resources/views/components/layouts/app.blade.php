@@ -64,20 +64,20 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Anntix",
-      "alternateName": "Anntix.id",
-      "url": "{{ url('/') }}",
-      "logo": "{{ isset($global_settings['site_logo']) ? asset('storage/' . $global_settings['site_logo']) : asset('logo.png') }}",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "",
-        "contactType": "customer support",
-        "email": "hallo@anntix.id"
-      }
-    }
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => 'Anntix',
+            'alternateName' => 'Anntix.id',
+            'url' => url('/'),
+            'logo' => isset($global_settings['site_logo']) ? asset('storage/' . $global_settings['site_logo']) : asset('logo.png'),
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'telephone' => '',
+                'contactType' => 'customer support',
+                'email' => 'hallo@anntix.id'
+            ]
+        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
 </head>
 
