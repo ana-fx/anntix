@@ -30,7 +30,7 @@ class PaymentSuccess extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Ticket Confirmed: ' . $this->transaction->event->name . ' [' . $this->transaction->code . ']',
+            subject: 'Ticket Confirmed: ' . ($this->transaction->event?->name ?? 'Event') . ' [' . $this->transaction->code . ']',
         );
     }
 

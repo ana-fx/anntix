@@ -149,6 +149,7 @@ class ReportController extends Controller
     public function resendEmail(Transaction $transaction)
     {
         try {
+            $transaction->load('event'); // Ensure event relationship is loaded
             \Illuminate\Support\Facades\Mail::to($transaction->email)->send(new \App\Mail\PaymentSuccess($transaction));
             return back()->with('success', 'Payment success email has been resent to ' . $transaction->email);
         } catch (\Exception $e) {
