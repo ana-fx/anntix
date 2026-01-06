@@ -39,11 +39,6 @@ class ScanController extends Controller
             ], 403);
         }
 
-        // Find transaction/ticket by code
-        // Assuming the 'code' corresponds to a transaction code or a specific ticket identifier.
-        // For simplicity, let's assume transaction code for now, or we might need a unique ticket code if single transaction has multiple tickets.
-        // But usually, anntix likely generates a code per transaction or per ticket.
-        // Let's check Transaction model to see if it has 'code'.
         $transaction = Transaction::where('code', $code)->first();
 
         if (!$transaction) {
@@ -53,7 +48,7 @@ class ScanController extends Controller
             ], 404);
         }
 
-        // Check if transaction belongs to the event (via ticket relationship usually)
+        // Check if transaction belongs to the event
         if ($transaction->ticket->event_id != $eventId) {
             return response()->json([
                 'status' => 'error',
@@ -68,10 +63,62 @@ class ScanController extends Controller
             ], 400);
         }
 
+        // CHANGED: Check if already redeemed but RETURN the data (don't block)
+        $alreadyRedeemed = $transaction->redeemed_at !== null;
+
+        return response()->json([
+            'status' => $alreadyRedeemed ? 'warning' : 'pending',
+            'message' => $alreadyRedeemed
+                ? 'Already scanned at ' . $transaction->redeemed_at->format('H:i:s')
+                : 'Ready to check in',
+            'already_redeemed' => $alreadyRedeemed,
+            'data' => [
+                'transaction_id' => $transaction->id,
+                'code' => $transaction->code,
+                'name' => $transaction->name,
+                'email' => $transaction->email,
+                'phone' => $transaction->phone,
+                'city' => $transaction->city,
+                'nik' => $transaction->nik,
+                'gender' => $transaction->gender,
+                'ticket_type' => $transaction->ticket->name,
+                'quantity' => $transaction->quantity,
+                'redeemed_at' => $transaction->redeemed_at?->format('d M Y, H:i:s'),
+            ]
+        ]);
+    }
+
+    public function redeem(Request $request)
+    {
+        $request->validate([
+            'transaction_id' => 'required|exists:transactions,id',
+            'event_id' => 'required|exists:events,id',
+        ]);
+
+        $transaction = Transaction::findOrFail($request->transaction_id);
+        $eventId = $request->event_id;
+
+        // Verify scanner authorization
+        if (!Auth::user()->scannedEvents()->where('events.id', $eventId)->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
+        // Check if transaction belongs to the event
+        if ($transaction->ticket->event_id != $eventId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid event.'
+            ], 400);
+        }
+
+        // Check if already redeemed
         if ($transaction->redeemed_at) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Ticket already scanned at ' . $transaction->redeemed_at->format('H:i:s')
+                'message' => 'Already redeemed.'
             ], 400);
         }
 
@@ -82,17 +129,8 @@ class ScanController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Ticket verified successfully!',
+            'message' => 'Check-in successful!',
             'data' => [
-                'code' => $transaction->code,
-                'name' => $transaction->name,
-                'email' => $transaction->email,
-                'phone' => $transaction->phone,
-                'city' => $transaction->city,
-                'nik' => $transaction->nik,
-                'gender' => $transaction->gender,
-                'ticket_type' => $transaction->ticket->name,
-                'quantity' => $transaction->quantity,
                 'redeemed_at' => $transaction->redeemed_at->format('H:i:s'),
             ]
         ]);

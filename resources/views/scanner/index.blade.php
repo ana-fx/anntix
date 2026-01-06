@@ -31,21 +31,27 @@
                 <div class="relative" x-data="{ open: false }">
                     <button type="button" @click="open = !open" @click.away="open = false"
                         class="w-full flex items-center justify-between bg-white border border-slate-200 rounded-2xl py-4 px-6 text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm">
-                        <span x-text="selectedEventId ? document.querySelector('[data-event-id=\''+selectedEventId+'\']')?.innerText : 'Select an Event...'"
-                              :class="!selectedEventId ? 'text-slate-400' : 'text-slate-900'"></span>
-                        <svg class="w-5 h-5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                        <span
+                            x-text="selectedEventId ? document.querySelector('[data-event-id=\''+selectedEventId+'\']')?.innerText : 'Select an Event...'"
+                            :class="!selectedEventId ? 'text-slate-400' : 'text-slate-900'"></span>
+                        <svg class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                            :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
 
-                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                         class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-3xl border border-slate-100 overflow-hidden">
                         <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select Event to Scan</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select Event
+                                to Scan</span>
                         </div>
                         <div class="py-2 max-h-60 overflow-y-auto">
                             <button type="button" @click="selectedEventId = ''; stopScanner(); open = false"
-                                class="w-full px-6 py-3.5 text-left hover:bg-slate-50 text-sm font-bold text-slate-400">None / Stop Scanner</button>
+                                class="w-full px-6 py-3.5 text-left hover:bg-slate-50 text-sm font-bold text-slate-400">None
+                                / Stop Scanner</button>
                             @foreach($events as $event)
                                 <button type="button" data-event-id="{{ $event->id }}"
                                     @click="selectedEventId = '{{ $event->id }}'; stopScanner(); open = false"
@@ -145,10 +151,24 @@
 
                     <!-- Status Indicator -->
                     <div class="w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl group animate-bounce-short"
-                        :class="scanResult.status === 'success' ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'">
+                        :class="{
+                            'bg-emerald-50 text-emerald-500': scanResult.status === 'success',
+                            'bg-amber-50 text-amber-500': scanResult.status === 'warning' || scanResult.status === 'pending',
+                            'bg-rose-50 text-rose-500': scanResult.status === 'error'
+                        }">
                         <svg x-show="scanResult.status === 'success'" class="w-12 h-12" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <svg x-show="scanResult.status === 'warning'" class="w-12 h-12" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <svg x-show="scanResult.status === 'pending'" class="w-12 h-12" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <svg x-show="scanResult.status === 'error'" class="w-12 h-12" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
@@ -159,7 +179,8 @@
 
                     <div class="mb-10">
                         <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight"
-                            x-text="scanResult.status === 'success' ? 'Verified' : 'Invalid'"></h2>
+                            x-text="scanResult.status === 'success' ? 'Checked In' : scanResult.status === 'warning' ? 'Already Scanned' : scanResult.status === 'pending' ? 'Valid Ticket' : 'Invalid'">
+                        </h2>
                         <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest"
                             x-text="scanResult.message"></p>
                     </div>
@@ -187,6 +208,13 @@
                                     <span class="text-[10px] font-bold text-slate-400">Quantity</span>
                                     <span class="text-sm font-black text-slate-900"
                                         x-text="'x' + scanResult.data.quantity"></span>
+                                </div>
+                                <!-- Show redeemed timestamp if already scanned -->
+                                <div x-show="scanResult.already_redeemed"
+                                    class="flex justify-between items-center pt-2 border-t border-slate-200">
+                                    <span class="text-[10px] font-bold text-amber-500">Scanned At</span>
+                                    <span class="text-xs font-black text-amber-500"
+                                        x-text="scanResult.data.redeemed_at"></span>
                                 </div>
                             </div>
                         </div>
@@ -239,11 +267,33 @@
                         </div>
                     </div>
 
-                    <button @click="resetScan()"
-                        class="w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl"
-                        :class="scanResult.status === 'success' ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-rose-500 text-white shadow-rose-500/20'">
-                        Next Scan
-                    </button>
+                    <!-- Action Buttons -->
+                    <div class="w-full space-y-3">
+                        <!-- If pending (not redeemed yet), show CHECK IN button -->
+                        <button x-show="scanResult.status === 'pending' && !scanResult.already_redeemed"
+                            @click="confirmCheckIn()"
+                            class="w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl bg-emerald-500 text-white shadow-emerald-500/20">
+                            Confirm Check-In
+                        </button>
+
+                        <!-- If already redeemed or error, show Next Scan button -->
+                        <button x-show="scanResult.status !== 'pending' || scanResult.already_redeemed"
+                            @click="resetScan()"
+                            class="w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl"
+                            :class="{
+                                'bg-emerald-500 text-white shadow-emerald-500/20': scanResult.status === 'success',
+                                'bg-amber-500 text-white shadow-amber-500/20': scanResult.status === 'warning',
+                                'bg-rose-500 text-white shadow-rose-500/20': scanResult.status === 'error'
+                            }">
+                            Next Scan
+                        </button>
+
+                        <!-- Cancel button (always available) -->
+                        <button @click="resetScan()"
+                            class="w-full py-3 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors">
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
         </template>
@@ -323,6 +373,36 @@
                             if (navigator.vibrate) navigator.vibrate(this.scanResult.status === 'success' ? 100 : [100, 100]);
                         } catch (e) {
                             this.scanResult = { status: 'error', message: 'Connection issue' };
+                        }
+                    },
+
+                    async confirmCheckIn() {
+                        if (!this.scanResult || !this.scanResult.data) return;
+
+                        try {
+                            const response = await fetch("{{ route('scanner.redeem') }}", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                                body: JSON.stringify({
+                                    transaction_id: this.scanResult.data.transaction_id,
+                                    event_id: this.selectedEventId
+                                })
+                            });
+                            const result = await response.json();
+
+                            if (result.status === 'success') {
+                                this.scanResult.status = 'success';
+                                this.scanResult.message = result.message;
+                                this.scanResult.already_redeemed = true;
+                                if (navigator.vibrate) navigator.vibrate(200);
+                            } else {
+                                this.scanResult.status = 'error';
+                                this.scanResult.message = result.message;
+                                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                            }
+                        } catch (e) {
+                            this.scanResult.status = 'error';
+                            this.scanResult.message = 'Failed to check in';
                         }
                     },
 

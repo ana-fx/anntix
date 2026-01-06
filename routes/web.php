@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('scanner')->name('scanner.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Scanner\ScanController::class, 'index'])->name('index');
         Route::post('/verify', [\App\Http\Controllers\Scanner\ScanController::class, 'verify'])->name('verify');
+        Route::post('/redeem', [\App\Http\Controllers\Scanner\ScanController::class, 'redeem'])->name('redeem');
     });
 });
 
