@@ -148,6 +148,11 @@ class ReportController extends Controller
     }
     public function resendEmail(Transaction $transaction)
     {
+        // Only allow resending email for paid transactions
+        if ($transaction->status !== 'paid') {
+            return back()->with('error', 'Cannot resend email. Only paid transactions can receive success emails.');
+        }
+
         try {
             $transaction->load('event'); // Ensure event relationship is loaded
             \Illuminate\Support\Facades\Mail::to($transaction->email)->send(new \App\Mail\PaymentSuccess($transaction));

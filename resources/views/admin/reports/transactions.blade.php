@@ -232,13 +232,21 @@
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button type="button"
-                                        @click="confirmModalOpen = true; actionUrl = '{{ route('admin.reports.resend-email', $transaction) }}'"
-                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="Resend Success Email">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                        </svg>
-                                    </button>
+                                    @if($transaction->status === 'paid')
+                                        <button type="button"
+                                            @click="confirmModalOpen = true; actionUrl = '{{ route('admin.reports.resend-email', $transaction) }}'"
+                                            class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="Resend Success Email">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                            </svg>
+                                        </button>
+                                    @else
+                                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50/50 text-gray-300 cursor-not-allowed shadow-sm border border-gray-100" title="Email only for paid transactions">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                            </svg>
+                                        </div>
+                                    @endif
 
                                     <a href="{{ route('admin.reports.transactions.show', $transaction) }}"
                                         class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-primary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="View Details">

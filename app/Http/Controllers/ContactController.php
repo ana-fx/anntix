@@ -23,13 +23,14 @@ class ContactController extends Controller
             'cf-turnstile-response' => [
                 'required',
                 function ($attribute, $value, $fail) {
+                    /** @var \Illuminate\Http\Client\Response $response */
                     $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
                         'secret' => config('services.turnstile.secret'),
                         'response' => $value,
                         'remoteip' => request()->ip(),
                     ]);
 
-                    if (!$response->json('success')) {
+                    if (!$response->successful() || !$response->json('success')) {
                         $fail('The turnstile verification failed. Please try again.');
                     }
                 }
