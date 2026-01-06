@@ -10,7 +10,7 @@ class SitemapController extends Controller
 {
     public function index()
     {
-        $events = Event::where('status', 'published')->latest()->get();
+        $events = Event::where('status', 'active')->latest()->get();
 
         return response()->view('sitemap.index', [
             'events' => $events,

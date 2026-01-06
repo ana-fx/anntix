@@ -184,8 +184,20 @@
 
                         <!-- Basic Buyer Details -->
                         <div class="space-y-6">
-                            <div>
-                                <h3 class="font-bold text-dark mb-4">3. Buyer Details</h3>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-dark">3. Buyer Details</h3>
+                                    <button type="button"
+                                        @click="
+                                            $refs.inputName.value = '{{ Auth::user()->name }}';
+                                            $refs.inputEmail.value = '{{ Auth::user()->email }}';
+                                            $refs.inputPhone.value = '{{ Auth::user()->phone }}';
+                                        "
+                                        class="text-[10px] font-bold uppercase tracking-wider text-primary hover:text-dark transition-colors bg-primary/10 hover:bg-gray-100 px-3 py-1.5 rounded-lg flex items-center gap-1"
+                                    >
+                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        Autofill Me
+                                    </button>
+                                </div>
                                 <p class="text-xs text-primary mb-4">Enter the details of the buyer who will
                                     receive the ticket.</p>
                             </div>
@@ -268,7 +280,7 @@
                                     <label
                                         class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Full
                                         Name</label>
-                                    <input type="text" name="name"
+                                    <input type="text" name="name" x-ref="inputName"
                                         class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
                                         placeholder="John Doe" required>
                                 </div>
@@ -276,7 +288,7 @@
                                     <label
                                         class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Email
                                         Address</label>
-                                    <input type="email" name="email"
+                                    <input type="email" name="email" x-ref="inputEmail"
                                         class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
                                         placeholder="john@example.com" required>
                                 </div>
@@ -287,7 +299,7 @@
                                     <label
                                         class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Phone
                                         Number</label>
-                                    <input type="tel" name="phone" maxlength="15"
+                                    <input type="tel" name="phone" x-ref="inputPhone" maxlength="15"
                                         class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
                                         placeholder="+62..." required
                                         oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
