@@ -38,6 +38,15 @@
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Profile</a>
                 @endif
 
+                @if(Auth::user()->role === 'reseller')
+                    <a href="{{ route('reseller.dashboard') }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Dashboard</a>
+                    <a href="{{ route('reseller.reports.index') }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">My Sales</a>
+                    <a href="{{ route('reseller.deposits.index') }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Deposit Info</a>
+                @endif
+
 
                 <div class="border-t border-gray-50 my-1"></div>
 

@@ -16,9 +16,11 @@ class ResellerController extends Controller
     {
         $view = $request->query('view', 'standard');
         $resellers = User::where('role', 'reseller')
-            ->withSum(['resellerTransactions as total_sales_sum' => function ($query) {
-                $query->where('status', 'paid');
-            }], 'total_price')
+            ->withSum([
+                'resellerTransactions as total_sales_sum' => function ($query) {
+                    $query->where('status', 'paid');
+                }
+            ], 'total_price')
             ->latest()
             ->paginate(10);
 

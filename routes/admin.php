@@ -49,8 +49,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Resellers
     Route::resource('resellers', \App\Http\Controllers\Admin\ResellerController::class)->except(['show']);
-    Route::get('resellers/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'deposits'])->name('resellers.deposits');
-    Route::post('resellers/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'storeDeposit'])->name('resellers.deposits.store');
+    Route::get('resellers-management/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'deposits'])->name('resellers.deposits');
+    Route::post('resellers-management/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'storeDeposit'])->name('resellers.deposits.store');
 
     // Reseller Management (Financial/Performance)
     Route::get('reseller-management', [\App\Http\Controllers\Admin\ResellerManagementController::class, 'index'])->name('reseller-management.index');

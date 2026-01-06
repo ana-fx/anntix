@@ -38,7 +38,9 @@ class EventSeeder extends Seeder
                 // Reseller Commission / Fee
                 'reseller_fee_type' => 'fixed',
                 'reseller_fee_value' => 0,
-                'organizer_fee' => 5000,
+                'organizer_fee_online' => 5000,
+                'organizer_fee_reseller_type' => 'percent',
+                'organizer_fee_reseller' => 3,
             ]
         );
 

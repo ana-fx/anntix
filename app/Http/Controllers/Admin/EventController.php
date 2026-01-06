@@ -74,8 +74,10 @@ class EventController extends Controller
             'organizer_logo' => 'nullable|image|max:1024',
             'reseller_fee_type' => 'nullable|in:fixed,percent',
             'reseller_fee_value' => 'nullable|numeric|min:0',
-            'organizer_fee_type' => 'nullable|in:fixed,percent',
-            'organizer_fee' => 'nullable|numeric|min:0',
+            'organizer_fee_online_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_online' => 'nullable|numeric|min:0',
+            'organizer_fee_reseller_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_reseller' => 'nullable|numeric|min:0',
         ]);
 
         $slug = Str::slug($validated['name']);
@@ -100,8 +102,10 @@ class EventController extends Controller
         // Set defaults for fee fields if they are null (because DB columns are not nullable)
         $validated['reseller_fee_type'] = $validated['reseller_fee_type'] ?? 'fixed';
         $validated['reseller_fee_value'] = $validated['reseller_fee_value'] ?? 0;
-        $validated['organizer_fee_type'] = $validated['organizer_fee_type'] ?? 'fixed';
-        $validated['organizer_fee'] = $validated['organizer_fee'] ?? 0;
+        $validated['organizer_fee_online_type'] = $validated['organizer_fee_online_type'] ?? 'fixed';
+        $validated['organizer_fee_online'] = $validated['organizer_fee_online'] ?? 0;
+        $validated['organizer_fee_reseller_type'] = $validated['organizer_fee_reseller_type'] ?? 'fixed';
+        $validated['organizer_fee_reseller'] = $validated['organizer_fee_reseller'] ?? 0;
 
         $event = Event::create($validated);
 
@@ -222,8 +226,10 @@ class EventController extends Controller
             'organizer_logo' => 'nullable|image|max:1024',
             'reseller_fee_type' => 'nullable|in:fixed,percent',
             'reseller_fee_value' => 'nullable|numeric|min:0',
-            'organizer_fee_type' => 'nullable|in:fixed,percent',
-            'organizer_fee' => 'nullable|numeric|min:0',
+            'organizer_fee_online_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_online' => 'nullable|numeric|min:0',
+            'organizer_fee_reseller_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_reseller' => 'nullable|numeric|min:0',
         ]);
 
         // Regenerate slug if name changed
@@ -258,8 +264,10 @@ class EventController extends Controller
         // Set defaults for fee fields if they are null
         $validated['reseller_fee_type'] = $validated['reseller_fee_type'] ?? 'fixed';
         $validated['reseller_fee_value'] = $validated['reseller_fee_value'] ?? 0;
-        $validated['organizer_fee_type'] = $validated['organizer_fee_type'] ?? 'fixed';
-        $validated['organizer_fee'] = $validated['organizer_fee'] ?? 0;
+        $validated['organizer_fee_online_type'] = $validated['organizer_fee_online_type'] ?? 'fixed';
+        $validated['organizer_fee_online'] = $validated['organizer_fee_online'] ?? 0;
+        $validated['organizer_fee_reseller_type'] = $validated['organizer_fee_reseller_type'] ?? 'fixed';
+        $validated['organizer_fee_reseller'] = $validated['organizer_fee_reseller'] ?? 0;
 
         $event->update($validated);
 

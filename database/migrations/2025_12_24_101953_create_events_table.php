@@ -48,8 +48,11 @@ return new class extends Migration {
             $table->enum('reseller_fee_type', ['fixed', 'percent'])->default('fixed');
             $table->decimal('reseller_fee_value', 12, 2)->default(0);
 
-            $table->enum('organizer_fee_type', ['fixed', 'percent'])->default('fixed');
-            $table->decimal('organizer_fee', 12, 2)->default(0);
+            $table->enum('organizer_fee_online_type', ['fixed', 'percent'])->default('fixed');
+            $table->decimal('organizer_fee_online', 12, 2)->default(0);
+
+            $table->enum('organizer_fee_reseller_type', ['fixed', 'percent'])->default('fixed');
+            $table->decimal('organizer_fee_reseller', 12, 2)->default(0);
 
             $table->softDeletes();
             $table->timestamps();

@@ -1,7 +1,8 @@
 <x-layouts.admin title="{{ $reseller->name }} - Deposits">
     <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
-            <a href="{{ route('admin.resellers.index') }}" class="p-2 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-dark transition-colors">
+            <a href="{{ route('admin.reseller-management.index') }}"
+                class="p-2 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-dark transition-colors">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -25,11 +26,14 @@
         <div class="bg-white p-6 rounded-2xl border border-gray-100 flex items-center justify-between">
             <div>
                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Lifetime Gross Sales</p>
-                <p class="text-2xl font-black text-dark tracking-tight">Rp{{ number_format($reseller->resellerTransactions()->where('status', 'paid')->sum('total_price')) }}</p>
+                <p class="text-2xl font-black text-dark tracking-tight">
+                    Rp{{ number_format($reseller->resellerTransactions()->where('status', 'paid')->sum('total_price')) }}
+                </p>
             </div>
             <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
             </div>
         </div>
@@ -54,7 +58,9 @@
                     @csrf
                     <div class="space-y-6">
                         <div>
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Deposit Amount (Rp)</label>
+                            <label
+                                class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Deposit
+                                Amount (Rp)</label>
                             <input type="number" name="amount" required min="1"
                                 class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-bold text-lg"
                                 placeholder="e.g. 1000000">
@@ -64,7 +70,9 @@
                         </div>
 
                         <div>
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Note (Optional)</label>
+                            <label
+                                class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Note
+                                (Optional)</label>
                             <textarea name="note" rows="3"
                                 class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-medium text-sm"
                                 placeholder="Reason for deposit..."></textarea>
@@ -77,7 +85,8 @@
                             class="w-full py-5 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all active:scale-95 flex items-center justify-center gap-3">
                             Confirm Deposit
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                         </button>
                     </div>
@@ -107,8 +116,12 @@
                             @forelse($deposits as $deposit)
                                 <tr class="hover:bg-gray-50/50 transition-colors">
                                     <td class="px-8 py-6">
-                                        <div class="text-sm font-bold text-dark">{{ $deposit->created_at->format('M d, Y') }}</div>
-                                        <div class="text-[10px] text-gray-400 uppercase tracking-tight">{{ $deposit->created_at->format('H:i') }}</div>
+                                        <div class="text-sm font-bold text-dark">
+                                            {{ $deposit->created_at->format('M d, Y') }}
+                                        </div>
+                                        <div class="text-[10px] text-gray-400 uppercase tracking-tight">
+                                            {{ $deposit->created_at->format('H:i') }}
+                                        </div>
                                     </td>
                                     <td class="px-8 py-6">
                                         <div class="text-sm font-black text-green-600">
@@ -120,7 +133,8 @@
                                     </td>
                                     <td class="px-8 py-6 hidden md:table-cell">
                                         <div class="flex items-center gap-2">
-                                            <div class="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary">
+                                            <div
+                                                class="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary">
                                                 {{ $deposit->creator->initials() }}
                                             </div>
                                             <span class="text-xs font-bold text-dark">{{ $deposit->creator->name }}</span>
@@ -130,9 +144,11 @@
                             @empty
                                 <tr>
                                     <td colspan="4" class="px-8 py-12 text-center">
-                                        <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                        <div
+                                            class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-300">
                                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </div>
                                         <p class="text-gray-400 font-bold">No deposit history found.</p>

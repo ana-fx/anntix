@@ -43,7 +43,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Banner -->
-                    <div x-data="{ bannerPreview: '{{ $event->banner_path ? (Str::startsWith($event->banner_path, ['http', 'https']) ? $event->banner_path : (file_exists(public_path($event->banner_path)) ? asset($event->banner_path) : asset('storage/' . $event->banner_path))) : '' }}' }">
+                    <div
+                        x-data="{ bannerPreview: '{{ $event->banner_path ? (Str::startsWith($event->banner_path, ['http', 'https']) ? $event->banner_path : (file_exists(public_path($event->banner_path)) ? asset($event->banner_path) : asset('storage/' . $event->banner_path))) : '' }}' }">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Banner <span
                                 class="text-xs font-normal text-gray-500 ml-1">(16:9, Max 2MB)</span></label>
                         <div
@@ -69,7 +70,8 @@
                     </div>
 
                     <!-- Thumbnail -->
-                    <div x-data="{ thumbPreview: '{{ $event->thumbnail_path ? (Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path))) : '' }}' }">
+                    <div
+                        x-data="{ thumbPreview: '{{ $event->thumbnail_path ? (Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path))) : '' }}' }">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Upload Thumbnail <span
                                 class="text-xs font-normal text-gray-500 ml-1">(1:1, Max 2MB)</span></label>
                         <div
@@ -111,7 +113,8 @@
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Category</label>
-                        <input type="text" name="category" value="{{ old('category', $event->category) }}" placeholder="Enter Category"
+                        <input type="text" name="category" value="{{ old('category', $event->category) }}"
+                            placeholder="Enter Category"
                             class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                         @error('category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -125,13 +128,17 @@
                         <input type="hidden" name="status" :value="selected">
                         <button type="button" @click="open = !open" @click.away="open = false"
                             class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
-                            <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
-                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            <span x-text="label"
+                                :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                                :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
 
-                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                             class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
                             <div class="py-1">
                                 <button type="button" @click="selected = 'draft'; label = 'Draft'; open = false"
@@ -149,8 +156,7 @@
                         x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, defaultDate: '{{ old('start_date', $event->start_date->format('Y-m-d H:i')) }}', altInput: true, altFormat: 'd M Y, H:i', altInputClass: 'w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer' })">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Start Date</label>
                         <input x-ref="picker" type="text" name="start_date"
-                            value="{{ old('start_date', $event->start_date->format('Y-m-d H:i')) }}"
-                            class="hidden">
+                            value="{{ old('start_date', $event->start_date->format('Y-m-d H:i')) }}" class="hidden">
                         @error('start_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -158,8 +164,7 @@
                         x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, defaultDate: '{{ old('end_date', $event->end_date->format('Y-m-d H:i')) }}', altInput: true, altFormat: 'd M Y, H:i', altInputClass: 'w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer' })">
                         <label class="block text-sm font-bold text-gray-700 mb-2">End Date</label>
                         <input x-ref="picker" type="text" name="end_date"
-                            value="{{ old('end_date', $event->end_date->format('Y-m-d H:i')) }}"
-                            class="hidden">
+                            value="{{ old('end_date', $event->end_date->format('Y-m-d H:i')) }}" class="hidden">
                         @error('end_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -292,95 +297,152 @@
                 </div>
             </div>
             <!-- 6. Fees & Commission -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Fees & Commission
-                    </h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Fees & Commission
+                </h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div x-data="{
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div x-data="{
                             open: false,
                             selected: '{{ old('reseller_fee_type', $event->reseller_fee_type) }}',
                             label: '{{ old('reseller_fee_type', $event->reseller_fee_type) == 'percent' ? 'Percent (%)' : 'Fixed' }}'
                         }" class="relative">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Type</label>
-                            <input type="hidden" name="reseller_fee_type" :value="selected">
-                            <button type="button" @click="open = !open" @click.away="open = false"
-                                class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
-                                <span x-text="label"></span>
-                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Type</label>
+                        <input type="hidden" name="reseller_fee_type" :value="selected">
+                        <button type="button" @click="open = !open" @click.away="open = false"
+                            class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
+                            <span x-text="label"></span>
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                                :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
 
-                            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                                class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
-                                <div class="py-1">
-                                    <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
-                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
-                                    <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
-                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent (%)</button>
-                                </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                            <div class="py-1">
+                                <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
+                                <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent
+                                    (%)</button>
                             </div>
-                            @error('reseller_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
+                        @error('reseller_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
 
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Value</label>
-                            <input type="number" name="reseller_fee_value"
-                                value="{{ old('reseller_fee_value', $event->reseller_fee_value ?? 0) }}" min="0"
-                                step="0.01" placeholder="0"
-                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
-                            @error('reseller_fee_value') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Value</label>
+                        <input type="number" name="reseller_fee_value"
+                            value="{{ old('reseller_fee_value', $event->reseller_fee_value ?? 0) }}" min="0" step="0.01"
+                            placeholder="0"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                        @error('reseller_fee_value') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div class="col-span-1 md:col-span-2 border-t border-gray-100"></div>
+                    <!-- Organizer Fee Online -->
+                    <div class="col-span-1 md:col-span-2 border-t border-gray-100"></div>
 
-                        <div x-data="{
+                    <div x-data="{
                             open: false,
-                            selected: '{{ old('organizer_fee_type', $event->organizer_fee_type) }}',
-                            label: '{{ old('organizer_fee_type', $event->organizer_fee_type) == 'percent' ? 'Percent (%)' : 'Fixed' }}'
+                            selected: '{{ old('organizer_fee_online_type', $event->organizer_fee_online_type) }}',
+                            label: '{{ old('organizer_fee_online_type', $event->organizer_fee_online_type) == 'percent' ? 'Percent (%)' : 'Fixed' }}'
                         }" class="relative">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee Type</label>
-                            <input type="hidden" name="organizer_fee_type" :value="selected">
-                            <button type="button" @click="open = !open" @click.away="open = false"
-                                class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
-                                <span x-text="label"></span>
-                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Online Sales)
+                            Type</label>
+                        <input type="hidden" name="organizer_fee_online_type" :value="selected">
+                        <button type="button" @click="open = !open" @click.away="open = false"
+                            class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
+                            <span x-text="label"></span>
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                                :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
 
-                            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                                class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
-                                <div class="py-1">
-                                    <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
-                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
-                                    <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
-                                        class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent (%)</button>
-                                </div>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                            <div class="py-1">
+                                <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
+                                <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent
+                                    (%)</button>
                             </div>
-                            @error('organizer_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
+                        @error('organizer_fee_online_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee Value</label>
-                            <input type="number" name="organizer_fee"
-                                value="{{ old('organizer_fee', $event->organizer_fee ?? 0) }}" min="0" step="0.01"
-                                placeholder="0"
-                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
-                            @error('organizer_fee') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Online Sales)
+                            Value</label>
+                        <input type="number" name="organizer_fee_online"
+                            value="{{ old('organizer_fee_online', $event->organizer_fee_online ?? 0) }}" min="0"
+                            step="0.01" placeholder="0"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                        @error('organizer_fee_online') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <!-- Organizer Fee Reseller -->
+                    <div x-data="{
+                            open: false,
+                            selected: '{{ old('organizer_fee_reseller_type', $event->organizer_fee_reseller_type) }}',
+                            label: '{{ old('organizer_fee_reseller_type', $event->organizer_fee_reseller_type) == 'percent' ? 'Percent (%)' : 'Fixed' }}'
+                        }" class="relative">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Reseller Sales)
+                            Type</label>
+                        <input type="hidden" name="organizer_fee_reseller_type" :value="selected">
+                        <button type="button" @click="open = !open" @click.away="open = false"
+                            class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
+                            <span x-text="label"></span>
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                                :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                            <div class="py-1">
+                                <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
+                                <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent
+                                    (%)</button>
+                            </div>
                         </div>
+                        @error('organizer_fee_reseller_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Reseller Sales)
+                            Value</label>
+                        <input type="number" name="organizer_fee_reseller"
+                            value="{{ old('organizer_fee_reseller', $event->organizer_fee_reseller ?? 0) }}" min="0"
+                            step="0.01" placeholder="0"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                        @error('organizer_fee_reseller') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
+            </div>
 
-                <!-- Submit -->
-                <div class="flex justify-end pt-4 pb-12">
-                    <button type="submit"
-                        class="px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25 text-lg w-full md:w-auto">
-                        Update Event
-                    </button>
-                </div>
+            <!-- Submit -->
+            <div class="flex justify-end pt-4 pb-12">
+                <button type="submit"
+                    class="px-8 py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary/25 text-lg w-full md:w-auto">
+                    Update Event
+                </button>
+            </div>
 
         </form>
     </div>

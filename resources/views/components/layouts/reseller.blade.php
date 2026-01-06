@@ -27,16 +27,7 @@
 </head>
 
 <body class="font-sans antialiased text-gray-900 bg-gray-50 flex min-h-screen overflow-hidden"
-    x-data="{ sidebarOpen: window.innerWidth >= 1024 }">
 
-    <!-- Sidebar -->
-    <div x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
-        x-transition:leave="transition ease-in duration-300" x-transition:leave-start="translate-x-0"
-        x-transition:leave-end="-translate-x-full"
-        class="relative z-30 transition-all duration-300 ease-in-out flex-shrink-0">
-        @include('partials.reseller.sidebar')
-    </div>
 
     <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col min-w-0 overflow-y-auto h-screen">
@@ -54,13 +45,7 @@
     </div>
 
     <!-- Floating Toggle -->
-    <button x-show="!sidebarOpen" @click="sidebarOpen = true" x-cloak
-        class="fixed bottom-8 left-8 z-50 p-4 bg-primary text-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-primary-700 hover:shadow-primary/30 transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center group">
-        <div class="absolute inset-0 bg-primary/20 rounded-full animate-ping opacity-0 group-hover:opacity-100"></div>
-        <svg class="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
+
 
     @stack('scripts')
 </body>

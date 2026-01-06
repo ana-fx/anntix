@@ -23,31 +23,42 @@
                         x-transition:enter-start="opacity-0 scale-105" x-transition:enter-end="opacity-100 scale-100"
                         x-transition:leave="transition transform duration-500 ease-in"
                         x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                        class="absolute inset-0 w-full h-full bg-dark">
+                        class="absolute inset-0 w-full h-full bg-gray-100">
 
-                        <a :href="slide.link" class="block w-full h-full">
+                        <a :href="slide.link" class="block w-full h-full relative">
+                            <!-- Image -->
                             <img :src="slide.img"
+                                onerror="this.style.display = 'none'; this.nextElementSibling.style.display = 'flex'"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+
+                            <!-- Fallback Icon -->
+                            <div
+                                class="hidden w-full h-full absolute inset-0 items-center justify-center bg-gray-100 text-gray-300">
+                                <svg class="w-20 h-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
                         </a>
                     </div>
                 </template>
 
                 <!-- Navigation Arrows -->
                 <button @click="prev()"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100">
+                    class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 z-10">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
                 <button @click="next()"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100">
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 z-10">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
 
                 <!-- Pagination Dots -->
-                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                     <template x-for="(slide, index) in slides" :key="index">
                         <button @click="activeSlide = index"
                             class="w-2.5 h-2.5 rounded-full transition-all duration-300"
@@ -72,14 +83,34 @@
                     <a href="{{ route('events.show', $event) }}"
                         class="block group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Landscape Image -->
-                        <div class="aspect-video relative overflow-hidden">
-                            <img src="{{ Str::startsWith($event->banner_path, ['http', 'https']) ? $event->banner_path : (file_exists(public_path($event->banner_path)) ? asset($event->banner_path) : asset('storage/' . $event->banner_path)) }}"
-                                alt="{{ $event->name }}"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="aspect-video relative overflow-hidden bg-gray-100">
+                            @php
+                                $bannerUrl = $event->banner_path
+                                    ? (Str::startsWith($event->banner_path, ['http', 'https'])
+                                        ? $event->banner_path
+                                        : asset('storage/' . $event->banner_path))
+                                    : null;
+                            @endphp
+
+                            @if($bannerUrl)
+                                <img src="{{ $bannerUrl }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                                    alt="{{ $event->name }}"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @endif
+
+                            <div
+                                class="{{ $bannerUrl ? 'hidden' : 'flex' }} absolute inset-0 items-center justify-center text-gray-300 bg-gray-100">
+                                <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
 
                             @if($event->created_at->diffInDays(now()) < 7)
                                 <div
-                                    class="absolute top-3 right-3 bg-accent text-dark px-2 py-1 rounded text-xs font-bold shadow-sm">
+                                    class="absolute top-3 right-3 bg-accent text-dark px-2 py-1 rounded text-xs font-bold shadow-sm z-10">
                                     New
                                 </div>
                             @endif

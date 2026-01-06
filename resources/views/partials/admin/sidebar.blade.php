@@ -145,10 +145,10 @@
                 </a>
 
                 <!-- Resellers -->
-                <a href="{{ route('admin.resellers.index', ['view' => 'standard']) }}"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->get('view', 'standard') === 'standard' && request()->routeIs('admin.resellers.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                <a href="{{ route('admin.resellers.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.resellers.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
                     <span
-                        class="w-1.5 h-1.5 rounded-full {{ request()->get('view', 'standard') === 'standard' && request()->routeIs('admin.resellers.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.resellers.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     Resellers
                 </a>
 
@@ -161,7 +161,8 @@
             class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reseller-management.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
             <svg class="w-5 h-5 {{ request()->routeIs('admin.reseller-management.*') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Reseller Management
         </a>

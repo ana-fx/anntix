@@ -32,8 +32,10 @@ class Event extends Model
         'organizer_logo_path',
         'reseller_fee_type',
         'reseller_fee_value',
-        'organizer_fee_type',
-        'organizer_fee',
+        'organizer_fee_online_type',
+        'organizer_fee_online',
+        'organizer_fee_reseller_type',
+        'organizer_fee_reseller',
     ];
 
     protected $casts = [

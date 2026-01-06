@@ -21,15 +21,21 @@ class WithdrawalController extends Controller
         $totalOrgTax = 0;
 
         foreach ($allTickets as $t) {
-            $qPaid = ($t->online_qty ?? 0) + ($t->reseller_qty ?? 0);
+            $onlineQty = $t->online_qty ?? 0;
+            $resellerQty = $t->reseller_qty ?? 0;
+            $qPaid = $onlineQty + $resellerQty;
             $tRevenue = $qPaid * $t->price;
 
-            $orgFeeUnit = $event->organizer_fee_type === 'percent'
-                ? $t->price * ($event->organizer_fee / 100)
-                : $event->organizer_fee;
+            $onlineFee = $event->organizer_fee_online_type === 'percent'
+                ? $t->price * ($event->organizer_fee_online / 100)
+                : $event->organizer_fee_online;
+
+            $resellerFee = $event->organizer_fee_reseller_type === 'percent'
+                ? $t->price * ($event->organizer_fee_reseller / 100)
+                : $event->organizer_fee_reseller;
 
             $totalTicketRevenue += $tRevenue;
-            $totalOrgTax += ($qPaid * $orgFeeUnit);
+            $totalOrgTax += ($onlineQty * $onlineFee) + ($resellerQty * $resellerFee);
         }
 
         $cumulativeSaldo = $totalTicketRevenue - $totalOrgTax;
@@ -53,15 +59,21 @@ class WithdrawalController extends Controller
         $totalOrgTax = 0;
 
         foreach ($allTickets as $t) {
-            $qPaid = ($t->online_qty ?? 0) + ($t->reseller_qty ?? 0);
+            $onlineQty = $t->online_qty ?? 0;
+            $resellerQty = $t->reseller_qty ?? 0;
+            $qPaid = $onlineQty + $resellerQty;
             $tRevenue = $qPaid * $t->price;
 
-            $orgFeeUnit = $event->organizer_fee_type === 'percent'
-                ? $t->price * ($event->organizer_fee / 100)
-                : $event->organizer_fee;
+            $onlineFee = $event->organizer_fee_online_type === 'percent'
+                ? $t->price * ($event->organizer_fee_online / 100)
+                : $event->organizer_fee_online;
+
+            $resellerFee = $event->organizer_fee_reseller_type === 'percent'
+                ? $t->price * ($event->organizer_fee_reseller / 100)
+                : $event->organizer_fee_reseller;
 
             $totalTicketRevenue += $tRevenue;
-            $totalOrgTax += ($qPaid * $orgFeeUnit);
+            $totalOrgTax += ($onlineQty * $onlineFee) + ($resellerQty * $resellerFee);
         }
 
         $cumulativeSaldo = $totalTicketRevenue - $totalOrgTax;

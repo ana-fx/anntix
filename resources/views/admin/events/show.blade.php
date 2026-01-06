@@ -170,7 +170,7 @@
                                         <td class="px-6 py-4">
                                             <span
                                                 class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                                                                                                                            {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                                 {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
                                             </span>
                                         </td>
@@ -185,7 +185,8 @@
                                                     </svg>
                                                 </a>
 
-                                                <form action="{{ route('admin.tickets-report.destroy', $ticket) }}" method="POST"
+                                                <form action="{{ route('admin.tickets-report.destroy', $ticket) }}"
+                                                    method="POST"
                                                     @submit.prevent="formToSubmit = $el; deleteModalOpen = true"
                                                     class="inline-block">
                                                     @csrf
@@ -252,22 +253,32 @@
                                     <input type="hidden" name="scanner_id" :value="selected" required>
                                     <button type="button" @click="open = !open" @click.away="open = false"
                                         class="w-full flex items-center justify-between appearance-none bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-xl leading-tight focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-medium">
-                                        <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark font-bold'"></span>
-                                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                        <span x-text="label"
+                                            :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark font-bold'"></span>
+                                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                                            :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </button>
 
-                                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="opacity-0 scale-95"
+                                        x-transition:enter-end="opacity-100 scale-100"
                                         class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                                         <div class="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Select Agent</span>
+                                            <span
+                                                class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Select
+                                                Agent</span>
                                         </div>
                                         <div class="py-1 max-h-48 overflow-y-auto">
                                             @foreach($scanners as $scanner)
-                                                <button type="button" @click="selected = '{{ $scanner->id }}'; label = '{{ addslashes($scanner->name) }}'; open = false"
+                                                <button type="button"
+                                                    @click="selected = '{{ $scanner->id }}'; label = '{{ addslashes($scanner->name) }}'; open = false"
                                                     class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">
-                                                    {{ $scanner->name }} <span class="text-[10px] text-gray-400 font-medium ml-1">({{ $scanner->email }})</span>
+                                                    {{ $scanner->name }} <span
+                                                        class="text-[10px] text-gray-400 font-medium ml-1">({{ $scanner->email }})</span>
                                                 </button>
                                             @endforeach
                                         </div>
@@ -368,22 +379,32 @@
                                     <input type="hidden" name="reseller_id" :value="selected" required>
                                     <button type="button" @click="open = !open" @click.away="open = false"
                                         class="w-full flex items-center justify-between appearance-none bg-white border border-gray-200 text-gray-700 py-3 px-4 rounded-xl leading-tight focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-medium">
-                                        <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark font-bold'"></span>
-                                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                                        <span x-text="label"
+                                            :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark font-bold'"></span>
+                                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                                            :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </button>
 
-                                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="opacity-0 scale-95"
+                                        x-transition:enter-end="opacity-100 scale-100"
                                         class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                                         <div class="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                                            <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Select Reseller</span>
+                                            <span
+                                                class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Select
+                                                Reseller</span>
                                         </div>
                                         <div class="py-1 max-h-48 overflow-y-auto">
                                             @foreach($resellers as $reseller)
-                                                <button type="button" @click="selected = '{{ $reseller->id }}'; label = '{{ addslashes($reseller->name) }}'; open = false"
+                                                <button type="button"
+                                                    @click="selected = '{{ $reseller->id }}'; label = '{{ addslashes($reseller->name) }}'; open = false"
                                                     class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">
-                                                    {{ $reseller->name }} <span class="text-[10px] text-gray-400 font-medium ml-1">({{ $reseller->email }})</span>
+                                                    {{ $reseller->name }} <span
+                                                        class="text-[10px] text-gray-400 font-medium ml-1">({{ $reseller->email }})</span>
                                                 </button>
                                             @endforeach
                                         </div>
@@ -618,7 +639,8 @@
                                     </span>
                                 </p>
                                 <p class="text-xs text-gray-500 font-medium">Type:
-                                    {{ ucfirst($event->reseller_fee_type) }}</p>
+                                    {{ ucfirst($event->reseller_fee_type) }}
+                                </p>
                             </div>
                         </div>
 
@@ -632,10 +654,33 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-400 font-bold mb-1">Organizer Fee</p>
+                                <p class="text-sm text-gray-400 font-bold mb-1">Organizer Fee (Online)</p>
                                 <p class="font-bold text-gray-900">
-                                    {{ number_format($event->organizer_fee, 0, ',', '.') }} <span
-                                        class="text-xs text-gray-500 font-medium">IDR</span></p>
+                                    {{ number_format($event->organizer_fee_online, 0, ',', '.') }}
+                                    <span class="text-xs text-gray-500 font-medium">
+                                        {{ $event->organizer_fee_online_type === 'percent' ? '%' : 'IDR' }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400 font-bold mb-1">Organizer Fee (Reseller)</p>
+                                <p class="font-bold text-gray-900">
+                                    {{ number_format($event->organizer_fee_reseller, 0, ',', '.') }}
+                                    <span class="text-xs text-gray-500 font-medium">
+                                        {{ $event->organizer_fee_reseller_type === 'percent' ? '%' : 'IDR' }}
+                                    </span>
+                                </p>
                             </div>
                         </div>
                     </div>

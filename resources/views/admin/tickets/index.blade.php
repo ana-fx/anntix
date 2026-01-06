@@ -15,9 +15,11 @@
 
             <!-- Aggregate Saldo Widget -->
             <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-                <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 flex flex-wrap md:flex-nowrap items-center divide-x divide-gray-50">
+                <div
+                    class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 flex flex-wrap md:flex-nowrap items-center divide-x divide-gray-50">
                     <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Total Saldo</div>
+                        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Total Saldo
+                        </div>
                         <div class="font-black text-dark text-lg leading-tight">
                             Rp {{ number_format($totalSaldo, 0, ',', '.') }}
                         </div>
@@ -35,7 +37,8 @@
                         </div>
                     </div>
                     <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Platform Rev</div>
+                        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Platform Rev
+                        </div>
                         <div class="font-black text-gray-500 text-base leading-tight">
                             Rp {{ number_format($totalPlatformRevenue, 0, ',', '.') }}
                         </div>
@@ -43,15 +46,20 @@
                 </div>
 
                 <div class="flex flex-col gap-2 w-full md:w-auto">
-                    <a href="{{ route('admin.events.withdrawals.create', $event) }}" class="group flex items-center justify-center w-full px-5 py-3 bg-dark text-white rounded-2xl font-bold text-xs hover:bg-black transition-all shadow-lg shadow-dark/10 gap-2">
+                    <a href="{{ route('admin.events.withdrawals.create', $event) }}"
+                        class="group flex items-center justify-center w-full px-5 py-3 bg-dark text-white rounded-2xl font-bold text-xs hover:bg-black transition-all shadow-lg shadow-dark/10 gap-2">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Withdraw
                     </a>
-                    <button onclick="exportToExcel()" class="group flex items-center justify-center w-full px-5 py-3 bg-white text-gray-400 rounded-2xl font-bold text-xs hover:bg-gray-50 transition-all border border-gray-100 shadow-sm gap-2">
+                    <button onclick="exportToExcel()"
+                        class="group flex items-center justify-center w-full px-5 py-3 bg-white text-gray-400 rounded-2xl font-bold text-xs hover:bg-gray-50 transition-all border border-gray-100 shadow-sm gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
                         </svg>
                         Export Excel
                     </button>
@@ -137,9 +145,9 @@
                                     $ticketRevenue = $qty * $ticket->price;
 
                                     // Platform Tax Deduction
-                                    $orgFeePerUnit = $event->organizer_fee_type === 'percent'
-                                        ? $ticket->price * ($event->organizer_fee / 100)
-                                        : $event->organizer_fee;
+                                    $orgFeePerUnit = $event->organizer_fee_online_type === 'percent'
+                                        ? $ticket->price * ($event->organizer_fee_online / 100)
+                                        : $event->organizer_fee_online;
 
                                     $orgTaxTotal = $qty * $orgFeePerUnit;
                                     $netRevenue = $ticketRevenue - $orgTaxTotal;
@@ -287,9 +295,9 @@
                                     $ticketRevenue = $qty * $ticket->price;
 
                                     // Platform Tax Deduction
-                                    $orgFeePerUnit = $event->organizer_fee_type === 'percent'
-                                        ? $ticket->price * ($event->organizer_fee / 100)
-                                        : $event->organizer_fee;
+                                    $orgFeePerUnit = $event->organizer_fee_reseller_type === 'percent'
+                                        ? $ticket->price * ($event->organizer_fee_reseller / 100)
+                                        : $event->organizer_fee_reseller;
 
                                     $orgTaxTotal = $qty * $orgFeePerUnit;
                                     $netRevenue = $ticketRevenue - $orgTaxTotal;
