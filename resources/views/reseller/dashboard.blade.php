@@ -29,7 +29,7 @@
                 <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Total Deposit</p>
                 <h3 class="text-2xl font-black text-primary tracking-tight">Rp {{ number_format($stats['total_commission']) }}</h3>
                 <div class="mt-4 flex items-center gap-2">
-                    <span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-lg uppercase">Earned</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-lg uppercase">Deposit</span>
                 </div>
             </div>
 
@@ -41,7 +41,7 @@
                 <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Deposit Balance</p>
                 <h3 class="text-2xl font-black text-primary tracking-tight">Rp {{ number_format($stats['current_balance']) }}</h3>
                 <div class="mt-4 flex items-center gap-2">
-                    <span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-lg uppercase">Available</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-lg uppercase">Debt</span>
                 </div>
             </div>
 
