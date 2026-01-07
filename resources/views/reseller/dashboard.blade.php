@@ -26,7 +26,7 @@
             <!-- Commission Earned -->
             <div
                 class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
-                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Total Earned</p>
+                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Total Deposit</p>
                 <h3 class="text-2xl font-black text-primary tracking-tight">Rp {{ number_format($stats['total_commission']) }}</h3>
                 <div class="mt-4 flex items-center gap-2">
                     <span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-lg uppercase">Earned</span>
@@ -46,13 +46,23 @@
             </div>
 
             <!-- Tickets Sold -->
-            <div
-                class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
-                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-1">Tickets Sold</p>
-                <h3 class="text-2xl font-black text-primary tracking-tight">{{ number_format($stats['tickets_sold']) }}</h3>
-                <div class="mt-4 flex items-center gap-2">
-                    <span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-lg uppercase">Sold</span>
-                </div>
+            <!-- Tickets Sold By Name -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                <p class="text-gray-400 font-bold uppercase tracking-wider text-[10px] mb-3">Ticket Sold By Name</p>
+                
+                @if(isset($stats['tickets_by_name']) && $stats['tickets_by_name']->count() > 0)
+                    <div class="space-y-3 max-h-[100px] overflow-y-auto pr-2 custom-scrollbar">
+                        @foreach($stats['tickets_by_name'] as $name => $count)
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-dark truncate w-2/3" title="{{ $name }}">{{ $name }}</span>
+                            <span class="px-2 py-0.5 bg-primary/10 text-primary font-black rounded-lg">{{ $count }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                    <h3 class="text-2xl font-black text-gray-300 tracking-tight">-</h3>
+                    <div class="mt-2 text-[10px] font-bold text-gray-400">No sales recorded</div>
+                @endif
             </div>
         </div>
 

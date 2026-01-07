@@ -14,9 +14,13 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // Data for reseller dashboard
-        $paidTransactions = $user->resellerTransactions()->where('status', 'paid')->get();
+        $paidTransactions = $user->resellerTransactions()->where('status', 'paid')->with('ticket')->get();
         $totalSales = $paidTransactions->sum('total_price');
-        $totalCommission = $paidTransactions->sum('commission');
+        $totalCommission = $user->deposits()->sum('amount');
+
+        $ticketsByName = $paidTransactions->groupBy(fn($t) => $t->ticket->name ?? 'Unknown')
+            ->map(fn($group) => $group->sum('quantity'))
+            ->sortDesc();
 
         $stats = [
             'total_sales' => $totalSales,
@@ -24,6 +28,7 @@ class DashboardController extends Controller
             'must_deposited' => $totalSales - $totalCommission,
             'current_balance' => $user->balance,
             'tickets_sold' => $paidTransactions->sum('quantity'),
+            'tickets_by_name' => $ticketsByName,
         ];
 
         $events = $user->resellerEvents()

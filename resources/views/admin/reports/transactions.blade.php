@@ -35,8 +35,7 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search..."
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
                         class="w-full pl-12 pr-4 py-4 rounded-2xl border-none bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 outline-none transition-all text-sm font-medium placeholder:text-gray-400">
                 </div>
             </div>
@@ -47,26 +46,36 @@
                 selected: '{{ request('source') ?: '' }}',
                 label: '{{ request('source') == 'online' ? 'Online' : (request('source') == 'reseller' ? 'Reseller' : 'All Sources') }}'
             }">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Source</label>
+                <label
+                    class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Source</label>
                 <input type="hidden" name="source" :value="selected">
                 <div class="relative">
                     <button type="button" @click="open = !open" @click.away="open = false"
                         class="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 text-sm font-bold border-none focus:ring-4 focus:ring-primary/10 transition-all text-dark">
-                        <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
-                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                        <span x-text="label"
+                            :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                            :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7">
+                            </path>
                         </svg>
                     </button>
 
-                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                         class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
                         <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Source</span>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select
+                                Source</span>
                         </div>
                         <div class="py-2">
-                            <button type="button" @click="selected = ''; label = 'All Sources'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">All Sources</button>
-                            <button type="button" @click="selected = 'online'; label = 'Online'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Online</button>
-                            <button type="button" @click="selected = 'reseller'; label = 'Reseller'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Reseller</button>
+                            <button type="button" @click="selected = ''; label = 'All Sources'; open = false"
+                                class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">All
+                                Sources</button>
+                            <button type="button" @click="selected = 'online'; label = 'Online'; open = false"
+                                class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Online</button>
+                            <button type="button" @click="selected = 'reseller'; label = 'Reseller'; open = false"
+                                class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Reseller</button>
                         </div>
                     </div>
                 </div>
@@ -78,27 +87,38 @@
                 selected: '{{ request('status') ?: '' }}',
                 label: '{{ request('status') == 'pending' ? 'Pending' : (request('status') == 'paid' ? 'Paid' : (request('status') == 'failed' ? 'Failed' : 'All Status')) }}'
             }">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Status</label>
+                <label
+                    class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Status</label>
                 <input type="hidden" name="status" :value="selected">
                 <div class="relative">
                     <button type="button" @click="open = !open" @click.away="open = false"
                         class="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 text-sm font-bold border-none focus:ring-4 focus:ring-primary/10 transition-all text-dark">
-                        <span x-text="label" :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
-                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                        <span x-text="label"
+                            :class="selected === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                            :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7">
+                            </path>
                         </svg>
                     </button>
 
-                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                         class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
                         <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Status</span>
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select
+                                Status</span>
                         </div>
                         <div class="py-2">
-                            <button type="button" @click="selected = ''; label = 'All Status'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">All Status</button>
-                            <button type="button" @click="selected = 'pending'; label = 'Pending'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Pending</button>
-                            <button type="button" @click="selected = 'paid'; label = 'Paid'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Paid</button>
-                            <button type="button" @click="selected = 'failed'; label = 'Failed'; open = false" class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Failed</button>
+                            <button type="button" @click="selected = ''; label = 'All Status'; open = false"
+                                class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">All
+                                Status</button>
+                            <button type="button" @click="selected = 'pending'; label = 'Pending'; open = false"
+                                class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Pending</button>
+                            <button type="button" @click="selected = 'paid'; label = 'Paid'; open = false"
+                                class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Paid</button>
+                            <button type="button" @click="selected = 'failed'; label = 'Failed'; open = false"
+                                class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark">Failed</button>
                         </div>
                     </div>
                 </div>
@@ -118,25 +138,24 @@
     </div>
 
     <!-- Main Table Container -->
-    <div class="bg-white rounded-2xl shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden" x-data="{ confirmModalOpen: false, actionUrl: '' }">
+    <div class="bg-white rounded-2xl shadow-2xl shadow-primary/5 border border-gray-100 overflow-hidden"
+        x-data="{ confirmModalOpen: false, actionUrl: '' }">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse" id="transaction-table">
                 <thead>
-                    <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                    <tr
+                        class="bg-gray-50 border-b border-gray-100 text-xs uppercase text-gray-500 font-bold tracking-wider">
                         <th class="px-4 py-3">
                             Transaction</th>
                         <th class="px-4 py-3">Customer
                         </th>
                         <th class="px-4 py-3">Source</th>
                         <th class="px-4 py-3">Event Detail</th>
-                        <th
-                            class="px-4 py-3 text-right">
+                        <th class="px-4 py-3 text-right">
                             Amount Breakout</th>
-                        <th
-                            class="px-4 py-3 text-center">
+                        <th class="px-4 py-3 text-center">
                             Status</th>
-                        <th
-                            class="px-4 py-3 text-right">
+                        <th class="px-4 py-3 text-right">
                             Action</th>
                     </tr>
                 </thead>
@@ -146,7 +165,7 @@
                             $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
 
                             // Adjust Fee Logic based on Source
-                            if($transaction->reseller_id) {
+                            if ($transaction->reseller_id) {
                                 $handlingTotal = 0; // Resellers don't have Handling Fee
                                 $extraFee = (float) $transaction->total_price - $ticketSales; // Remaining is Reseller Fee
                             } else {
@@ -154,7 +173,8 @@
                                 $extraFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal); // Remaining is Service Fee
                             }
 
-                            if ($extraFee < 0) $extraFee = 0;
+                            if ($extraFee < 0)
+                                $extraFee = 0;
                         @endphp
                         <tr class="group hover:bg-primary/[0.02] transition-colors">
                             <td class="px-4 py-3 leading-none">
@@ -162,28 +182,35 @@
                                     class="block group/item">
                                     <div
                                         class="font-mono text-[11px] font-black text-gray-600 tracking-tighter mb-1 select-all underline decoration-dotted decoration-gray-300 underline-offset-4 group-hover/item:text-dark transition-colors">
-                                        {{ $transaction->code }}</div>
+                                        {{ $transaction->code }}
+                                    </div>
                                 </a>
                                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                                    {{ $transaction->created_at->format('d M Y, H:i') }}</div>
+                                    {{ $transaction->created_at->format('d M Y, H:i') }}
+                                </div>
                             </td>
                             <td class="px-4 py-3">
                                 <div class="text-sm font-black text-dark mb-0.5">{{ $transaction->name }}</div>
                                 <div class="flex flex-col gap-0.5">
-                                    <a href="mailto:{{ $transaction->email }}" class="text-[10px] font-bold text-primary hover:text-primary transition-colors">{{ $transaction->email }}</a>
-                                    <a href="tel:{{ $transaction->phone }}" class="text-[10px] font-black text-gray-500 hover:opacity-70 transition-opacity">{{ $transaction->phone }}</a>
+                                    <a href="mailto:{{ $transaction->email }}"
+                                        class="text-[10px] font-bold text-primary hover:text-primary transition-colors">{{ $transaction->email }}</a>
+                                    <a href="tel:{{ $transaction->phone }}"
+                                        class="text-[10px] font-black text-gray-500 hover:opacity-70 transition-opacity">{{ $transaction->phone }}</a>
                                 </div>
                             </td>
                             <td class="px-4 py-3">
                                 @if($transaction->reseller_id)
                                     <div class="flex flex-col">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100/80 text-gray-500 border border-gray-100 w-max mb-1 uppercase tracking-tighter">Reseller</span>
-                                        <div class="text-[10px] font-black text-dark truncate max-w-[120px]" title="{{ $transaction->reseller->name ?? 'Deleted' }}">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100/80 text-gray-500 border border-gray-100 w-max mb-1 uppercase tracking-tighter">Reseller</span>
+                                        <div class="text-[10px] font-black text-dark truncate max-w-[120px]"
+                                            title="{{ $transaction->reseller->name ?? 'Deleted' }}">
                                             {{ $transaction->reseller->name ?? 'Deleted' }}
                                         </div>
                                     </div>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary border border-primary/10 w-max uppercase tracking-tighter">Online</span>
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary border border-primary/10 w-max uppercase tracking-tighter">Online</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
@@ -191,11 +218,13 @@
                                     class="inline-block text-xs font-black text-gray-500 group-hover:text-primary transition-colors bg-gray-100 px-2.5 py-1 rounded-lg mb-1">{{ $transaction->event->name ?? 'Deleted Event' }}</span>
                                 <div class="text-[10px] font-bold text-primary uppercase tracking-wider ml-1">
                                     {{ $transaction->ticket->name ?? 'N/A' }} <span
-                                        class="text-gray-400 italic mx-1">x{{ $transaction->quantity }}</span></div>
+                                        class="text-gray-400 italic mx-1">x{{ $transaction->quantity }}</span>
+                                </div>
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <div class="text-base font-black text-dark tracking-tight mb-0.5">Rp
-                                    {{ number_format($transaction->total_price, 0, ',', '.') }}</div>
+                                    {{ number_format($transaction->total_price, 0, ',', '.') }}
+                                </div>
                                 <div class="flex items-center justify-end gap-2">
                                     @if($transaction->reseller_id)
                                         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Fee:
@@ -234,22 +263,37 @@
                                 <div class="flex items-center justify-end gap-2">
                                     @if($transaction->status === 'paid')
                                         <button type="button"
-                                            @click="confirmModalOpen = true; actionUrl = '{{ route('admin.reports.resend-email', $transaction) }}'"
-                                            class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="Resend Success Email">
+                                            @click="$clipboard('{{ route('payment.success', $transaction->code) }}'); alert('Success URL copied to clipboard!')"
+                                            class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-emerald-500 hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100"
+                                            title="Copy Success URL">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button type="button"
+                                            @click="confirmModalOpen = true; actionUrl = '{{ route('admin.reports.resend-email', $transaction) }}'"
+                                            class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100"
+                                            title="Resend Success Email">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                             </svg>
                                         </button>
                                     @else
-                                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50/50 text-gray-300 cursor-not-allowed shadow-sm border border-gray-100" title="Email only for paid transactions">
+                                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50/50 text-gray-300 cursor-not-allowed shadow-sm border border-gray-100"
+                                            title="Email only for paid transactions">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                                             </svg>
                                         </div>
                                     @endif
 
                                     <a href="{{ route('admin.reports.transactions.show', $transaction) }}"
-                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-primary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100" title="View Details">
+                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-primary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100"
+                                        title="View Details">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -294,14 +338,16 @@
 
         <!-- Confirmation Modal -->
         <div x-show="confirmModalOpen" style="display: none;"
-            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
-            x-transition>
+            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" x-transition>
             <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-5 relative border border-gray-100"
                 @click.away="confirmModalOpen = false">
                 <div class="flex flex-col items-center text-center">
-                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
+                    <div
+                        class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
                         </svg>
                     </div>
 
