@@ -93,4 +93,17 @@ class ScannerController extends Controller
         $scanner->delete();
         return redirect()->route('admin.scanners.index')->with('success', 'Scanner deleted successfully.');
     }
+
+    public function toggleActive(User $scanner)
+    {
+        if ($scanner->role !== 'scanner') {
+            return back()->with('error', 'Cannot modify this user.');
+        }
+
+        $scanner->is_active = !$scanner->is_active;
+        $scanner->save();
+
+        $status = $scanner->is_active ? 'activated' : 'deactivated';
+        return back()->with('success', "Scanner account has been {$status}.");
+    }
 }

@@ -11,6 +11,26 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use App\Models\Event;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string $role
+ * @property bool $is_active
+ * @property string|null $profile_photo_path
+ * @property string|null $phone
+ * @property string|null $address
+ * @property string|null $bio
+ * @property int $balance
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Event[] $scannedEvents
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Event[] $resellerEvents
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ResellerDeposit[] $deposits
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Transaction[] $resellerTransactions
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -26,6 +46,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_active',
         'profile_photo_path',
         'phone',
         'address',
@@ -55,6 +76,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 

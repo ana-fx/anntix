@@ -43,12 +43,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Scanners
     // Scanners
     Route::resource('scanners', \App\Http\Controllers\Admin\ScannerController::class)->except(['show']);
+    Route::post('scanners/{scanner}/toggle-active', [\App\Http\Controllers\Admin\ScannerController::class, 'toggleActive'])->name('scanners.toggle-active');
 
     // Admins
     Route::resource('admins', \App\Http\Controllers\Admin\AdminUserController::class)->except(['show']);
 
     // Resellers
     Route::resource('resellers', \App\Http\Controllers\Admin\ResellerController::class)->except(['show']);
+    Route::post('resellers/{reseller}/toggle-active', [\App\Http\Controllers\Admin\ResellerController::class, 'toggleActive'])->name('resellers.toggle-active');
     Route::get('resellers-management/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'deposits'])->name('resellers.deposits');
     Route::post('resellers-management/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'storeDeposit'])->name('resellers.deposits.store');
     Route::get('resellers-management/{reseller}/deposits/{deposit}/edit', [\App\Http\Controllers\Admin\ResellerController::class, 'editDeposit'])->name('resellers.deposits.edit');

@@ -30,7 +30,16 @@
         </style>
     @endpush
     <div class="max-w-5xl mx-auto">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8">Edit Event: {{ $event->name }}</h2>
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">Edit Event: {{ $event->name }}</h2>
+            <a href="{{ route('admin.events.index') }}"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Events
+            </a>
+        </div>
 
         <form action="{{ route('admin.events.update', $event) }}" method="POST" enctype="multipart/form-data"
             class="space-y-8">

@@ -4,6 +4,31 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $code
+ * @property int $event_id
+ * @property int $ticket_id
+ * @property string $name
+ * @property string $email
+ * @property string $phone
+ * @property string $city
+ * @property string $nik
+ * @property string $gender
+ * @property int $quantity
+ * @property int $total_price
+ * @property string $status
+ * @property string|null $snap_token
+ * @property string|null $payment_type
+ * @property string|null $midtrans_transaction_id
+ * @property \Illuminate\Support\Carbon|null $redeemed_at
+ * @property int|null $redeemed_by
+ * @property int|null $reseller_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Event|null $event
+ * @property-read \App\Models\Ticket|null $ticket
+ */
 class Transaction extends Model
 {
 
@@ -27,6 +52,8 @@ class Transaction extends Model
         'redeemed_by',
         'reseller_id',
     ];
+
+
 
     protected $casts = [
         'redeemed_at' => 'datetime',

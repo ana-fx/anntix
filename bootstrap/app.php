@@ -32,6 +32,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'reseller' => \App\Http\Middleware\IsReseller::class,
             'scanner' => \App\Http\Middleware\IsScanner::class,
         ]);
+
+        // Add middleware to check if user is active on all auth routes
+        $middleware->appendToGroup('web', [
+            \App\Http\Middleware\EnsureUserIsActive::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, \Illuminate\Http\Request $request) {

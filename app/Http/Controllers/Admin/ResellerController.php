@@ -208,4 +208,17 @@ class ResellerController extends Controller
 
         return back()->with('success', 'Deposit deleted and balance reverted successfully.');
     }
+
+    public function toggleActive(User $reseller)
+    {
+        if ($reseller->role !== 'reseller') {
+            return back()->with('error', 'Cannot modify this user.');
+        }
+
+        $reseller->is_active = !$reseller->is_active;
+        $reseller->save();
+
+        $status = $reseller->is_active ? 'activated' : 'deactivated';
+        return back()->with('success', "Reseller account has been {$status}.");
+    }
 }

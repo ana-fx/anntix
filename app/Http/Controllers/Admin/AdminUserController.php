@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
+use Illuminate\Support\Facades\Auth;
+
 class AdminUserController extends Controller
 {
     public function index()
@@ -90,7 +92,7 @@ class AdminUserController extends Controller
             return back()->with('error', 'Cannot delete this user.');
         }
 
-        if ($admin->id === auth()->id()) {
+        if ($admin->id === Auth::id()) {
             return back()->with('error', 'You cannot delete yourself.');
         }
 

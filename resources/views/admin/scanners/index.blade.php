@@ -33,6 +33,29 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
+                                    <!-- Status Badge -->
+                                    <span class="px-2.5 py-1 text-xs font-bold rounded-lg {{ $scanner->is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                        {{ $scanner->is_active ? 'Active' : 'Disabled' }}
+                                    </span>
+
+                                    <!-- Toggle Active Button -->
+                                    <form action="{{ route('admin.scanners.toggle-active', $scanner) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit"
+                                            class="p-2 text-gray-400 rounded-lg hover:text-primary hover:bg-primary/5 transition-colors"
+                                            title="{{ $scanner->is_active ? 'Disable Account' : 'Enable Account' }}">
+                                            @if($scanner->is_active)
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                                </svg>
+                                            @else
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            @endif
+                                        </button>
+                                    </form>
+
                                     <a href="{{ route('admin.scanners.edit', $scanner) }}"
                                         class="p-2 text-gray-400 rounded-lg hover:text-primary hover:bg-primary/5 transition-colors"
                                         title="Edit">
