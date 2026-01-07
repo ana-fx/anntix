@@ -80,7 +80,7 @@
             <!-- Event List / Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($events as $event)
-                    <a href="{{ route('events.show', $event) }}"
+                    <a href="{{ auth()->user()?->role === 'reseller' ? route('reseller.transactions.create', $event) : route('events.show', $event) }}"
                         class="block group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Landscape Image -->
                         <div class="aspect-video relative overflow-hidden bg-gray-100">

@@ -24,13 +24,12 @@
                 <div class="lg:col-span-4">
                     <div class="rounded-2xl overflow-hidden shadow-lg mb-6">
                         <img src="{{
-                            Str::startsWith($event->thumbnail_path, 'http')
-                            ? $event->thumbnail_path
-                            : (file_exists(public_path($event->thumbnail_path))
-                                ? asset($event->thumbnail_path)
-                                : asset('storage/' . $event->thumbnail_path))
-                        }}"
-                            class="w-full aspect-square object-cover">
+    Str::startsWith($event->thumbnail_path, 'http')
+    ? $event->thumbnail_path
+    : (file_exists(public_path($event->thumbnail_path))
+        ? asset($event->thumbnail_path)
+        : asset('storage/' . $event->thumbnail_path))
+                        }}" class="w-full aspect-square object-cover">
                     </div>
                     <div class="space-y-4">
                         <div class="flex items-start gap-3">
@@ -184,39 +183,29 @@
 
                         <!-- Basic Buyer Details -->
                         <div class="space-y-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-bold text-dark">3. Buyer Details</h3>
-                                    <button type="button"
-                                        @click="
-                                            $refs.inputName.value = '{{ Auth::user()->name }}';
-                                            $refs.inputEmail.value = '{{ Auth::user()->email }}';
-                                            $refs.inputPhone.value = '{{ Auth::user()->phone }}';
-                                        "
-                                        class="text-[10px] font-bold uppercase tracking-wider text-primary hover:text-dark transition-colors bg-primary/10 hover:bg-gray-100 px-3 py-1.5 rounded-lg flex items-center gap-1"
-                                    >
-                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                                        Autofill Me
-                                    </button>
-                                </div>
-                                <p class="text-xs text-primary mb-4">Enter the details of the buyer who will
-                                    receive the ticket.</p>
-                            </div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-dark">3. Buyer Details</h3>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="group">
-                                    <label
-                                        class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Identity
-                                        Number (NIK)</label>
-                                    <input type="text" inputmode="numeric" name="nik" maxlength="16" minlength="16"
-                                        pattern="\d{16}"
-                                        class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
-                                        placeholder="16-digit number" required
-                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)">
-                                </div>
-                                <div class="group">
-                                    <label
-                                        class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Gender</label>
-                                    <div class="relative" x-data="{
+                            </div>
+                            <p class="text-xs text-primary mb-4">Enter the details of the buyer who will
+                                receive the ticket.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Identity
+                                    Number (NIK)</label>
+                                <input type="text" inputmode="numeric" name="nik" maxlength="16" minlength="16"
+                                    pattern="\d{16}"
+                                    class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                                    placeholder="16-digit number" required
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)">
+                            </div>
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Gender</label>
+                                <div class="relative" x-data="{
                                         open: false,
                                         selected: '{{ old('gender') }}',
                                         label: '{{ old('gender') ? ucfirst(old('gender')) : 'Select Gender' }}',
@@ -230,119 +219,119 @@
                                             this.open = false;
                                         }
                                     }" @click.outside="open = false">
-                                        <!-- Hidden Input -->
-                                        <input type="hidden" name="gender" :value="selected" required>
+                                    <!-- Hidden Input -->
+                                    <input type="hidden" name="gender" :value="selected" required>
 
-                                        <!-- Trigger -->
-                                        <button type="button" @click="open = !open"
-                                            class="relative w-full bg-gray-50 border-none px-4 py-3 text-left font-bold transition-all rounded-xl hover:bg-white focus:bg-white"
-                                            :class="selected ? 'text-dark' : 'text-gray-400'">
-                                            <span x-text="label" class="block truncate mr-2"></span>
-                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                <svg class="w-5 h-5 text-gray-400 transition-transform duration-300"
-                                                    :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </div>
-                                        </button>
-
-                                        <!-- Dropdown Menu -->
-                                        <div x-show="open" x-transition:enter="transition ease-out duration-200"
-                                            x-transition:enter-start="opacity-0 translate-y-2"
-                                            x-transition:enter-end="opacity-100 translate-y-0"
-                                            x-transition:leave="transition ease-in duration-150"
-                                            x-transition:leave-start="opacity-100 translate-y-0"
-                                            x-transition:leave-end="opacity-0 translate-y-2"
-                                            class="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-2xl shadow-primary/10 border border-gray-100 overflow-hidden py-1">
-                                            <template x-for="option in options" :key="option.value">
-                                                <button type="button" @click="select(option.value, option.label)"
-                                                    class="w-full text-left px-5 py-3 text-sm font-bold transition-colors"
-                                                    :class="selected === option.value ? 'bg-primary/5 text-primary' : 'text-dark hover:bg-gray-50'">
-                                                    <div class="flex items-center justify-between">
-                                                        <span x-text="option.label"></span>
-                                                        <svg x-show="selected === option.value" class="w-4 h-4"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2.5" d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    </div>
-                                                </button>
-                                            </template>
+                                    <!-- Trigger -->
+                                    <button type="button" @click="open = !open"
+                                        class="relative w-full bg-gray-50 border-none px-4 py-3 text-left font-bold transition-all rounded-xl hover:bg-white focus:bg-white"
+                                        :class="selected ? 'text-dark' : 'text-gray-400'">
+                                        <span x-text="label" class="block truncate mr-2"></span>
+                                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                                                :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </div>
+                                    </button>
+
+                                    <!-- Dropdown Menu -->
+                                    <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0 translate-y-2"
+                                        x-transition:enter-end="opacity-100 translate-y-0"
+                                        x-transition:leave="transition ease-in duration-150"
+                                        x-transition:leave-start="opacity-100 translate-y-0"
+                                        x-transition:leave-end="opacity-0 translate-y-2"
+                                        class="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-2xl shadow-primary/10 border border-gray-100 overflow-hidden py-1">
+                                        <template x-for="option in options" :key="option.value">
+                                            <button type="button" @click="select(option.value, option.label)"
+                                                class="w-full text-left px-5 py-3 text-sm font-bold transition-colors"
+                                                :class="selected === option.value ? 'bg-primary/5 text-primary' : 'text-dark hover:bg-gray-50'">
+                                                <div class="flex items-center justify-between">
+                                                    <span x-text="option.label"></span>
+                                                    <svg x-show="selected === option.value" class="w-4 h-4" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="group">
-                                    <label
-                                        class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Full
-                                        Name</label>
-                                    <input type="text" name="name" x-ref="inputName"
-                                        class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
-                                        placeholder="John Doe" required>
-                                </div>
-                                <div class="group">
-                                    <label
-                                        class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Email
-                                        Address</label>
-                                    <input type="email" name="email" x-ref="inputEmail"
-                                        class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
-                                        placeholder="john@example.com" required>
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Full
+                                    Name</label>
+                                <input type="text" name="name" x-ref="inputName"
+                                    class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                                    placeholder="John Doe" required>
                             </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="group">
-                                    <label
-                                        class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Phone
-                                        Number</label>
-                                    <input type="tel" name="phone" x-ref="inputPhone" maxlength="15"
-                                        class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
-                                        placeholder="+62..." required
-                                        oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
-                                </div>
-                                <div class="group">
-                                    <label
-                                        class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">City
-                                        of Residence</label>
-                                    <input type="text" name="city"
-                                        class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
-                                        placeholder="Jakarta" required>
-                                </div>
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Email
+                                    Address</label>
+                                <input type="email" name="email" x-ref="inputEmail"
+                                    class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                                    placeholder="john@example.com" required>
                             </div>
                         </div>
 
-                        <!-- Summary -->
-                        <div class="pt-8 border-t border-gray-100">
-                            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-                                <div>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Total
-                                        Payment</p>
-                                    <p class="text-3xl font-black text-primary tracking-tight">
-                                        Rp <span x-text="new Intl.NumberFormat('id-ID').format(total)"></span>
-                                    </p>
-                                    <p class="text-[10px] text-gray-400 font-bold uppercase mt-1" x-show="handlingFee > 0">
-                                        Incl. Fee Rp <span x-text="new Intl.NumberFormat('id-ID').format(handlingFee * quantity)"></span>
-                                    </p>
-                                </div>
-                                <button type="submit" :disabled="!selectedTicket"
-                                    :class="!selectedTicket ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90 hover:scale-105 active:scale-95'"
-                                    class="w-full md:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-2">
-                                    <span>Process Payment</span>
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Phone
+                                    Number</label>
+                                <input type="tel" name="phone" x-ref="inputPhone" maxlength="15"
+                                    class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                                    placeholder="+62..." required
+                                    oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
+                            </div>
+                            <div class="group">
+                                <label
+                                    class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">City
+                                    of Residence</label>
+                                <input type="text" name="city"
+                                    class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                                    placeholder="Jakarta" required>
                             </div>
                         </div>
 
-                    </form>
+                <!-- Summary -->
+                <div class="pt-8 border-t border-gray-100">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Total
+                                Payment</p>
+                            <p class="text-3xl font-black text-primary tracking-tight">
+                                Rp <span x-text="new Intl.NumberFormat('id-ID').format(total)"></span>
+                            </p>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase mt-1" x-show="handlingFee > 0">
+                                Incl. Fee Rp <span
+                                    x-text="new Intl.NumberFormat('id-ID').format(handlingFee * quantity)"></span>
+                            </p>
+                        </div>
+                        <button type="submit" :disabled="!selectedTicket"
+                            :class="!selectedTicket ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90 hover:scale-105 active:scale-95'"
+                            class="w-full md:w-auto px-8 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-2">
+                            <span>Process Payment</span>
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+
+                </form>
             </div>
         </div>
+    </div>
     </div>
 </x-layouts.reseller>

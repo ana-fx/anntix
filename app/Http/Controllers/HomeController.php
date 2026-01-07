@@ -26,6 +26,9 @@ class HomeController extends Controller
 
     public function show(Event $event)
     {
+        if (auth()->user()?->role === 'reseller') {
+            return redirect()->route('reseller.transactions.create', $event);
+        }
         $event->load('tickets');
 
         $relatedEvents = Event::where('status', 'active')
