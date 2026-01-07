@@ -51,6 +51,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('resellers', \App\Http\Controllers\Admin\ResellerController::class)->except(['show']);
     Route::get('resellers-management/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'deposits'])->name('resellers.deposits');
     Route::post('resellers-management/{reseller}/deposits', [\App\Http\Controllers\Admin\ResellerController::class, 'storeDeposit'])->name('resellers.deposits.store');
+    Route::get('resellers-management/{reseller}/deposits/{deposit}/edit', [\App\Http\Controllers\Admin\ResellerController::class, 'editDeposit'])->name('resellers.deposits.edit');
+    Route::put('resellers-management/{reseller}/deposits/{deposit}', [\App\Http\Controllers\Admin\ResellerController::class, 'updateDeposit'])->name('resellers.deposits.update');
+    Route::delete('resellers-management/{reseller}/deposits/{deposit}', [\App\Http\Controllers\Admin\ResellerController::class, 'destroyDeposit'])->name('resellers.deposits.destroy');
 
     // Reseller Management (Financial/Performance)
     Route::get('reseller-management', [\App\Http\Controllers\Admin\ResellerManagementController::class, 'index'])->name('reseller-management.index');

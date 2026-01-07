@@ -1,4 +1,5 @@
 <x-layouts.admin title="{{ $reseller->name }} - Deposits">
+    <div class="space-y-6">
     <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.reseller-management.index') }}"
@@ -96,7 +97,7 @@
         </div>
 
         <!-- Deposit History -->
-        <div class="lg:col-span-8">
+        <div class="lg:col-span-8" x-data="{ deleteModalOpen: false, formToSubmit: null }">
             <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-8 py-6 border-b border-gray-50">
                     <h2 class="text-lg font-black text-dark uppercase tracking-tight">Deposit History</h2>
@@ -110,6 +111,7 @@
                                 <th class="px-8 py-4">Amount</th>
                                 <th class="px-8 py-4 hidden md:table-cell">Note</th>
                                 <th class="px-8 py-4 hidden md:table-cell">Added By</th>
+                                <th class="px-8 py-4 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
@@ -140,10 +142,30 @@
                                             <span class="text-xs font-bold text-dark">{{ $deposit->creator->name }}</span>
                                         </div>
                                     </td>
+                                    <td class="px-8 py-6 text-right">
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a href="{{ route('admin.resellers.deposits.edit', [$reseller, $deposit]) }}" 
+                                               class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all active:scale-90"
+                                               title="Edit Deposit">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
+                                            <form action="{{ route('admin.resellers.deposits.destroy', [$reseller, $deposit]) }}" method="POST" @submit.prevent="formToSubmit = $el; deleteModalOpen = true">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all active:scale-90" title="Delete Deposit">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-8 py-12 text-center">
+                                    <td colspan="5" class="px-8 py-12 text-center">
                                         <div
                                             class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-300">
                                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -165,6 +187,9 @@
                     </div>
                 @endif
             </div>
+            <!-- Delete Confirmation Modal -->
+            <x-notifications.delete />
         </div>
     </div>
+</div>
 </x-layouts.admin>

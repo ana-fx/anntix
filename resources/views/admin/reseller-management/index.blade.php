@@ -31,7 +31,7 @@
                 </svg>
             </div>
             <div>
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Total Group Balance</p>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Group Total Debt</p>
                 <p class="text-2xl font-black text-dark">Rp {{ number_format($totalGroupBalance) }}</p>
             </div>
         </div>
@@ -58,6 +58,7 @@
                         <th class="px-6 py-5">Reseller Name</th>
                         <th class="px-6 py-5 text-center">Total Deposited</th>
                         <th class="px-6 py-5 text-center">Sales Generated</th>
+                        <th class="px-6 py-5 text-center">Outstanding Debt</th>
                         <th class="px-6 py-5 text-right">Action</th>
                     </tr>
                 </thead>
@@ -76,6 +77,11 @@
                             <td class="px-6 py-4 text-center">
                                 <span class="font-black text-primary text-sm">
                                     Rp{{ number_format($reseller->total_sales_sum ?? 0) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="font-black {{ $reseller->balance < 0 ? 'text-rose-600' : 'text-emerald-600' }} text-sm">
+                                    Rp{{ number_format($reseller->balance) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">

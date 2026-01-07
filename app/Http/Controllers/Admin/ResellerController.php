@@ -151,4 +151,61 @@ class ResellerController extends Controller
 
         return back()->with('success', 'Deposit added successfully.');
     }
+
+    public function editDeposit(User $reseller, \App\Models\ResellerDeposit $deposit)
+    {
+        if ($reseller->role !== 'reseller' || $deposit->user_id !== $reseller->id) {
+            abort(404);
+        }
+        return view('admin.resellers.deposits-edit', compact('reseller', 'deposit'));
+    }
+
+    public function updateDeposit(Request $request, User $reseller, \App\Models\ResellerDeposit $deposit)
+    {
+        if ($reseller->role !== 'reseller' || $deposit->user_id !== $reseller->id) {
+            return back()->with('error', 'Invalid request.');
+        }
+
+        $validated = $request->validate([
+            'amount' => ['required', 'numeric', 'min:1'],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        DB::transaction(function () use ($reseller, $deposit, $validated) {
+            $oldAmount = $deposit->amount;
+            $newAmount = $validated['amount'];
+            $difference = $newAmount - $oldAmount;
+
+            // Update user balance
+            $reseller->increment('balance', $difference);
+
+            // Update deposit
+            $deposit->update([
+                'amount' => $newAmount,
+                'note' => $validated['note'],
+            ]);
+        });
+
+        return redirect()->route('admin.resellers.deposits', $reseller)->with('success', 'Deposit updated successfully.');
+    }
+
+    public function destroyDeposit(User $reseller, \App\Models\ResellerDeposit $deposit)
+    {
+        if ($reseller->role !== 'reseller') {
+            return back()->with('error', 'Invalid reseller.');
+        }
+
+        if ($deposit->user_id !== $reseller->id) {
+            return back()->with('error', 'Deposit does not belong to this reseller.');
+        }
+
+        DB::transaction(function () use ($reseller, $deposit) {
+            // Deduct the balance
+            $reseller->decrement('balance', $deposit->amount);
+            // Soft delete the deposit
+            $deposit->delete();
+        });
+
+        return back()->with('success', 'Deposit deleted and balance reverted successfully.');
+    }
 }
