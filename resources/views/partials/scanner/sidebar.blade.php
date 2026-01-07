@@ -38,39 +38,28 @@
 
     <!-- Navigation -->
     <nav class="flex-1 py-8 px-4 flex flex-col gap-2 overflow-y-auto">
-        <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-teal-100/50 mb-2">Reseller Panel</p>
+        <p class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-teal-100/50 mb-2">Scanner Panel</p>
 
-        <a href="{{ route('reseller.dashboard') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('reseller.dashboard') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
-            <svg class="w-5 h-5 {{ request()->routeIs('reseller.dashboard') ? 'opacity-100' : 'opacity-70' }}"
-                viewBox="0 0 20 20" fill="currentColor">
-                <path
-                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+        <a href="{{ route('scanner.index') }}"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('scanner.index') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+            <svg class="w-5 h-5 {{ request()->routeIs('scanner.index') ? 'opacity-100' : 'opacity-70' }}"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 17h.01M8 11h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-8a2 2 0 012-2z" />
             </svg>
-            Dashboard
+            Entry Scanner
         </a>
 
-        <!-- Reports / Sales -->
-        <a href="{{ route('reseller.reports.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('reseller.reports.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
-            <svg class="w-5 h-5 {{ request()->routeIs('reseller.reports.*') ? 'opacity-100' : 'opacity-70' }}"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-            My Sales
-        </a>
-
-        <a href="{{ route('reseller.deposits.index') }}"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('reseller.deposits.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
-            <svg class="w-5 h-5 {{ request()->routeIs('reseller.deposits.*') ? 'opacity-100' : 'opacity-70' }}"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-            Deposit Info
-        </a>
-
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('admin.dashboard') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-teal-50 hover:bg-white/10 font-medium transition-colors">
+                <svg class="w-5 h-5 opacity-70" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                        d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                Back to Admin
+            </a>
+        @endif
     </nav>
 
     <!-- User Section / Logout -->

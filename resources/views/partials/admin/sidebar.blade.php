@@ -1,8 +1,8 @@
 <div class="w-64 bg-gradient-to-b from-primary to-[#108c8d] text-white min-h-screen flex flex-col shadow-xl relative"
     x-data>
-    <!-- Modern Creative Toggle Button -->
+    <!-- Modern Creative Toggle Button (Desktop Only) -->
     <button @click="sidebarOpen = false"
-        class="absolute left-full top-1/2 transform -translate-y-1/2 focus:outline-none z-50 group"
+        class="absolute left-full top-1/2 transform -translate-y-1/2 focus:outline-none z-50 group hidden lg:block"
         title="Collapse Sidebar">
         <div
             class="flex items-center justify-center w-4 h-12 bg-white text-gray-300 rounded-r-xl shadow-[4px_0_24px_rgba(0,0,0,0.1)] border-y border-r border-gray-100 group-hover:w-8 group-hover:text-primary transition-all duration-300 ease-out">
@@ -14,7 +14,7 @@
     </button>
 
     <!-- Branding -->
-    <div class="h-24 flex items-center justify-between px-8 border-b border-white/10">
+    <div class="h-24 flex items-center justify-between px-6 md:px-8 border-b border-white/10">
         <div class="flex items-center gap-3">
             @if(isset($global_settings['site_logo_white']))
                 <img src="{{ asset('storage/' . $global_settings['site_logo_white']) }}" class="h-8 w-auto">
@@ -28,7 +28,12 @@
             @endif
         </div>
 
-
+        <!-- Mobile Close Button -->
+        <button @click="sidebarOpen = false" class="lg:hidden p-2 text-white/70 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
     </div>
 
     <!-- Navigation -->

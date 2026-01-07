@@ -1,6 +1,14 @@
 <header class="bg-white border-b border-gray-100 h-24 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
-    <!-- Left: Branding or Breadcrumb (Optional) -->
-    <div></div>
+    <!-- Left: Toggle Button -->
+    <div class="flex items-center gap-4">
+        <button @click="sidebarOpen = !sidebarOpen"
+            class="lg:hidden p-2.5 rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-primary transition-all duration-200 focus:outline-none group">
+            <!-- Hamburger Icon (Show when sidebar is closed) -->
+            <svg x-show="!sidebarOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
 
     <!-- Right: Actions -->
     <div class="flex items-center gap-4">

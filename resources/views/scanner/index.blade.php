@@ -2,25 +2,51 @@
     <div x-data="scannerApp()" class="h-full flex flex-col pt-safe" x-cloak>
 
         <!-- Header -->
-        <header class="px-6 py-6 flex items-center justify-between border-b border-gray-100 bg-white shadow-sm">
-            <div>
-                <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Entry Scanner</h1>
-                <div class="flex items-center gap-1.5 mt-0.5">
-                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">System Online</span>
+        <header
+            class="bg-white border-b border-gray-100 h-24 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
+            <!-- Left: Toggle Button -->
+            <div class="flex items-center gap-4">
+                <button @click="sidebarOpen = !sidebarOpen"
+                    class="lg:hidden p-2.5 rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-primary transition-all duration-200 focus:outline-none group">
+                    <!-- Hamburger Icon (Show when sidebar is closed) -->
+                    <svg x-show="!sidebarOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        style="display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <div class="hidden sm:block">
+                    <h1 class="text-lg font-extrabold text-slate-900 tracking-tight leading-tight">Entry Scanner</h1>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">System
+                            Online</span>
+                    </div>
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit"
-                    class="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                </button>
-            </form>
+            <!-- Right: Logout / Profile -->
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden md:block">
+                    <p class="text-sm font-bold text-gray-700 leading-none">{{ auth()->user()->name }}</p>
+                    <p class="text-[10px] text-gray-400 mt-1 font-black uppercase tracking-widest">
+                        {{ auth()->user()->role }}
+                    </p>
+                </div>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                        class="w-12 h-12 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white shadow-sm hover:bg-rose-500 hover:text-white transition-all duration-200"
+                        title="Log Out">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
         </header>
 
         <!-- Form Control -->
