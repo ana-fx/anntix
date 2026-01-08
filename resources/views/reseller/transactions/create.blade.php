@@ -195,12 +195,12 @@
                             <div class="group">
                                 <label
                                     class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Identity
-                                    Number (NIK)</label>
-                                <input type="text" inputmode="numeric" name="nik" maxlength="16" minlength="16"
-                                    pattern="\d{16}"
+                                    Number (NIK/Passport/ID)</label>
+                                <input type="text" inputmode="numeric" name="nik" maxlength="20" minlength="12"
+                                    pattern="\d{12,20}"
                                     class="w-full bg-gray-50 border-none px-4 py-3 text-dark font-bold focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
-                                    placeholder="16-digit number" required
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)">
+                                    placeholder="12-20 digit number" required
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 20)">
                             </div>
                             <div class="group">
                                 <label

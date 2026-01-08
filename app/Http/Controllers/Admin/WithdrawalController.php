@@ -11,37 +11,7 @@ class WithdrawalController extends Controller
 {
     public function create(Event $event)
     {
-        // Calculate Available Saldo
-        $allTickets = $event->tickets()
-            ->withSum(['transactions as online_qty' => fn($q) => $q->where('status', 'paid')->whereNull('reseller_id')], 'quantity')
-            ->withSum(['transactions as reseller_qty' => fn($q) => $q->where('status', 'paid')->whereNotNull('reseller_id')], 'quantity')
-            ->get();
-
-        $totalTicketRevenue = 0;
-        $totalOrgTax = 0;
-
-        foreach ($allTickets as $t) {
-            $onlineQty = $t->online_qty ?? 0;
-            $resellerQty = $t->reseller_qty ?? 0;
-            $qPaid = $onlineQty + $resellerQty;
-            $tRevenue = $qPaid * $t->price;
-
-            $onlineFee = $event->organizer_fee_online_type === 'percent'
-                ? $t->price * ($event->organizer_fee_online / 100)
-                : $event->organizer_fee_online;
-
-            $resellerFee = $event->organizer_fee_reseller_type === 'percent'
-                ? $t->price * ($event->organizer_fee_reseller / 100)
-                : $event->organizer_fee_reseller;
-
-            $totalTicketRevenue += $tRevenue;
-            $totalOrgTax += ($onlineQty * $onlineFee) + ($resellerQty * $resellerFee);
-        }
-
-        $cumulativeSaldo = $totalTicketRevenue - $totalOrgTax;
-        $totalWithdrawn = $event->withdrawals()->sum('amount');
-        $availableSaldo = $cumulativeSaldo - $totalWithdrawn;
-
+        $availableSaldo = $event->available_saldo;
         $withdrawals = $event->withdrawals()->latest()->get();
 
         return view('admin.withdrawals.create', compact('event', 'availableSaldo', 'withdrawals'));
@@ -49,50 +19,49 @@ class WithdrawalController extends Controller
 
     public function store(Request $request, Event $event)
     {
-        // 1. Recalculate Total Saldo for validation
-        $allTickets = $event->tickets()
-            ->withSum(['transactions as online_qty' => fn($q) => $q->where('status', 'paid')->whereNull('reseller_id')], 'quantity')
-            ->withSum(['transactions as reseller_qty' => fn($q) => $q->where('status', 'paid')->whereNotNull('reseller_id')], 'quantity')
-            ->get();
+        $availableSaldo = $event->available_saldo;
 
-        $totalTicketRevenue = 0;
-        $totalOrgTax = 0;
-
-        foreach ($allTickets as $t) {
-            $onlineQty = $t->online_qty ?? 0;
-            $resellerQty = $t->reseller_qty ?? 0;
-            $qPaid = $onlineQty + $resellerQty;
-            $tRevenue = $qPaid * $t->price;
-
-            $onlineFee = $event->organizer_fee_online_type === 'percent'
-                ? $t->price * ($event->organizer_fee_online / 100)
-                : $event->organizer_fee_online;
-
-            $resellerFee = $event->organizer_fee_reseller_type === 'percent'
-                ? $t->price * ($event->organizer_fee_reseller / 100)
-                : $event->organizer_fee_reseller;
-
-            $totalTicketRevenue += $tRevenue;
-            $totalOrgTax += ($onlineQty * $onlineFee) + ($resellerQty * $resellerFee);
-        }
-
-        $cumulativeSaldo = $totalTicketRevenue - $totalOrgTax;
-        $totalWithdrawn = $event->withdrawals()->sum('amount');
-        $availableSaldo = $cumulativeSaldo - $totalWithdrawn;
-
-        // 2. Validate
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1|max:' . $availableSaldo,
             'note' => 'nullable|string|max:500',
         ]);
 
-        // 3. Create Withdrawal record
         $event->withdrawals()->create([
             'amount' => $validated['amount'],
-            'reference' => $event->name, // User request: withdraw refers to the event name
+            'reference' => $event->name,
             'note' => $validated['note'],
         ]);
 
-        return redirect()->route('admin.events.tickets-report.index', $event)->with('success', 'Withdrawal recorded successfully.');
+        return redirect()->route('admin.events.withdrawals.create', $event)->with('success', 'Withdrawal recorded successfully.');
+    }
+
+    public function edit(Event $event, Withdrawal $withdrawal)
+    {
+        $availableSaldo = $event->available_saldo + $withdrawal->amount;
+        return view('admin.withdrawals.edit', compact('event', 'withdrawal', 'availableSaldo'));
+    }
+
+    public function update(Request $request, Event $event, Withdrawal $withdrawal)
+    {
+        $availableSaldo = $event->available_saldo + $withdrawal->amount;
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:1|max:' . $availableSaldo,
+            'note' => 'nullable|string|max:500',
+        ]);
+
+        $withdrawal->update([
+            'amount' => $validated['amount'],
+            'note' => $validated['note'],
+        ]);
+
+        return redirect()->route('admin.events.withdrawals.create', $event)->with('success', 'Withdrawal updated successfully.');
+    }
+
+    public function destroy(Event $event, Withdrawal $withdrawal)
+    {
+        $withdrawal->delete();
+        $event->refresh();
+        return redirect()->route('admin.events.withdrawals.create', $event)->with('success', 'Withdrawal deleted successfully.');
     }
 }

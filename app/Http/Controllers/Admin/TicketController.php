@@ -60,31 +60,34 @@ class TicketController extends Controller
             ->get();
 
         // Calculate Global Totals for this Event
-        $allTickets = $event->tickets()
-            ->withSum(['transactions as online_qty' => fn($q) => $q->where('status', 'paid')->whereNull('reseller_id')], 'quantity')
-            ->withSum(['transactions as reseller_qty' => fn($q) => $q->where('status', 'paid')->whereNotNull('reseller_id')], 'quantity')
-            ->get();
-
         $totalTicketRevenue = 0;
-        $totalOrgTax = 0;
-        $totalHandling = 0;
-
-        foreach ($allTickets as $t) {
-            $qPaid = ($t->online_qty ?? 0) + ($t->reseller_qty ?? 0);
-            $tRevenue = $qPaid * $t->price;
-
-            $orgFeeUnit = $event->organizer_fee_type === 'percent'
-                ? $t->price * ($event->organizer_fee / 100)
-                : $event->organizer_fee;
-
-            $totalTicketRevenue += $tRevenue;
-            $totalOrgTax += ($qPaid * $orgFeeUnit);
-            $totalHandling += (($t->online_qty ?? 0) * $handlingFeeValue);
+        foreach ($event->tickets()->withTrashed()->get() as $t) {
+            $qPaid = $t->transactions()->where('status', 'paid')->sum('quantity');
+            $totalTicketRevenue += ($qPaid * $t->price);
         }
 
-        $totalSaldo = $totalTicketRevenue - $totalOrgTax;
-        $totalWithdrawn = $event->withdrawals()->sum('amount');
-        $availableSaldo = $totalSaldo - $totalWithdrawn;
+        $totalSaldo = $event->calculateSaldo();
+        $totalWithdrawn = $event->total_withdrawn;
+        $availableSaldo = $event->available_saldo;
+
+        // Calculate Platform Revenue (Organizer Fees + Handling Fees)
+        $totalOrgTax = 0;
+        $totalHandling = 0;
+        foreach ($event->tickets()->withTrashed()->get() as $t) {
+            $onlineQty = $t->transactions()->where('status', 'paid')->whereNull('reseller_id')->sum('quantity');
+            $resellerQty = $t->transactions()->where('status', 'paid')->whereNotNull('reseller_id')->sum('quantity');
+
+            $onlinePlatformFee = $event->organizer_fee_online_type === 'percent'
+                ? $t->price * ($event->organizer_fee_online / 100)
+                : $event->organizer_fee_online;
+
+            $resellerPlatformFee = $event->organizer_fee_reseller_type === 'percent'
+                ? $t->price * ($event->organizer_fee_reseller / 100)
+                : $event->organizer_fee_reseller;
+
+            $totalOrgTax += ($onlineQty * $onlinePlatformFee) + ($resellerQty * $resellerPlatformFee);
+            $totalHandling += ($onlineQty * $handlingFeeValue);
+        }
         $totalPlatformRevenue = $totalOrgTax + $totalHandling;
 
         return view('admin.tickets.index', compact(

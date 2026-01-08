@@ -63,7 +63,7 @@ class TransactionController extends Controller
             'email' => 'required|email|max:255',
             'phone' => 'required|regex:/^[\d\+\-\s]+$/|min:10|max:20',
             'city' => 'required|string|max:255',
-            'nik' => 'required|digits:16|numeric',
+            'nik' => 'required|digits_between:12,20',
             'gender' => 'required|in:male,female',
         ]);
 

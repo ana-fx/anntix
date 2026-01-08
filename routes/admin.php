@@ -32,6 +32,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
     Route::get('events/{event}/withdrawals/create', [\App\Http\Controllers\Admin\WithdrawalController::class, 'create'])->name('events.withdrawals.create');
     Route::post('events/{event}/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'store'])->name('events.withdrawals.store');
+    Route::get('events/{event}/withdrawals/{withdrawal}/edit', [\App\Http\Controllers\Admin\WithdrawalController::class, 'edit'])->name('events.withdrawals.edit');
+    Route::put('events/{event}/withdrawals/{withdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'update'])->name('events.withdrawals.update');
+    Route::delete('events/{event}/withdrawals/{withdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'destroy'])->name('events.withdrawals.destroy');
 
     // Report
     Route::get('reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
