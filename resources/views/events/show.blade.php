@@ -1,13 +1,94 @@
 <x-layouts.app :seo="[
-    'title' => $event->seo_title ?? $event->name,
-    'description' => $event->seo_description ?? Str::limit(strip_tags($event->description), 160),
-    'image' => $event->banner_path ?? $event->thumbnail_path,
-    'type' => 'website'
-]">
+        'title' => $event->seo_title ?? $event->name,
+        'description' => $event->seo_description ?? Str::limit(strip_tags($event->description), 160),
+        'keywords' => $event->seo_keywords ?? 'tiket ' . $event->name . ', event ' . $event->city . ', konser, festival',
+        'image' => $event->banner_path ?? $event->thumbnail_path,
+        'type' => 'website',
+        'canonical' => route('events.show', $event),
+        'breadcrumbs' => [
+            ['name' => 'Home', 'url' => route('home')],
+            ['name' => 'Events', 'url' => route('events.index')],
+            ['name' => $event->name, 'url' => route('events.show', $event)]
+        ]
+    ]">
+
+    @push('structured-data')
+            <!-- Event Schema -->
+            <script type="application/ld+json">
+            {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Event',
+            'name' => $event->name,
+            'description' => strip_tags($event->description),
+            'startDate' => $event->start_date?->toIso8601String(),
+            'endDate' => $event->end_date?->toIso8601String(),
+            'eventStatus' => 'https://schema.org/EventScheduled',
+            'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+            'image' => [
+                $event->banner_path
+                ? (Str::startsWith($event->banner_path, ['http', 'https'])
+                    ? $event->banner_path
+                    : asset('storage/' . $event->banner_path))
+                : asset('logo.png')
+            ],
+            'location' => [
+                '@type' => 'Place',
+                'name' => $event->location,
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => $event->address ?? $event->location,
+                    'addressLocality' => $event->city,
+                    'addressRegion' => $event->province,
+                    'addressCountry' => 'ID'
+                ]
+            ],
+            'offers' => $event->tickets->map(function ($ticket) use ($event) {
+                return [
+                    '@type' => 'Offer',
+                    'name' => $ticket->name,
+                    'price' => $ticket->price,
+                    'priceCurrency' => 'IDR',
+                    'availability' => $ticket->quota > 0 ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+                    'url' => route('checkout.create', $event),
+                    'validFrom' => $ticket->start_date?->toIso8601String()
+                ];
+            })->toArray(),
+            'performer' => [
+                '@type' => 'PerformingGroup',
+                'name' => $event->organizer_name ?? 'Anntix'
+            ],
+            'organizer' => [
+                '@type' => 'Organization',
+                'name' => $event->organizer_name ?? 'Anntix',
+                'url' => url('/')
+            ]
+        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+            </script>
+    @endpush
+
     <div class="bg-white min-h-screen pt-32">
 
+        <!-- Breadcrumb Navigation -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+            <nav class="flex items-center gap-2 text-sm mb-8" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}" class="text-gray-500 hover:text-primary transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                </a>
+                <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <a href="{{ route('events.index') }}" class="text-gray-500 hover:text-primary transition-colors">Events</a>
+                <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-gray-900 font-medium truncate">{{ Str::limit($event->name, 50) }}</span>
+            </nav>
+        </div>
+
         <!-- Content Split (7/5 Ratio) -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-24 lg:pb-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 lg:pb-32">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
 
                 <!-- Left: Detailed Prose -->
@@ -17,7 +98,9 @@
                         <div
                             class="aspect-square w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-gray-200/50 bg-gray-50 border border-gray-100">
                             <img src="{{ Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path)) }}"
-                                class="w-full h-full object-cover" alt="{{ $event->name }}">
+                                class="w-full h-full object-cover" 
+                                alt="Tiket {{ $event->name }} - Event {{ $event->category ?? 'Hiburan' }} di {{ $event->city }} {{ $event->start_date ? $event->start_date->format('d M Y') : '' }}"
+                                loading="lazy">
                         </div>
                         <div class="mb-16">
                             <div class="inline-flex items-center gap-3 mb-6">

@@ -21,7 +21,14 @@ class HomeController extends Controller
 
         $banners = \App\Models\Banner::where('is_active', true)->latest()->get();
 
-        return view('home', compact('events', 'banners'));
+        // SEO data for homepage
+        $seoData = [
+            'title' => 'Beli Tiket Event, Konser & Festival Online Terpercaya',
+            'description' => 'Platform pembelian tiket event terpercaya di Indonesia. Temukan dan beli tiket konser, festival musik, seminar, workshop dengan mudah dan aman. Proses cepat, harga terjangkau!',
+            'keywords' => 'tiket event, beli tiket online, konser indonesia, festival musik, event organizer, tiket konser murah, seminar online, workshop jakarta'
+        ];
+
+        return view('home', compact('events', 'banners', 'seoData'));
     }
 
     public function show(Event $event)

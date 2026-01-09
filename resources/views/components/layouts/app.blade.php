@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- DNS Prefetch & Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+
     <title>
         @if(isset($seo['title']))
             {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | ' . $seo['title'] }}
@@ -22,10 +28,19 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
     @endif
 
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ $seo['canonical'] ?? url()->current() }}">
+
     <!-- SEO & Social Sharing -->
-    <meta name="keywords" content="{{ $seo['keywords'] ?? ($global_settings['seo_keywords'] ?? 'events, tickets, concert, festival, anntix') }}">
+    <meta name="keywords" content="{{ $seo['keywords'] ?? ($global_settings['seo_keywords'] ?? 'tiket event, konser, festival, seminar, workshop, event organizer indonesia, beli tiket online') }}">
     <meta name="author" content="{{ $global_settings['site_name'] ?? 'Anntix' }}">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{{ $seo['robots'] ?? 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' }}">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="language" content="id">
+    <meta name="geo.region" content="ID">
+    <meta name="geo.placename" content="Indonesia">
+    <meta name="theme-color" content="#ea580c">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{{ $seo['type'] ?? 'website' }}">
@@ -54,31 +69,142 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:site" content="@anntix">
+    <meta property="twitter:creator" content="@anntix">
     <meta property="twitter:title" content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
     <meta property="twitter:description" content="{{ $seo['description'] ?? ($global_settings['seo_description'] ?? '') }}">
     @if($ogImage)
         <meta property="twitter:image" content="{{ $ogImage }}">
+        <meta property="twitter:image:alt" content="{{ $seo['title'] ?? config('app.name') }}">
+    @endif
+
+    <!-- Apple Mobile Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{ $global_settings['site_name'] ?? 'Anntix' }}">
+    @if(isset($global_settings['site_icon']))
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
     @endif
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
-        {!! json_encode([
-            '@context' => 'https://schema.org',
-            '@type' => 'Organization',
-            'name' => 'Anntix',
-            'alternateName' => 'Anntix.id',
-            'url' => url('/'),
-            'logo' => isset($global_settings['site_logo']) ? asset('storage/' . $global_settings['site_logo']) : asset('logo.png'),
-            'contactPoint' => [
-                '@type' => 'ContactPoint',
-                'telephone' => '',
-                'contactType' => 'customer support',
-                'email' => 'hallo@anntix.id'
-            ]
-        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    @php
+        $schemaGraph = [
+            // Organization
+            [
+                '@type' => 'Organization',
+                '@id' => url('/') . '#organization',
+                'name' => $global_settings['site_name'] ?? 'Anntix',
+                'url' => url('/'),
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => isset($global_settings['site_logo']) ? asset('storage/' . $global_settings['site_logo']) : asset('logo.png'),
+                ],
+                'sameAs' => array_filter([
+                    $global_settings['facebook_url'] ?? null,
+                    $global_settings['instagram_url'] ?? null,
+                    $global_settings['twitter_url'] ?? null,
+                ]),
+                'contactPoint' => [
+                    '@type' => 'ContactPoint',
+                    'telephone' => $global_settings['contact_phone'] ?? '+62877-5058-1589',
+                    'contactType' => 'customer support',
+                    'email' => $global_settings['contact_email'] ?? 'hallo@anntix.id',
+                    'areaServed' => 'ID',
+                    'availableLanguage' => ['id', 'en']
+                ]
+            ],
+            // LocalBusiness - Google Business Profile Integration
+            [
+                '@type' => 'LocalBusiness',
+                '@id' => url('/') . '#localbusiness',
+                'name' => 'Anntix - Platform Tiket Event Indonesia',
+                'image' => isset($global_settings['site_logo']) ? asset('storage/' . $global_settings['site_logo']) : asset('logo.png'),
+                'telephone' => '+62877-5058-1589',
+                'email' => 'hallo@anntix.id',
+                'url' => url('/'),
+                'priceRange' => '$$',
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => 'Jl. Raya Desa Sidaharja, Milangga, Rangkasbitung',
+                    'addressLocality' => 'Suradadi',
+                    'addressRegion' => 'Jawa Tengah',
+                    'postalCode' => '52182',
+                    'addressCountry' => 'ID'
+                ],
+                'geo' => [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => '-6.9175',  // Update dengan koordinat actual dari Google Maps
+                    'longitude' => '109.1425'
+                ],
+                'openingHoursSpecification' => [
+                    [
+                        '@type' => 'OpeningHoursSpecification',
+                        'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                        'opens' => '09:00',
+                        'closes' => '17:00'
+                    ],
+                    [
+                        '@type' => 'OpeningHoursSpecification',
+                        'dayOfWeek' => ['Saturday'],
+                        'opens' => '09:00',
+                        'closes' => '14:00'
+                    ]
+                ],
+                'sameAs' => array_filter([
+                    $global_settings['facebook_url'] ?? null,
+                    $global_settings['instagram_url'] ?? null,
+                    $global_settings['twitter_url'] ?? null,
+                ])
+            ],
+            // WebSite dengan Search Action
+            [
+                '@type' => 'WebSite',
+                '@id' => url('/') . '#website',
+                'url' => url('/'),
+                'name' => $global_settings['site_name'] ?? 'Anntix',
+                'description' => $global_settings['seo_description'] ?? 'Platform pembelian tiket event terpercaya di Indonesia',
+                'publisher' => [
+                    '@id' => url('/') . '#organization'
+                ],
+                'potentialAction' => [
+                    '@type' => 'SearchAction',
+                    'target' => [
+                        '@type' => 'EntryPoint',
+                        'urlTemplate' => url('/events') . '?search={search_term_string}'
+                    ],
+                    'query-input' => 'required name=search_term_string'
+                ]
+            ],
+        ];
+
+        // Add BreadcrumbList if available
+        if (isset($seo['breadcrumbs']) && is_array($seo['breadcrumbs'])) {
+            $schemaGraph[] = [
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => collect($seo['breadcrumbs'])->map(function($crumb, $index) {
+                    return [
+                        '@type' => 'ListItem',
+                        'position' => $index + 1,
+                        'name' => $crumb['name'],
+                        'item' => $crumb['url']
+                    ];
+                })->values()->toArray()
+            ];
+        }
+    @endphp
+    {!! json_encode([
+        '@context' => 'https://schema.org',
+        '@graph' => $schemaGraph
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
+
+    @stack('structured-data')
+
+
 </head>
 
 <body class="theme-event font-sans text-gray-900 antialiased bg-gray-50">

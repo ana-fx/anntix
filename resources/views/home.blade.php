@@ -1,4 +1,59 @@
-<x-layouts.app title="Home">
+<x-layouts.app :seo="[
+    'title' => $seoData['title'] ?? null,
+    'description' => $seoData['description'] ?? null,
+    'keywords' => $seoData['keywords'] ?? null,
+    'breadcrumbs' => [
+        ['name' => 'Home', 'url' => route('home')]
+    ]
+]">
+
+@push('structured-data')
+<!-- ItemList Schema for Featured Events -->
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'ItemList',
+    'name' => 'Featured Events di Anntix',
+    'description' => 'Daftar event terbaru dan terpopuler di Indonesia',
+    'numberOfItems' => $events->count(),
+    'itemListElement' => $events->map(function($event, $index) {
+        return [
+            '@type' => 'ListItem',
+            'position' => $index + 1,
+            'url' => route('events.show', $event),
+            'item' => [
+                '@type' => 'Event',
+                'name' => $event->name,
+                'description' => strip_tags(Str::limit($event->description, 200)),
+                'startDate' => $event->start_date?->toIso8601String(),
+                'location' => [
+                    '@type' => 'Place',
+                    'name' => $event->location,
+                    'address' => [
+                        '@type' => 'PostalAddress',
+                        'addressLocality' => $event->city,
+                        'addressRegion' => $event->province,
+                        'addressCountry' => 'ID'
+                    ]
+                ],
+                'image' => $event->banner_path 
+                    ? (Str::startsWith($event->banner_path, ['http', 'https']) 
+                        ? $event->banner_path 
+                        : asset('storage/' . $event->banner_path))
+                    : asset('logo.png'),
+                'offers' => [
+                    '@type' => 'AggregateOffer',
+                    'lowPrice' => $event->tickets->min('price') ?? 0,
+                    'highPrice' => $event->tickets->max('price') ?? 0,
+                    'priceCurrency' => 'IDR'
+                ]
+            ]
+        ];
+    })->toArray()
+], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
+
     <div class="bg-white min-h-screen pb-20">
 
         <!-- Main Banner Carousel -->
@@ -28,7 +83,9 @@
                         <a :href="slide.link" class="block w-full h-full relative">
                             <!-- Image -->
                             <img :src="slide.img"
+                                :alt="slide.title + ' - Promo Tiket Event di Anntix'"
                                 onerror="this.style.display = 'none'; this.nextElementSibling.style.display = 'flex'"
+                                loading="lazy"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
 
                             <!-- Fallback Icon -->
@@ -95,7 +152,8 @@
                             @if($bannerUrl)
                                 <img src="{{ $bannerUrl }}"
                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
-                                    alt="{{ $event->name }}"
+                                    alt="Tiket {{ $event->name }} - Event {{ $event->category ?? 'Hiburan' }} di {{ $event->city ?? 'Indonesia' }}, {{ $event->start_date ? $event->start_date->format('d M Y') : 'Coming Soon' }}"
+                                    loading="lazy"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             @endif
 
