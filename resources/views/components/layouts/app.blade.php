@@ -29,12 +29,11 @@
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
 
     @php
-        $siteIcon = isset($global_settings['site_icon']) 
-            ? asset('storage/' . $global_settings['site_icon']) 
-            : asset('logo.png');
+        $siteIcon = isset($global_settings['site_icon'])
+            ? asset('storage/' . $global_settings['site_icon'])
+            : asset('icon.png');
     @endphp
-    <link rel="icon" href="{{ $siteIcon }}" sizes="32x32">
-    <link rel="icon" href="{{ $siteIcon }}" sizes="192x192">
+    <link rel="icon" href="{{ $siteIcon }}" type="image/png">
     <link rel="apple-touch-icon" href="{{ $siteIcon }}">
     <link rel="shortcut icon" href="{{ $siteIcon }}">
 
@@ -50,7 +49,7 @@
     <meta name="keywords" content="{{ $seo['keywords'] ?? ($global_settings['seo_keywords'] ?? 'tiket event, konser, festival, seminar, workshop, event organizer indonesia, beli tiket online') }}">
     <meta name="author" content="{{ $global_settings['site_name'] ?? 'Anntix' }}">
     <meta name="robots" content="{{ $seo['robots'] ?? 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' }}">
-    
+
     <meta name="language" content="{{ app()->getLocale() }}">
     <meta name="geo.region" content="ID">
     <meta name="geo.placename" content="Indonesia">
@@ -99,7 +98,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     @php
