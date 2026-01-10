@@ -1,58 +1,58 @@
 <x-layouts.app :seo="[
-    'title' => $seoData['title'] ?? null,
-    'description' => $seoData['description'] ?? null,
-    'keywords' => $seoData['keywords'] ?? null,
-    'breadcrumbs' => [
-        ['name' => 'Home', 'url' => route('home')]
-    ]
-]">
+        'title' => $seoData['title'] ?? null,
+        'description' => $seoData['description'] ?? null,
+        'keywords' => $seoData['keywords'] ?? null,
+        'breadcrumbs' => [
+            ['name' => __('common.home'), 'url' => route('home')]
+        ]
+    ]">
 
-@push('structured-data')
-<!-- ItemList Schema for Featured Events -->
-<script type="application/ld+json">
-{!! json_encode([
-    '@context' => 'https://schema.org',
-    '@type' => 'ItemList',
-    'name' => 'Featured Events di Anntix',
-    'description' => 'Daftar event terbaru dan terpopuler di Indonesia',
-    'numberOfItems' => $events->count(),
-    'itemListElement' => $events->map(function($event, $index) {
-        return [
-            '@type' => 'ListItem',
-            'position' => $index + 1,
-            'url' => route('events.show', $event),
-            'item' => [
-                '@type' => 'Event',
-                'name' => $event->name,
-                'description' => strip_tags(Str::limit($event->description, 200)),
-                'startDate' => $event->start_date?->toIso8601String(),
-                'location' => [
-                    '@type' => 'Place',
-                    'name' => $event->location,
-                    'address' => [
-                        '@type' => 'PostalAddress',
-                        'addressLocality' => $event->city,
-                        'addressRegion' => $event->province,
-                        'addressCountry' => 'ID'
+    @push('structured-data')
+            <!-- ItemList Schema for Featured Events -->
+            <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'ItemList',
+            'name' => __('common.featured_events') . ' | Anntix',
+            'description' => __('common.footer_tagline'),
+            'numberOfItems' => $events->count(),
+            'itemListElement' => $events->map(function ($event, $index) {
+                return [
+                    '@type' => 'ListItem',
+                    'position' => $index + 1,
+                    'url' => route('events.show', $event),
+                    'item' => [
+                        '@type' => 'Event',
+                        'name' => $event->name,
+                        'description' => strip_tags(Str::limit($event->description, 200)),
+                        'startDate' => $event->start_date?->toIso8601String(),
+                        'location' => [
+                            '@type' => 'Place',
+                            'name' => $event->location,
+                            'address' => [
+                                '@type' => 'PostalAddress',
+                                'addressLocality' => $event->city,
+                                'addressRegion' => $event->province,
+                                'addressCountry' => 'ID'
+                            ]
+                        ],
+                        'image' => $event->banner_path
+                            ? (Str::startsWith($event->banner_path, ['http', 'https'])
+                                ? $event->banner_path
+                                : asset('storage/' . $event->banner_path))
+                            : asset('logo.png'),
+                        'offers' => [
+                            '@type' => 'AggregateOffer',
+                            'lowPrice' => $event->tickets->min('price') ?? 0,
+                            'highPrice' => $event->tickets->max('price') ?? 0,
+                            'priceCurrency' => 'IDR'
+                        ]
                     ]
-                ],
-                'image' => $event->banner_path 
-                    ? (Str::startsWith($event->banner_path, ['http', 'https']) 
-                        ? $event->banner_path 
-                        : asset('storage/' . $event->banner_path))
-                    : asset('logo.png'),
-                'offers' => [
-                    '@type' => 'AggregateOffer',
-                    'lowPrice' => $event->tickets->min('price') ?? 0,
-                    'highPrice' => $event->tickets->max('price') ?? 0,
-                    'priceCurrency' => 'IDR'
-                ]
-            ]
-        ];
-    })->toArray()
-], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-</script>
-@endpush
+                ];
+            })->toArray()
+        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+        </script>
+    @endpush
 
     <div class="bg-white min-h-screen pb-20">
 
@@ -82,8 +82,7 @@
 
                         <a :href="slide.link" class="block w-full h-full relative">
                             <!-- Image -->
-                            <img :src="slide.img"
-                                :alt="slide.title + ' - Promo Tiket Event di Anntix'"
+                            <img :src="slide.img" :alt="slide.title + ' - Promo Tiket Event di Anntix'"
                                 onerror="this.style.display = 'none'; this.nextElementSibling.style.display = 'flex'"
                                 loading="lazy"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
@@ -129,9 +128,9 @@
         <!-- Featured Events Section -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-2xl font-heading font-bold text-dark">Featured Events</h2>
-                <a href="{{ route('events.index') }}" class="text-sm font-bold text-primary hover:text-primary/80">View
-                    All</a>
+                <h2 class="text-2xl font-heading font-bold text-dark">{{ __('common.featured_events') }}</h2>
+                <a href="{{ route('events.index') }}"
+                    class="text-sm font-bold text-primary hover:text-primary/80">{{ __('common.view_all') }}</a>
             </div>
 
             <!-- Event List / Grid -->
@@ -169,7 +168,7 @@
                             @if($event->created_at->diffInDays(now()) < 7)
                                 <div
                                     class="absolute top-3 right-3 bg-accent text-dark px-2 py-1 rounded text-xs font-bold shadow-sm z-10">
-                                    New
+                                    {{ __('common.new') }}
                                 </div>
                             @endif
                         </div>
@@ -196,11 +195,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                {{ $event->location ?? $event->city ?? 'Location TBA' }}
+                                {{ $event->location ?? $event->city ?? __('common.location_tba') }}
                             </div>
 
                             <div class="pt-3 border-t border-gray-50 mt-1 flex items-center justify-between">
-                                <span class="text-xs text-black font-medium">Starts from</span>
+                                <span class="text-xs text-black font-medium">{{ __('common.starts_from') }}</span>
                                 <span class="font-extrabold text-dark text-sm">
                                     @php
                                         $lowestPriceTicket = $event->tickets->sortBy('price')->first();
@@ -208,7 +207,7 @@
                                     @if($lowestPriceTicket)
                                         Rp. {{ number_format($lowestPriceTicket->price, 0, ',', '.') }}
                                     @else
-                                        Free / TBA
+                                        {{ __('common.free_tba') }}
                                     @endif
                                 </span>
                             </div>
@@ -216,7 +215,7 @@
                     </a>
                 @empty
                     <div class="col-span-full py-12 text-center text-gray-500">
-                        <p>No upcoming events found. Check back soon!</p>
+                        <p>{{ __('common.no_events_found') }}</p>
                     </div>
                 @endforelse
             </div>

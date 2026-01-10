@@ -1,4 +1,4 @@
-<x-layouts.app title="Order Confirmed">
+<x-layouts.app :title="__('common.order_confirmed')">
     @php
         $subtotal = $transaction->ticket->price * $transaction->quantity;
 
@@ -30,15 +30,17 @@
 
 
                     <h1 class="text-3xl md:text-5xl font-heading font-bold text-dark mb-6 uppercase tracking-tight">
-                        Thank you for your purchase!
+                        {{ __('common.thank_you_purchase') }}
                     </h1>
 
                     <div class="space-y-2 text-lg text-black/70 mb-8">
-                        <p>You will receive an order confirmation email with details of your order.</p>
+                        <p>{{ __('common.order_confirmation_email_desc') }}</p>
                         <div class="flex flex-col gap-1">
-                            <p>Your order # is: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
+                            <p>{{ __('common.your_order_no') }}: <span
+                                    class="font-bold text-dark">{{ $transaction->code }}</span></p>
                             @if($transaction->reseller_id)
-                                <p>Processed by: <span class="font-bold text-dark">{{ $transaction->reseller->name }}</span>
+                                <p>{{ __('common.processed_by') }}: <span
+                                        class="font-bold text-dark">{{ $transaction->reseller->name }}</span>
                                 </p>
                             @endif
                         </div>
@@ -47,7 +49,7 @@
                     <div class="flex flex-wrap gap-4 mb-16">
                         <a href="{{ route('home') }}"
                             class="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-primary-dark hover:shadow-primary/50 hover:-translate-y-0.5 transition-all duration-300">
-                            Continue Shopping
+                            {{ __('common.continue_shopping') }}
                         </a>
                     </div>
 
@@ -70,13 +72,13 @@
 
                     <!-- Create Account / Additional Info (Optional placeholder) -->
                     <div>
-                        <h3 class="font-bold text-dark text-xl mb-4 uppercase">Important Information</h3>
+                        <h3 class="font-bold text-dark text-xl mb-4 uppercase">{{ __('common.important_information') }}
+                        </h3>
                         <p class="text-black/70 mb-4">
                             @if(!$isReseller)
-                                Please arrive 30 minutes before the event starts. Show the QR code on the right (or in your
-                                email) at the entrance.
+                                {{ __('common.arrival_instruction') }}
                             @else
-                                Please check your email for the ticket details.
+                                {{ __('common.check_email_ticket_desc') }}
                             @endif
                         </p>
                     </div>
@@ -89,7 +91,8 @@
                     <!-- QR Code Section (Moved here for easy access) -->
                     @if(!$isReseller)
                         <div class="bg-white p-6 rounded-xl border-2 border-dashed border-gray-200 text-center">
-                            <p class="font-bold text-dark mb-4 text-sm uppercase tracking-wider">Your Ticket QR</p>
+                            <p class="font-bold text-dark mb-4 text-sm uppercase tracking-wider">
+                                {{ __('common.your_ticket_qr') }}</p>
                             <div class="flex justify-center mb-4">
                                 @php
                                     $qrCode = (new Endroid\QrCode\Builder\Builder(
@@ -110,16 +113,16 @@
 
                     <!-- Items Ordered -->
                     <div>
-                        <h2 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">Items
-                            Ordered</h2>
+                        <h2 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">
+                            {{ __('common.items_ordered') }}</h2>
 
                         <div class="space-y-4">
                             <!-- Table Header -->
                             <div
                                 class="grid grid-cols-12 text-xs font-bold text-black/70 uppercase tracking-wider pb-2 border-b border-gray-100">
-                                <div class="col-span-8">Product Name</div>
-                                <div class="col-span-2 text-right">Qty</div>
-                                <div class="col-span-2 text-right">Subtotal</div>
+                                <div class="col-span-8">{{ __('common.product_name') }}</div>
+                                <div class="col-span-2 text-right">{{ __('common.ticket_quantity') }}</div>
+                                <div class="col-span-2 text-right">{{ __('common.subtotal') }}</div>
                             </div>
 
                             <!-- Item Row -->
@@ -139,27 +142,27 @@
                             <!-- Totals -->
                             <div class="pt-4 space-y-2">
                                 <div class="flex justify-between text-sm">
-                                    <span class="text-black/70">Subtotal</span>
+                                    <span class="text-black/70">{{ __('common.subtotal') }}</span>
                                     <span class="font-medium text-dark">Rp
                                         {{ number_format($subtotal, 0, ',', '.') }}</span>
                                 </div>
                                 @if($handlingFee * $transaction->quantity > 0)
                                     <div class="flex justify-between text-sm">
                                         <span
-                                            class="text-black/70">{{ $transaction->reseller_id ? 'Reseller Fee' : 'Handling Fee' }}</span>
+                                            class="text-black/70">{{ $transaction->reseller_id ? __('common.reseller_fee') : __('common.handling_fee') }}</span>
                                         <span class="font-medium text-dark">Rp
                                             {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
                                     </div>
                                 @endif
                                 @if($serviceFee > 0)
                                     <div class="flex justify-between text-sm">
-                                        <span class="text-black/70">Service Fee</span>
+                                        <span class="text-black/70">{{ __('common.service_fee') }}</span>
                                         <span class="font-medium text-dark">Rp
                                             {{ number_format($serviceFee, 0, ',', '.') }}</span>
                                     </div>
                                 @endif
                                 <div class="flex justify-between text-lg font-bold pt-4 border-t border-gray-100">
-                                    <span class="text-dark">Grand Total</span>
+                                    <span class="text-dark">{{ __('common.grand_total') }}</span>
                                     <span class="text-primary">Rp
                                         {{ number_format($transaction->total_price, 0, ',', '.') }}</span>
                                 </div>
@@ -180,40 +183,45 @@
                                 <!-- Table Header -->
                                 <div
                                     class="grid grid-cols-12 text-xs font-bold text-black/70 uppercase tracking-wider pb-2 border-b border-gray-100">
-                                    <div class="col-span-4">Information</div>
-                                    <div class="col-span-8">Details</div>
+                                    <div class="col-span-4">{{ __('common.information') }}</div>
+                                    <div class="col-span-8">{{ __('common.details') }}</div>
                                 </div>
 
                                 <!-- Rows -->
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-black/70">Passport / NIK</div>
+                                    <div class="col-span-4 font-bold text-black/70">{{ __('common.passport_nik') }}
+                                    </div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->nik }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-black/70">Full Name</div>
+                                    <div class="col-span-4 font-bold text-black/70">{{ __('common.full_name') }}</div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->name }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-black/70">Email Address</div>
+                                    <div class="col-span-4 font-bold text-black/70">{{ __('common.email_address') }}
+                                    </div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->email }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-black/70">Phone Number</div>
+                                    <div class="col-span-4 font-bold text-black/70">{{ __('common.phone_number') }}
+                                    </div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->phone }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-black/70">City / Address</div>
+                                    <div class="col-span-4 font-bold text-black/70">{{ __('common.city_address') }}
+                                    </div>
                                     <div class="col-span-8 font-medium text-dark">{{ $transaction->city }}</div>
                                 </div>
 
                                 <div class="grid grid-cols-12 text-sm py-2 border-b border-gray-100 items-center">
-                                    <div class="col-span-4 font-bold text-black/70">Payment Method</div>
+                                    <div class="col-span-4 font-bold text-black/70">{{ __('common.payment_method') }}
+                                    </div>
                                     <div class="col-span-8 font-bold text-primary">
-                                        {{ strtoupper($transaction->payment_type ?? 'Online Payment') }}
+                                        {{ strtoupper($transaction->payment_type ?? __('common.online_payment')) }}
                                     </div>
                                 </div>
                             </div>

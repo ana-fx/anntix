@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app :title="__('common.error_503')">
     <div
         class="relative min-h-screen flex items-center justify-center overflow-hidden bg-white selection:bg-primary selection:text-white -mt-16">
 
@@ -22,12 +22,12 @@
             <div class="flex-1 text-center md:text-left space-y-8 order-2 md:order-1">
 
                 <h2 class="text-5xl md:text-7xl font-heading font-black leading-tight tracking-tight text-dark">
-                    Under <br>
-                    <span class="text-primary">Maintenance.</span>
+                    503 <br>
+                    <span class="text-primary">{{ __('common.error_503') }}</span>
                 </h2>
 
                 <p class="text-lg text-black max-w-md mx-auto md:mx-0 leading-relaxed opacity-90">
-                    We are currently performing scheduled maintenance to improve your experience. We'll be back shortly.
+                    {{ __('common.error_503_message') }}
                 </p>
 
                 <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">

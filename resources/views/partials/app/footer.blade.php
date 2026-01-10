@@ -24,7 +24,7 @@
                     </div>
                 </a>
                 <p class="text-gray-400 leading-relaxed text-sm max-w-sm">
-                    {{ $global_settings['seo_description'] ?? "Your premier destination for discovering and experiencing the best events in town. From music festivals to tech conferences, we've got you covered." }}
+                    {{ __('common.footer_tagline') }}
                 </p>
                 <div class="flex gap-4">
                     @if(isset($global_settings['social_facebook']) && $global_settings['social_facebook'] !== '#')
@@ -78,21 +78,19 @@
 
                 <!-- Company -->
                 <div>
-                    <h3 class="font-bold text-white mb-6">Company</h3>
+                    <h3 class="font-bold text-white mb-6">{{ __('common.company') }}</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="{{ route('pages.about') }}" class="hover:text-primary transition-colors">About
-                                Us</a></li>
-                        <li><a href="{{ route('contact.index') }}" class="hover:text-primary transition-colors">Contact
-                                Support</a></li>
+                        <li><a href="{{ route('pages.about') }}" class="hover:text-primary transition-colors">{{ __('common.about') }}</a></li>
+                        <li><a href="{{ route('contact.index') }}" class="hover:text-primary transition-colors">{{ __('common.contact') }}</a></li>
                         @guest
-                            <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">Login</a></li>
+                            <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">{{ __('common.login') }}</a></li>
                         @endguest
                     </ul>
                 </div>
 
                 <!-- Contact - NAP Consistency for Local SEO -->
                 <div>
-                    <h3 class="font-bold text-white mb-6">Get in Touch</h3>
+                    <h3 class="font-bold text-white mb-6">{{ __('common.get_in_touch') }}</h3>
                     <ul class="space-y-4 text-sm text-gray-400">
                         <!-- Address - Must match Google Business Profile -->
                         <li class="flex items-start gap-3" itemscope itemtype="https://schema.org/PostalAddress">
@@ -152,14 +150,14 @@
 
         <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-gray-500 text-sm">
-                &copy; {{ date('Y') }} Anntix. All rights reserved.
+                &copy; {{ date('Y') }} Anntix. {{ __('common.all_rights_reserved') }}.
             </p>
             <div class="flex gap-6 text-sm">
                 <a href="{{ route('pages.privacy') }}"
-                    class="text-gray-500 hover:text-white transition-colors">Privacy</a>
-                <a href="{{ route('pages.terms') }}" class="text-gray-500 hover:text-white transition-colors">Terms</a>
+                    class="text-gray-500 hover:text-white transition-colors">{{ __('common.privacy_policy') }}</a>
+                <a href="{{ route('pages.terms') }}" class="text-gray-500 hover:text-white transition-colors">{{ __('common.terms_conditions') }}</a>
                 <a href="{{ route('pages.cookie') }}"
-                    class="text-gray-500 hover:text-white transition-colors">Cookies</a>
+                    class="text-gray-500 hover:text-white transition-colors">{{ __('common.cookie_policy') }}</a>
             </div>
         </div>
     </div>

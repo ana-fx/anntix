@@ -11,13 +11,11 @@
                     <div class="h-1 w-20 bg-primary mb-12"></div>
                     <h1
                         class="text-6xl md:text-9xl font-heading font-black text-white tracking-tighter leading-none mb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                        About <br>
-                        <span
-                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Anntix.</span>
+                        {{ __('common.about_anntix') }}
                     </h1>
                     <p
                         class="text-2xl md:text-3xl text-gray-400 font-medium leading-tight max-w-2xl animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-                        Bridging the gap between visionary creators and passionate audiences since 2024.
+                        {{ __('common.services_intro') }}
                     </p>
                 </div>
             </div>
@@ -45,38 +43,35 @@
                             </svg>
                         </div>
                         <h2 class="text-3xl md:text-5xl font-black text-dark leading-tight max-w-4xl relative z-10">
-                            "We don't just sell tickets. We curate the heartbeat of the community, turning solo ideas
-                            into shared cultural moments."
+                            {{ __('common.services_quote') }}
                         </h2>
                     </div>
                 </div>
 
                 <!-- Mission & Core Features -->
                 <div class="lg:col-span-5 py-8">
-                    <h3 class="text-xs font-black text-primary uppercase tracking-[0.3em] mb-12">The Ecosystem</h3>
+                    <h3 class="text-xs font-black text-primary uppercase tracking-[0.3em] mb-12">
+                        {{ __('common.the_ecosystem') }}</h3>
                     <div class="space-y-16">
                         <div class="group">
                             <div class="h-px w-0 group-hover:w-12 bg-primary transition-all duration-500 mb-6"></div>
-                            <h4 class="text-2xl font-black text-dark mb-4">Smart Distribution</h4>
+                            <h4 class="text-2xl font-black text-dark mb-4">{{ __('common.smart_distribution') }}</h4>
                             <p class="text-lg text-black/70 leading-relaxed">
-                                Our platform uses proprietary algorithms to ensure fair access, preventing mass-buy bots
-                                and rewarding true fans.
+                                {{ __('common.smart_distribution_desc') }}
                             </p>
                         </div>
                         <div class="group">
                             <div class="h-px w-0 group-hover:w-12 bg-primary transition-all duration-500 mb-6"></div>
-                            <h4 class="text-2xl font-black text-dark mb-4">Live Insights</h4>
+                            <h4 class="text-2xl font-black text-dark mb-4">{{ __('common.live_insights') }}</h4>
                             <p class="text-lg text-black/70 leading-relaxed">
-                                Real-time monitoring of entries, sales dynamics, and demographic flow allows organizers
-                                to adapt instantly.
+                                {{ __('common.live_insights_desc') }}
                             </p>
                         </div>
                         <div class="group">
                             <div class="h-px w-0 group-hover:w-12 bg-primary transition-all duration-500 mb-6"></div>
-                            <h4 class="text-2xl font-black text-dark mb-4">Bank-Grade QR</h4>
+                            <h4 class="text-2xl font-black text-dark mb-4">{{ __('common.bank_grade_qr') }}</h4>
                             <p class="text-lg text-black/70 leading-relaxed">
-                                Every pass is encoded with rotating cryptographic keys, making duplication impossible
-                                and entry seamless.
+                                {{ __('common.bank_grade_qr_desc') }}
                             </p>
                         </div>
                     </div>
@@ -97,11 +92,12 @@
 
         <!-- Footer Call to Action -->
         <div class="py-40 bg-white border-t border-gray-100 text-center">
-            <h2 class="text-4xl md:text-6xl font-black text-dark tracking-tighter mb-12">Ready to expand your reach?
+            <h2 class="text-4xl md:text-6xl font-black text-dark tracking-tighter mb-12">
+                {{ __('common.ready_expand_reach') }}
             </h2>
             <a href="{{ route('contact.index') }}" class="inline-flex items-center group">
-                <span class="text-2xl md:text-4xl font-bold text-primary group-hover:pr-6 transition-all">Become a
-                    Partner</span>
+                <span
+                    class="text-2xl md:text-4xl font-bold text-primary group-hover:pr-6 transition-all">{{ __('common.become_partner') }}</span>
                 <svg class="w-8 h-8 md:w-12 md:h-12 text-primary opacity-0 group-hover:opacity-100 transition-all -translate-x-12 group-hover:translate-x-0"
                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -1,4 +1,4 @@
-<x-layouts.app title="Payment">
+<x-layouts.app :title="__('common.payment')">
     @php
         // Base values
         $subtotal = $transaction->ticket->price * $transaction->quantity;
@@ -43,19 +43,21 @@
                                 class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                         </span>
-                        Awaiting Payment
+                        {{ __('common.awaiting_payment') }}
                     </div>
 
                     <h1 class="text-3xl md:text-5xl font-heading font-bold text-dark mb-6 uppercase tracking-tight">
-                        Complete Your Payment
+                        {{ __('common.complete_your_payment') }}
                     </h1>
 
                     <div class="space-y-2 text-lg text-black/70 mb-8">
-                        <p>To secure your tickets, please complete the payment using your preferred method.</p>
+                        <p>{{ __('common.payment_instruction_desc') }}</p>
                         <div class="flex flex-col gap-1">
-                            <p>Transaction ID: <span class="font-bold text-dark">{{ $transaction->code }}</span></p>
+                            <p>{{ __('common.transaction_id') }}: <span
+                                    class="font-bold text-dark">{{ $transaction->code }}</span></p>
                             @if($transaction->reseller_id)
-                                <p>Processed by: <span class="font-bold text-dark">{{ $transaction->reseller->name }}</span></p>
+                                <p>{{ __('common.processed_by') }}: <span
+                                        class="font-bold text-dark">{{ $transaction->reseller->name }}</span></p>
                             @endif
                         </div>
                     </div>
@@ -64,10 +66,10 @@
                         <!-- Reseller Direct Payment Mode -->
                         <div class="mb-12 p-6 bg-primary/5 rounded-2xl border border-primary/20"
                             x-data="{ showModal: false }">
-                            <h3 class="font-bold text-dark text-lg uppercase mb-2">Reseller Payment Mode</h3>
+                            <h3 class="font-bold text-dark text-lg uppercase mb-2">{{ __('common.reseller_payment_mode') }}
+                            </h3>
 
-                            <p class="text-sm text-black/60 mb-6">You are processing this transaction as a reseller. Please
-                                collect the cash from the customer. The amount will be recorded against your balance.</p>
+                            <p class="text-sm text-black/60 mb-6">{{ __('common.reseller_payment_desc') }}</p>
 
                             <!-- Warning Notification -->
                             <div class="mb-6 p-4 bg-yellow-50 border border-yellow-100 rounded-xl flex items-start gap-3">
@@ -77,12 +79,10 @@
                                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                                 <p class="text-sm text-yellow-800 leading-relaxed">
-                                    <strong>Ready to process?</strong> Confirming this will immediately mark the transaction
-                                    as
-                                    <strong>PAID</strong> and send the E-Ticket directly to the customer's email.
+                                    <strong>{{ __('common.ready_to_process') }}</strong>
+                                    {{ __('common.reseller_confirm_paid_desc') }}
                                     <br><br>
-                                    Please <strong>check your personal data and email</strong> to ensure they are correct
-                                    before proceeding.
+                                    {{ __('common.check_personal_data_desc') }}
                                 </p>
                             </div>
 
@@ -91,7 +91,7 @@
                                 @csrf
                                 <button type="button" @click="showModal = true"
                                     class="w-full px-12 py-5 bg-primary hover:bg-primary-dark shadow-xl hover:-translate-y-1 text-white font-black rounded-2xl transition-all duration-300 transform active:scale-95 text-lg flex items-center justify-center gap-3">
-                                    Confirm & Process Subscription
+                                    {{ __('common.confirm_process_subscription') }}
                                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -121,22 +121,23 @@
                                                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                             </svg>
                                         </div>
-                                        <h3 class="text-2xl font-black text-dark uppercase tracking-tight">Confirm Payment?
+                                        <h3 class="text-2xl font-black text-dark uppercase tracking-tight">
+                                            {{ __('common.confirm_payment_q') }}
                                         </h3>
                                         <p class="text-gray-500 mt-2">
-                                            <strong>Rp{{ number_format($baseTotal) }}</strong> will be recorded against your balance.
-                                            This action cannot be undone and the ticket will be sent immediately.
+                                            <strong>Rp{{ number_format($baseTotal) }}</strong>
+                                            {{ __('common.reseller_balance_deduction_desc') }}
                                         </p>
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">
                                         <button @click="showModal = false"
                                             class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-dark font-bold rounded-xl transition-colors">
-                                            Cancel
+                                            {{ __('common.cancel') }}
                                         </button>
                                         <button @click="$refs.resellerForm.submit()"
                                             class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95">
-                                            Yes, Process
+                                            {{ __('common.yes_process') }}
                                         </button>
                                     </div>
                                 </div>
@@ -151,10 +152,10 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
-                                <span>Proceed to Payment</span>
+                                <span>{{ __('common.proceed_to_payment') }}</span>
                             </button>
                             <p class="text-center text-sm text-gray-500 mt-4">
-                                Choose your payment method in the next step
+                                {{ __('common.choose_payment_next_step') }}
                             </p>
                         </div>
                     @endif
@@ -162,11 +163,11 @@
                     <!-- Event Banner -->
                     <div class="relative rounded-xl overflow-hidden group mb-12">
                         <img src="{{
-                            Str::startsWith($transaction->event->thumbnail_path, 'http')
-                            ? $transaction->event->thumbnail_path
-                            : (file_exists(public_path($transaction->event->thumbnail_path))
-                                ? asset($transaction->event->thumbnail_path)
-                                : asset('storage/' . $transaction->event->thumbnail_path))
+    Str::startsWith($transaction->event->thumbnail_path, 'http')
+    ? $transaction->event->thumbnail_path
+    : (file_exists(public_path($transaction->event->thumbnail_path))
+        ? asset($transaction->event->thumbnail_path)
+        : asset('storage/' . $transaction->event->thumbnail_path))
                         }}"
                             class="w-full h-80 object-cover brightness-75 group-hover:brightness-50 transition-all duration-500">
                         <div class="absolute inset-0 flex items-center justify-center p-8 text-center">
@@ -179,11 +180,12 @@
 
                     <!-- Information -->
                     <div>
-                        <h3 class="font-bold text-dark text-xl mb-4 uppercase">Important Information</h3>
+                        <h3 class="font-bold text-dark text-xl mb-4 uppercase">{{ __('common.important_information') }}
+                        </h3>
                         <p class="text-black/70 mb-4 leading-relaxed">
-                            Once payment is confirmed, your e-ticket and QR code will be sent to
+                            {{ __('common.payment_confirmation_email_desc') }}
                             <strong>{{ $transaction->email }}</strong>.
-                            Please ensure you show the QR code at the gate for scanning.
+                            {{ __('common.show_qr_at_gate') }}
                         </p>
                     </div>
 
@@ -194,7 +196,8 @@
 
                     <!-- Price Summary Highlight -->
                     <div class="bg-gray-50 p-8 rounded-2xl border border-gray-100 text-center">
-                        <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Total Payable Amount
+                        <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+                            {{ __('common.total_payable_amount') }}
                         </p>
                         <h2 class="text-5xl font-black text-primary tracking-tighter">
                             Rp {{ number_format($transaction->total_price, 0, ',', '.') }}
@@ -203,16 +206,16 @@
 
                     <!-- Items Summary -->
                     <div>
-                        <h2 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">Your
-                            Selection</h2>
+                        <h2 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">
+                            {{ __('common.your_selection') }}</h2>
 
                         <div class="space-y-4">
                             <!-- Table Header -->
                             <div
                                 class="grid grid-cols-12 text-xs font-bold text-black/70 uppercase tracking-wider pb-2 border-b border-gray-100">
-                                <div class="col-span-8">Ticket Type</div>
-                                <div class="col-span-2 text-right">Qty</div>
-                                <div class="col-span-2 text-right">Subtotal</div>
+                                <div class="col-span-8">{{ __('common.ticket_type') }}</div>
+                                <div class="col-span-2 text-right">{{ __('common.ticket_quantity') }}</div>
+                                <div class="col-span-2 text-right">{{ __('common.subtotal') }}</div>
                             </div>
 
                             <!-- Item Row -->
@@ -232,14 +235,14 @@
                             <!-- Totals -->
                             <div class="pt-4 space-y-2">
                                 <div class="flex justify-between text-sm">
-                                    <span class="text-black/70">Subtotal</span>
+                                    <span class="text-black/70">{{ __('common.subtotal') }}</span>
                                     <span class="font-medium text-dark">Rp
                                         {{ number_format($transaction->ticket->price * $transaction->quantity, 0, ',', '.') }}</span>
                                 </div>
                                 @if($handlingFee > 0)
                                     <div class="flex justify-between text-sm">
                                         <span
-                                            class="text-black/70">{{ $transaction->reseller_id ? 'Reseller Fee' : 'Handling Fee' }}</span>
+                                            class="text-black/70">{{ $transaction->reseller_id ? __('common.reseller_fee') : __('common.handling_fee') }}</span>
                                         <span class="font-medium text-dark">Rp
                                             {{ number_format($handlingFee * $transaction->quantity, 0, ',', '.') }}</span>
                                     </div>
@@ -247,12 +250,12 @@
 
                                 @if(!$transaction->reseller_id)
                                     <div class="flex justify-between text-sm text-primary font-bold">
-                                        <span>Service Fee</span>
+                                        <span>{{ __('common.service_fee') }}</span>
                                         <span id="service-fee-display">Rp 0</span>
                                     </div>
                                 @endif
                                 <div class="flex justify-between text-xl font-black pt-4 border-t border-gray-100">
-                                    <span class="text-dark uppercase">Grand Total</span>
+                                    <span class="text-dark uppercase">{{ __('common.grand_total') }}</span>
                                     <span class="text-primary tracking-tighter" id="grand-total-display">Rp
                                         {{ number_format($baseTotal, 0, ',', '.') }}</span>
                                 </div>
@@ -262,32 +265,36 @@
 
                     <!-- Customer Identity -->
                     <div>
-                        <h3 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">Buyer
-                            Details</h3>
+                        <h3 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">
+                            {{ __('common.buyer_details') }}</h3>
 
                         <div class="space-y-4">
                             <!-- Rows -->
                             <div class="grid grid-cols-12 text-sm py-3 border-b border-gray-50 items-center">
                                 <div class="col-span-4 font-bold text-black/70 uppercase text-[10px] tracking-widest">
-                                    NIK</div>
+                                    {{ __('common.nik_label') }}
+                                </div>
                                 <div class="col-span-8 font-medium text-dark">{{ $transaction->nik }}</div>
                             </div>
 
                             <div class="grid grid-cols-12 text-sm py-3 border-b border-gray-50 items-center">
                                 <div class="col-span-4 font-bold text-black/70 uppercase text-[10px] tracking-widest">
-                                    Full Name</div>
+                                    {{ __('common.full_name') }}
+                                </div>
                                 <div class="col-span-8 font-medium text-dark">{{ $transaction->name }}</div>
                             </div>
 
                             <div class="grid grid-cols-12 text-sm py-3 border-b border-gray-50 items-center">
                                 <div class="col-span-4 font-bold text-black/70 uppercase text-[10px] tracking-widest">
-                                    Email</div>
+                                    {{ __('common.email') }}
+                                </div>
                                 <div class="col-span-8 font-medium text-dark">{{ $transaction->email }}</div>
                             </div>
 
                             <div class="grid grid-cols-12 text-sm py-3 border-b border-gray-50 items-center">
                                 <div class="col-span-4 font-bold text-black/70 uppercase text-[10px] tracking-widest">
-                                    Phone</div>
+                                    {{ __('common.phone') }}
+                                </div>
                                 <div class="col-span-8 font-medium text-dark">{{ $transaction->phone }}</div>
                             </div>
                         </div>
@@ -307,7 +314,7 @@
 
             payButton.onclick = function () {
                 const originalHTML = payButton.innerHTML;
-                payButton.innerHTML = 'Processing...';
+                payButton.innerHTML = "{{ __('common.processing') }}";
                 payButton.disabled = true;
 
                 // Fetch Token - Use 'gopay' to show all payment options
@@ -344,9 +351,9 @@
                                         window.location.href = "{{ route('payment.success', $transaction->code) }}";
                                     });
                             },
-                            onPending: function (result) { alert("Waiting for your payment!"); },
-                            onError: function (result) { 
-                                alert("Payment failed!"); 
+                            onPending: function (result) { alert("{{ __('common.waiting_for_payment') }}"); },
+                            onClose: function () {
+                                alert("{{ __('common.payment_failed') }}");
                                 payButton.disabled = false;
                                 payButton.innerHTML = originalHTML;
                             },
@@ -358,7 +365,7 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Something went wrong. Please try again.');
+                        alert("{{ __('common.something_went_wrong_try_again') }}");
                         payButton.disabled = false;
                         payButton.innerHTML = originalHTML;
                     });

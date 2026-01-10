@@ -31,13 +31,17 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ $seo['canonical'] ?? url()->current() }}">
 
+    <!-- Hreflang Tags for Multilingual SEO -->
+    <link rel="alternate" hreflang="id" href="{{ url()->current() }}?lang=id">
+    <link rel="alternate" hreflang="en" href="{{ url()->current() }}?lang=en">
+    <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
+
     <!-- SEO & Social Sharing -->
     <meta name="keywords" content="{{ $seo['keywords'] ?? ($global_settings['seo_keywords'] ?? 'tiket event, konser, festival, seminar, workshop, event organizer indonesia, beli tiket online') }}">
     <meta name="author" content="{{ $global_settings['site_name'] ?? 'Anntix' }}">
     <meta name="robots" content="{{ $seo['robots'] ?? 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' }}">
     
-    <!-- Additional SEO Meta Tags -->
-    <meta name="language" content="id">
+    <meta name="language" content="{{ app()->getLocale() }}">
     <meta name="geo.region" content="ID">
     <meta name="geo.placename" content="Indonesia">
     <meta name="theme-color" content="#ea580c">
@@ -123,14 +127,14 @@
                 '@id' => url('/') . '#localbusiness',
                 'name' => 'Anntix - Platform Tiket Event Indonesia',
                 'image' => isset($global_settings['site_logo']) ? asset('storage/' . $global_settings['site_logo']) : asset('logo.png'),
-                'telephone' => '+62877-5058-1589',
-                'email' => 'hallo@anntix.id',
+                'telephone' => $global_settings['contact_phone'] ?? '+62877-5058-1589',
+                'email' => $global_settings['contact_email'] ?? 'hallo@anntix.id',
                 'url' => url('/'),
                 'priceRange' => '$$',
                 'address' => [
                     '@type' => 'PostalAddress',
-                    'streetAddress' => 'Jl. Raya Desa Sidaharja, Milangga, Rangkasbitung',
-                    'addressLocality' => 'Suradadi',
+                    'streetAddress' => $global_settings['contact_location'] ?? 'Tegal, Jawa Tengah',
+                    'addressLocality' => 'Tegal',
                     'addressRegion' => 'Jawa Tengah',
                     'postalCode' => '52182',
                     'addressCountry' => 'ID'
@@ -232,7 +236,7 @@
         <!-- Tooltip -->
         <span
             class="absolute right-full mr-4 bg-white text-dark px-3 py-1.5 rounded-lg text-sm font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-            Chat with us!
+            {{ __('common.chat_with_us') }}
         </span>
     </a>
     @stack('scripts')

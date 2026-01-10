@@ -6,8 +6,8 @@
         'type' => 'website',
         'canonical' => route('events.show', $event),
         'breadcrumbs' => [
-            ['name' => 'Home', 'url' => route('home')],
-            ['name' => 'Events', 'url' => route('events.index')],
+            ['name' => __('common.home'), 'url' => route('home')],
+            ['name' => __('common.events'), 'url' => route('events.index')],
             ['name' => $event->name, 'url' => route('events.show', $event)]
         ]
     ]">
@@ -15,7 +15,7 @@
     @push('structured-data')
             <!-- Event Schema -->
             <script type="application/ld+json">
-            {!! json_encode([
+                    {!! json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'Event',
             'name' => $event->name,
@@ -63,7 +63,7 @@
                 'url' => url('/')
             ]
         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-            </script>
+                    </script>
     @endpush
 
     <div class="bg-white min-h-screen pt-32">
@@ -73,15 +73,21 @@
             <nav class="flex items-center gap-2 text-sm mb-8" aria-label="Breadcrumb">
                 <a href="{{ route('home') }}" class="text-gray-500 hover:text-primary transition-colors">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                        <path
+                            d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                     </svg>
                 </a>
                 <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd" />
                 </svg>
-                <a href="{{ route('events.index') }}" class="text-gray-500 hover:text-primary transition-colors">Events</a>
+                <a href="{{ route('events.index') }}"
+                    class="text-gray-500 hover:text-primary transition-colors">Events</a>
                 <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd" />
                 </svg>
                 <span class="text-gray-900 font-medium truncate">{{ Str::limit($event->name, 50) }}</span>
             </nav>
@@ -98,7 +104,7 @@
                         <div
                             class="aspect-square w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-gray-200/50 bg-gray-50 border border-gray-100">
                             <img src="{{ Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path)) }}"
-                                class="w-full h-full object-cover" 
+                                class="w-full h-full object-cover"
                                 alt="Tiket {{ $event->name }} - Event {{ $event->category ?? 'Hiburan' }} di {{ $event->city }} {{ $event->start_date ? $event->start_date->format('d M Y') : '' }}"
                                 loading="lazy">
                         </div>
@@ -106,7 +112,7 @@
                             <div class="inline-flex items-center gap-3 mb-6">
                                 <span class="w-8 h-px bg-primary"></span>
                                 <span
-                                    class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{{ $event->category ?? 'Experience' }}</span>
+                                    class="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{{ $event->category ?? __('common.general') }}</span>
                             </div>
                             <h1
                                 class="text-6xl md:text-7xl font-heading font-black text-dark tracking-tighter leading-[0.9] mb-8">
@@ -134,7 +140,7 @@
 
                         <div
                             class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
-                            The Narrative
+                            {{ __('common.the_narrative') }}
                             <div class="h-px flex-1 bg-gray-100"></div>
                         </div>
                         <div
@@ -146,7 +152,7 @@
                     <section>
                         <div
                             class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
-                            Venue Orientation
+                            {{ __('common.venue_orientation') }}
                             <div class="h-px flex-1 bg-gray-100"></div>
                         </div>
                         <div class="space-y-12">
@@ -173,7 +179,7 @@
                         <section>
                             <div
                                 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-12 flex items-center gap-4">
-                                Event Policy
+                                {{ __('common.event_policy') }}
                                 <div class="h-px flex-1 bg-gray-100"></div>
                             </div>
                             <div
@@ -193,7 +199,8 @@
                                 class="absolute -right-4 -bottom-4 text-9xl font-black text-gray-100/50 select-none group-hover:text-primary/5 transition-colors">
                                 ANNTX</div>
                             <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 relative z-10">
-                                Access Pass</p>
+                                {{ __('common.access_pass') }}
+                            </p>
                             @php $lowest = $event->tickets->min('price'); @endphp
                             <h2 class="text-6xl font-black text-primary tracking-tighter mb-8 relative z-10">
                                 @if($lowest !== null)
@@ -217,7 +224,7 @@
                             @endif
                             <a href="{{ route('checkout.create', $event) }}"
                                 class="w-full py-6 bg-dark text-white text-center font-black rounded-2xl shadow-2xl hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-3 relative z-10">
-                                Reserve Tickets
+                                {{ __('common.reserve_tickets') }}
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -229,7 +236,8 @@
                         <div class="bg-white p-12 space-y-12 border-t border-gray-100">
                             <div>
                                 <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-8">
-                                    Executive Curator</h4>
+                                    {{ __('common.executive_curator') }}
+                                </h4>
                                 <div class="flex items-center gap-6">
                                     <div
                                         class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-2xl shadow-inner uppercase">
@@ -246,7 +254,7 @@
                                                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                                     clip-rule="evenodd" />
                                             </svg>
-                                            Verified Authority
+                                            {{ __('common.verified_authority') }}
                                         </div>
                                     </div>
                                 </div>
@@ -263,7 +271,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div
                         class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-16 flex items-center gap-4">
-                        Related Events
+                        {{ __('common.related_events') }}
                         <div class="h-px flex-1 bg-gray-200"></div>
                     </div>
 
@@ -285,7 +293,7 @@
                                     <div class="absolute inset-0 bg-dark/20 group-hover:bg-dark/10 transition-colors"></div>
                                     <div class="absolute bottom-10 left-10 right-10 text-white">
                                         <div class="text-xs font-black uppercase tracking-widest mb-3 opacity-70">
-                                            {{ $related->category ?? 'Experience' }}
+                                            {{ $related->category ?? __('common.general') }}
                                         </div>
                                         <h4 class="text-3xl font-black tracking-tighter leading-[0.9]">{{ $related->name }}</h4>
                                     </div>

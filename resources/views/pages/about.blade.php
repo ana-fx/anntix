@@ -8,28 +8,27 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <div>
-                        <div class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-6">Who We Are
+                        <div class="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-6">
+                            {{ __('common.about_us') }}
                         </div>
                         <h2
                             class="text-4xl md:text-5xl font-heading font-black text-dark tracking-tighter leading-tight mb-8">
-                            A fresh perspective on <br> <span class="text-primary">live experiences.</span>
+                            {{ __('common.about_description') }}
                         </h2>
                         <p class="text-lg text-black/70 leading-relaxed mb-10">
-                            We are Anntix. A young, ambitious startup determined to rewrite the rules of event
-                            ticketing.
-                            Born from the frustration of clunky legacy systems, we built Anntix to be fast, beautiful,
-                            and unapologetically modern.
-                            We're just getting started, but our vision is massive.
+                            {{ __('common.about_story') }}
                         </p>
 
                         <div class="grid grid-cols-2 gap-10">
                             <div>
                                 <div class="text-3xl font-black text-dark tracking-tighter mb-1">2024</div>
-                                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">Launched</div>
+                                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    {{ __('common.launched') }}</div>
                             </div>
                             <div>
                                 <div class="text-3xl font-black text-dark tracking-tighter mb-1">100%</div>
-                                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">Bootstrapped
+                                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                    {{ __('common.bootstrapped') }}
                                 </div>
                             </div>
                         </div>
@@ -48,7 +47,8 @@
         <div class="py-32 bg-gray-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-20">
-                    <h2 class="text-4xl font-heading font-black text-dark tracking-tighter">The Startup Mindset</h2>
+                    <h2 class="text-4xl font-heading font-black text-dark tracking-tighter">
+                        {{ __('common.our_values') }}</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                     <!-- Agility -->
@@ -61,9 +61,8 @@
                                     d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-black text-dark mb-4">Radical Agility</h3>
-                        <p class="text-gray-500 leading-relaxed">We move fast and break things (except your data).
-                            Innovation happens daily here, not quarterly.</p>
+                        <h3 class="text-xl font-black text-dark mb-4">{{ __('common.radical_agility') }}</h3>
+                        <p class="text-gray-500 leading-relaxed">{{ __('common.radical_agility_desc') }}</p>
                     </div>
 
                     <!-- Transparency -->
@@ -76,9 +75,8 @@
                                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-black text-dark mb-4">Total Transparency</h3>
-                        <p class="text-gray-500 leading-relaxed">No hidden fees, no dark patterns. Just honest, clear
-                            pricing and communication from day one.</p>
+                        <h3 class="text-xl font-black text-dark mb-4">{{ __('common.total_transparency') }}</h3>
+                        <p class="text-gray-500 leading-relaxed">{{ __('common.total_transparency_desc') }}</p>
                     </div>
 
                     <!-- Obsession -->
@@ -91,9 +89,8 @@
                                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-black text-dark mb-4">Customer Obsessed</h3>
-                        <p class="text-gray-500 leading-relaxed">We are a small team, which means every piece of
-                            feedback goes directly to the founders. We build for you.</p>
+                        <h3 class="text-xl font-black text-dark mb-4">{{ __('common.customer_obsessed') }}</h3>
+                        <p class="text-gray-500 leading-relaxed">{{ __('common.customer_obsessed_desc') }}</p>
                     </div>
                 </div>
             </div>
@@ -102,11 +99,12 @@
         <!-- Join Us -->
         <div class="py-32 bg-dark">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                <h2 class="text-5xl md:text-6xl font-heading font-black tracking-tighter mb-10">Join the revolution.
+                <h2 class="text-5xl md:text-6xl font-heading font-black tracking-tighter mb-10">
+                    {{ __('common.join_revolution') }}
                 </h2>
                 <a href="{{ route('events.index') }}"
                     class="inline-block px-12 py-5 bg-primary text-white font-black rounded-2xl shadow-2xl hover:-translate-y-1 transition-all">
-                    Browse Events
+                    {{ __('common.view_all') }} {{ __('common.events') }}
                 </a>
             </div>
         </div>

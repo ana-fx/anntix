@@ -1,16 +1,11 @@
 <?php
 
-use App\Http\Controllers\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Auth\UserLoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ContactController;
 
-Route::middleware('guest')->group(function () {
-    Route::get('login', [AdminLoginController::class, 'create'])->name('login');
-    Route::post('login', [AdminLoginController::class, 'store'])->name('login.store');
-});
-
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::post('logout', [AdminLoginController::class, 'destroy'])->name('logout');
+    Route::post('logout', [UserLoginController::class, 'destroy'])->name('logout');
     Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');

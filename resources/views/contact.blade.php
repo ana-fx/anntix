@@ -8,10 +8,9 @@
             <!-- Contact Info -->
             <div class="space-y-12">
                 <div>
-                    <h2 class="text-3xl font-heading font-bold text-dark mb-6">Contact Information</h2>
+                    <h2 class="text-3xl font-heading font-bold text-dark mb-6">{{ __('common.contact_info') }}</h2>
                     <p class="text-black/70 leading-relaxed">
-                        Whether you have a question about events, tickets, or just want to say hello, we'd love to hear
-                        from you.
+                        {{ __('common.get_in_touch_description') }}
                     </p>
                 </div>
 
@@ -27,7 +26,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-bold text-dark text-lg">Our Office</h3>
+                            <h3 class="font-bold text-dark text-lg">{{ __('common.office_address') }}</h3>
                             <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($global_settings['contact_location'] ?? 'Tegal, Jawa Tengah') }}"
                                 target="_blank" class="text-black/70 mt-1 hover:text-primary transition-colors">
                                 {!! nl2br(e($global_settings['contact_location'] ?? "Tegal, Jawa Tengah")) !!}
@@ -44,7 +43,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-bold text-dark text-lg">Email Us</h3>
+                            <h3 class="font-bold text-dark text-lg">{{ __('common.email_address') }}</h3>
                             <p class="text-black/70 mt-1">{{ $global_settings['contact_email'] ?? 'hallo@anntix.com'
                                 }}</p>
                             @if(isset($settings['partnership_email']))
@@ -62,11 +61,11 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-bold text-dark text-lg">Call Us</h3>
+                            <h3 class="font-bold text-dark text-lg">{{ __('common.phone_number') }}</h3>
                             <p class="text-black/70 mt-1">
                                 {{ $global_settings['contact_whatsapp'] ?? '+62 856-0045-7192' }}
                             </p>
-                            <p class="text-black/70 text-sm">(Mon-Fri, 9am - 5pm WIB)</p>
+                            <p class="text-black/70 text-sm">({{ __('common.monday_friday') }}, 9am - 5pm WIB)</p>
                         </div>
                     </div>
                 </div>
@@ -85,25 +84,29 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label for="name" class="text-sm font-bold text-dark uppercase tracking-wide">Name</label>
+                            <label for="name"
+                                class="text-sm font-bold text-dark uppercase tracking-wide">{{ __('common.your_name') }}</label>
                             <input type="text" name="name" id="name" required
                                 class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                         </div>
                         <div class="space-y-2">
-                            <label for="email" class="text-sm font-bold text-dark uppercase tracking-wide">Email</label>
+                            <label for="email"
+                                class="text-sm font-bold text-dark uppercase tracking-wide">{{ __('common.your_email') }}</label>
                             <input type="email" name="email" id="email" required
                                 class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                         </div>
                     </div>
 
                     <div class="space-y-2">
-                        <label for="subject" class="text-sm font-bold text-dark uppercase tracking-wide">Subject</label>
+                        <label for="subject"
+                            class="text-sm font-bold text-dark uppercase tracking-wide">{{ __('common.subject') }}</label>
                         <input type="text" name="subject" id="subject" required
                             class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                     </div>
 
                     <div class="space-y-2">
-                        <label for="message" class="text-sm font-bold text-dark uppercase tracking-wide">Message</label>
+                        <label for="message"
+                            class="text-sm font-bold text-dark uppercase tracking-wide">{{ __('common.your_message') }}</label>
                         <textarea name="message" id="message" rows="5" required
                             class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"></textarea>
                     </div>
@@ -121,7 +124,7 @@
 
                     <button type="submit"
                         class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/30 hover:-translate-y-1">
-                        Send Message
+                        {{ __('common.send_message') }}
                     </button>
                 </form>
             </div>

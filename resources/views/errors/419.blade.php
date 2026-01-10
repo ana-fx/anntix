@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app :title="__('common.error_419')">
     <div
         class="relative min-h-screen flex items-center justify-center overflow-hidden bg-white selection:bg-primary selection:text-white -mt-16">
 
@@ -22,19 +22,18 @@
             <div class="flex-1 text-center md:text-left space-y-8 order-2 md:order-1">
 
                 <h2 class="text-5xl md:text-7xl font-heading font-black leading-tight tracking-tight text-dark">
-                    Session <br>
-                    <span class="text-primary">Expired.</span>
+                    419 <br>
+                    <span class="text-primary">{{ __('common.error_419') }}</span>
                 </h2>
 
                 <p class="text-lg text-black max-w-md mx-auto md:mx-0 leading-relaxed opacity-90">
-                    Your session has expired due to inactivity. Please refresh the page or try submitting the form
-                    again.
+                    {{ __('common.error_419_message') }}
                 </p>
 
                 <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                     <a href="{{ url()->previous() }}"
                         class="px-8 py-4 bg-primary text-white font-bold rounded-xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group">
-                        <span>Refresh Page</span>
+                        <span>{{ __('common.refresh_page') }}</span>
                         <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

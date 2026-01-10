@@ -22,19 +22,17 @@
             <div class="flex-1 text-center md:text-left space-y-8 order-2 md:order-1">
 
                 <h2 class="text-5xl md:text-7xl font-heading font-black leading-tight tracking-tight text-dark">
-                    Server <br>
-                    <span class="text-primary">Error.</span>
+                    {{ __('common.error_500') }}
                 </h2>
 
                 <p class="text-lg text-black max-w-md mx-auto md:mx-0 leading-relaxed opacity-90">
-                    Something went wrong on our end. We're already notified and working to fix the issue. Please try
-                    again later.
+                    {{ __('common.error_500_message') }}
                 </p>
 
                 <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                     <a href="{{ route('home') }}"
                         class="px-8 py-4 bg-primary text-white font-bold rounded-xl shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group">
-                        <span>Back to Home</span>
+                        <span>{{ __('common.go_home') }}</span>
                         <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

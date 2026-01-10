@@ -1,17 +1,17 @@
-<x-layouts.app title="Events">
+<x-layouts.app :title="__('common.events')">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-32">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
             <!-- Sidebar Filters -->
             <div class="lg:col-span-1">
                 <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm sticky top-32">
-                    <h3 class="font-heading font-bold text-xl text-dark mb-6">Filters</h3>
+                    <h3 class="font-heading font-bold text-xl text-dark mb-6">{{ __('common.filters') }}</h3>
 
                     <form action="{{ route('events.index') }}" method="GET" class="space-y-6">
 
                         <!-- Search -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Search</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.search') }}</label>
                             <div class="relative">
                                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -19,17 +19,17 @@
                                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                                 <input type="text" name="search" value="{{ request('search') }}"
-                                    placeholder="Keyword..."
+                                    placeholder="{{ __('common.keyword') }}"
                                     class="w-full pl-12 pr-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium">
                             </div>
                         </div>
 
                         <!-- Category -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Category</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.category') }}</label>
                             <select name="category" onchange="this.form.submit()"
                                 class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl text-sm font-medium text-dark focus:border-primary focus:ring-primary/20 cursor-pointer transition-colors appearance-none">
-                                <option value="">All Categories</option>
+                                <option value="">{{ __('common.all_categories') }}</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}
                                     </option>
@@ -39,10 +39,10 @@
 
                         <!-- City -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Location</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.location') }}</label>
                             <select name="city" onchange="this.form.submit()"
                                 class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl text-sm font-medium text-dark focus:border-primary focus:ring-primary/20 cursor-pointer transition-colors appearance-none">
-                                <option value="">All Cities</option>
+                                <option value="">{{ __('common.all_cities') }}</option>
                                 @foreach($cities as $city)
                                     <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>{{ $city }}
                                     </option>
@@ -58,7 +58,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M6 18L18 6M6 6l12 12" />
                                     </svg>
-                                    Clear Filters
+                                    {{ __('common.clear_filters') }}
                                 </a>
                             </div>
                         @endif
@@ -100,7 +100,7 @@
 
                                 <div
                                     class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark shadow-sm z-10">
-                                    {{ $event->category ?? 'General' }}
+                                    {{ $event->category ?? __('common.general') }}
                                 </div>
                             </div>
                             <div class="p-5">
@@ -121,7 +121,7 @@
                                     {{ Str::limit($event->location, 30) }}
                                 </p>
                                 <div class="flex items-center justify-between pt-3 border-t border-gray-50">
-                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">From</span>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">{{ __('common.from') }}</span>
                                     <span class="text-base font-black text-dark">
                                         @php
                                             $lowestPriceTicket = $event->tickets->sortBy('price')->first();
@@ -129,7 +129,7 @@
                                         @if($lowestPriceTicket)
                                             Rp {{ number_format($lowestPriceTicket->price, 0, ',', '.') }}
                                         @else
-                                            Free
+                                            {{ __('common.free') }}
                                         @endif
                                     </span>
                                 </div>
@@ -145,8 +145,8 @@
                                         d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
                             </div>
-                            <h3 class="text-lg font-bold text-dark">No Events Found</h3>
-                            <p class="text-gray-400 text-sm mt-1">Try adjusting your filters.</p>
+                            <h3 class="text-lg font-bold text-dark">{{ __('common.no_events_found') }}</h3>
+                            <p class="text-gray-400 text-sm mt-1">{{ __('common.try_adjust_filters') }}</p>
                         </div>
                     @endforelse
                 </div>
