@@ -1,3 +1,4 @@
+@props(['seo' => [], 'title' => null])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -6,27 +7,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- DNS Prefetch & Preconnect for Performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="//www.google-analytics.com">
-    <link rel="dns-prefetch" href="//www.googletagmanager.com">
-
     <title>
-        @if(isset($seo['title']))
+        @if(isset($seo['title']) && $seo['title'])
             {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | ' . $seo['title'] }}
-        @elseif(isset($title))
+        @elseif($title)
             {{ ($global_settings['site_name'] ?? 'ANTIX') . ' | ' . $title }}
         @else
             {{ $global_settings['seo_title'] ?? ($global_settings['site_name'] ?? config('app.name', 'Laravel')) }}
         @endif
     </title>
 
-    <meta name="description" content="{{ $seo['description'] ?? ($global_settings['seo_description'] ?? '') }}">
+    @php
+        $description = $seo['description'] ?? ($global_settings['seo_description'] ?? 'Platform beli tiket event terpercaya di Indonesia. Cepat, aman, dan mudah.');
+    @endphp
+    <meta name="description" content="{{ $description }}">
 
-    @if(isset($global_settings['site_icon']))
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
-    @endif
+    <!-- DNS Prefetch & Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+
+    @php
+        $siteIcon = isset($global_settings['site_icon']) 
+            ? asset('storage/' . $global_settings['site_icon']) 
+            : asset('logo.png');
+    @endphp
+    <link rel="icon" href="{{ $siteIcon }}" sizes="32x32">
+    <link rel="icon" href="{{ $siteIcon }}" sizes="192x192">
+    <link rel="apple-touch-icon" href="{{ $siteIcon }}">
+    <link rel="shortcut icon" href="{{ $siteIcon }}">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ $seo['canonical'] ?? url()->current() }}">
@@ -51,7 +61,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:site_name" content="{{ $global_settings['site_name'] ?? config('app.name') }}">
     <meta property="og:title" content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
-    <meta property="og:description" content="{{ $seo['description'] ?? ($global_settings['seo_description'] ?? '') }}">
+    <meta property="og:description" content="{{ $description }}">
 
     @php
         $ogImage = null;
@@ -76,7 +86,7 @@
     <meta property="twitter:site" content="@anntix">
     <meta property="twitter:creator" content="@anntix">
     <meta property="twitter:title" content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
-    <meta property="twitter:description" content="{{ $seo['description'] ?? ($global_settings['seo_description'] ?? '') }}">
+    <meta property="twitter:description" content="{{ $description }}">
     @if($ogImage)
         <meta property="twitter:image" content="{{ $ogImage }}">
         <meta property="twitter:image:alt" content="{{ $seo['title'] ?? config('app.name') }}">
@@ -86,9 +96,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="{{ $global_settings['site_name'] ?? 'Anntix' }}">
-    @if(isset($global_settings['site_icon']))
-        <link rel="apple-touch-icon" href="{{ asset('storage/' . $global_settings['site_icon']) }}">
-    @endif
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
