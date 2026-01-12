@@ -33,9 +33,10 @@
             ? asset('storage/' . $global_settings['site_icon'])
             : asset('icon.png');
     @endphp
-    <link rel="icon" href="{{ $siteIcon }}" type="image/png">
-    <link rel="apple-touch-icon" href="{{ $siteIcon }}">
-    <link rel="shortcut icon" href="{{ $siteIcon }}">
+    <link rel="icon" href="{{ $siteIcon }}?v=2" type="image/png" sizes="32x32">
+    <link rel="icon" href="{{ $siteIcon }}?v=2" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="{{ $siteIcon }}?v=2">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=2">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ $seo['canonical'] ?? url()->current() }}">
