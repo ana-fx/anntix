@@ -66,6 +66,13 @@ class ScanController extends Controller
         // CHANGED: Check if already redeemed but RETURN the data (don't block)
         $alreadyRedeemed = $transaction->redeemed_at !== null;
 
+        // Get scanner information if already redeemed
+        $scannedBy = null;
+        if ($alreadyRedeemed && $transaction->redeemed_by) {
+            $scanner = \App\Models\User::find($transaction->redeemed_by);
+            $scannedBy = $scanner ? $scanner->name : 'Unknown Scanner';
+        }
+
         return response()->json([
             'status' => $alreadyRedeemed ? 'warning' : 'pending',
             'message' => $alreadyRedeemed
@@ -84,6 +91,7 @@ class ScanController extends Controller
                 'ticket_type' => $transaction->ticket->name,
                 'quantity' => $transaction->quantity,
                 'redeemed_at' => $transaction->redeemed_at?->format('d M Y, H:i:s'),
+                'scanned_by' => $scannedBy,
             ]
         ]);
     }

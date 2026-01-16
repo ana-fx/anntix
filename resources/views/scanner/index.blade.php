@@ -179,8 +179,8 @@
                     <div class="w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-2xl group animate-bounce-short"
                         :class="{
                             'bg-emerald-50 text-emerald-500': scanResult.status === 'success',
-                            'bg-amber-50 text-amber-500': scanResult.status === 'warning' || scanResult.status === 'pending',
-                            'bg-rose-50 text-rose-500': scanResult.status === 'error'
+                            'bg-rose-50 text-rose-500': scanResult.status === 'warning' || scanResult.status === 'error',
+                            'bg-amber-50 text-amber-500': scanResult.status === 'pending'
                         }">
                         <svg x-show="scanResult.status === 'success'" class="w-12 h-12" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +204,11 @@
                     </div>
 
                     <div class="mb-10">
-                        <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight"
+                        <h2 class="text-2xl font-black uppercase tracking-tight"
+                            :class="{
+                                'text-slate-900': scanResult.status === 'success' || scanResult.status === 'pending',
+                                'text-rose-500': scanResult.status === 'warning' || scanResult.status === 'error'
+                            }"
                             x-text="scanResult.status === 'success' ? 'Checked In' : scanResult.status === 'warning' ? 'Already Scanned' : scanResult.status === 'pending' ? 'Valid Ticket' : 'Invalid'">
                         </h2>
                         <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest"
@@ -238,9 +242,16 @@
                                 <!-- Show redeemed timestamp if already scanned -->
                                 <div x-show="scanResult.already_redeemed"
                                     class="flex justify-between items-center pt-2 border-t border-slate-200">
-                                    <span class="text-[10px] font-bold text-amber-500">Scanned At</span>
-                                    <span class="text-xs font-black text-amber-500"
+                                    <span class="text-[10px] font-bold text-rose-500">Scanned At</span>
+                                    <span class="text-xs font-black text-rose-500"
                                         x-text="scanResult.data.redeemed_at"></span>
+                                </div>
+                                <!-- Show scanner name if already scanned -->
+                                <div x-show="scanResult.already_redeemed && scanResult.data.scanned_by"
+                                    class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold text-rose-500">Scanned By</span>
+                                    <span class="text-xs font-black text-rose-500"
+                                        x-text="scanResult.data.scanned_by"></span>
                                 </div>
                             </div>
                         </div>
@@ -308,7 +319,7 @@
                             class="w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl"
                             :class="{
                                 'bg-emerald-500 text-white shadow-emerald-500/20': scanResult.status === 'success',
-                                'bg-amber-500 text-white shadow-amber-500/20': scanResult.status === 'warning',
+                                'bg-rose-500 text-white shadow-rose-500/20': scanResult.status === 'warning',
                                 'bg-rose-500 text-white shadow-rose-500/20': scanResult.status === 'error'
                             }">
                             Next Scan

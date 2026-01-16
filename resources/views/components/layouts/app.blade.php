@@ -31,12 +31,13 @@
     @php
         $siteIcon = isset($global_settings['site_icon'])
             ? asset('storage/' . $global_settings['site_icon'])
-            : asset('icon.png');
+            : asset('favicon.ico');
     @endphp
-    <link rel="icon" href="{{ $siteIcon }}?v=2" type="image/png" sizes="32x32">
-    <link rel="icon" href="{{ $siteIcon }}?v=2" type="image/png" sizes="192x192">
-    <link rel="apple-touch-icon" href="{{ $siteIcon }}?v=2">
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=2">
+    <link rel="icon" href="{{ $siteIcon }}?v=3" type="image/x-icon">
+    <link rel="icon" href="{{ $siteIcon }}?v=3" type="image/png" sizes="32x32">
+    <link rel="icon" href="{{ $siteIcon }}?v=3" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="{{ $siteIcon }}?v=3">
+    <link rel="shortcut icon" href="{{ $siteIcon }}?v=3">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ $seo['canonical'] ?? url()->current() }}">
@@ -47,9 +48,11 @@
     <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
 
     <!-- SEO & Social Sharing -->
-    <meta name="keywords" content="{{ $seo['keywords'] ?? ($global_settings['seo_keywords'] ?? 'tiket event, konser, festival, seminar, workshop, event organizer indonesia, beli tiket online') }}">
+    <meta name="keywords"
+        content="{{ $seo['keywords'] ?? ($global_settings['seo_keywords'] ?? 'tiket event, konser, festival, seminar, workshop, event organizer indonesia, beli tiket online') }}">
     <meta name="author" content="{{ $global_settings['site_name'] ?? 'Anntix' }}">
-    <meta name="robots" content="{{ $seo['robots'] ?? 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' }}">
+    <meta name="robots"
+        content="{{ $seo['robots'] ?? 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1' }}">
 
     <meta name="language" content="{{ app()->getLocale() }}">
     <meta name="geo.region" content="ID">
@@ -60,19 +63,20 @@
     <meta property="og:type" content="{{ $seo['type'] ?? 'website' }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:site_name" content="{{ $global_settings['site_name'] ?? config('app.name') }}">
-    <meta property="og:title" content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
+    <meta property="og:title"
+        content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
     <meta property="og:description" content="{{ $description }}">
 
     @php
         $ogImage = null;
         if (isset($seo['image']) && $seo['image']) {
-             $ogImage = Str::startsWith($seo['image'], ['http', 'https'])
+            $ogImage = Str::startsWith($seo['image'], ['http', 'https'])
                 ? $seo['image']
                 : asset('storage/' . $seo['image']);
         } elseif (isset($global_settings['seo_image'])) {
-             $ogImage = asset('storage/' . $global_settings['seo_image']);
+            $ogImage = asset('storage/' . $global_settings['seo_image']);
         } elseif (isset($global_settings['site_icon'])) {
-             $ogImage = asset('storage/' . $global_settings['site_icon']);
+            $ogImage = asset('storage/' . $global_settings['site_icon']);
         }
     @endphp
 
@@ -85,7 +89,8 @@
     <meta property="twitter:url" content="{{ url()->current() }}">
     <meta property="twitter:site" content="@anntix">
     <meta property="twitter:creator" content="@anntix">
-    <meta property="twitter:title" content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
+    <meta property="twitter:title"
+        content="{{ $seo['title'] ?? ($title ?? ($global_settings['seo_title'] ?? config('app.name'))) }}">
     <meta property="twitter:description" content="{{ $description }}">
     @if($ogImage)
         <meta property="twitter:image" content="{{ $ogImage }}">
@@ -196,7 +201,7 @@
         if (isset($seo['breadcrumbs']) && is_array($seo['breadcrumbs'])) {
             $schemaGraph[] = [
                 '@type' => 'BreadcrumbList',
-                'itemListElement' => collect($seo['breadcrumbs'])->map(function($crumb, $index) {
+                'itemListElement' => collect($seo['breadcrumbs'])->map(function ($crumb, $index) {
                     return [
                         '@type' => 'ListItem',
                         'position' => $index + 1,
@@ -208,9 +213,9 @@
         }
     @endphp
     {!! json_encode([
-        '@context' => 'https://schema.org',
-        '@graph' => $schemaGraph
-    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    '@context' => 'https://schema.org',
+    '@graph' => $schemaGraph
+], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>
 
     @stack('structured-data')

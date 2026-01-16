@@ -170,7 +170,7 @@
                                         <td class="px-6 py-4">
                                             <span
                                                 class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                                                                            {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                                                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                                 {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
                                             </span>
                                         </td>
@@ -683,6 +683,74 @@
                                 </p>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- QR Code Card -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Event QR Code</h4>
+
+                    @php
+
+
+                        $eventUrl = url('/events/' . $event->slug);
+
+                        $qrCode = new \Endroid\QrCode\QrCode(
+                            data: $eventUrl,
+                            encoding: new \Endroid\QrCode\Encoding\Encoding('UTF-8'),
+                            errorCorrectionLevel: \Endroid\QrCode\ErrorCorrectionLevel::High,
+                            size: 300,
+                            margin: 10,
+                            roundBlockSizeMode: \Endroid\QrCode\RoundBlockSizeMode::Margin,
+                            foregroundColor: new \Endroid\QrCode\Color\Color(0, 0, 0),
+                            backgroundColor: new \Endroid\QrCode\Color\Color(255, 255, 255)
+                        );
+
+                        $writer = new \Endroid\QrCode\Writer\PngWriter();
+                        $result = $writer->write($qrCode);
+                        $dataUri = $result->getDataUri();
+                    @endphp
+
+                    <div class="space-y-4">
+                        <!-- QR Code Image -->
+                        <div
+                            class="flex justify-center p-6 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                            <img src="{{ $dataUri }}" alt="QR Code for {{ $event->name }}"
+                                class="w-full max-w-[250px] h-auto">
+                        </div>
+
+                        <!-- Event URL -->
+                        <div class="space-y-2">
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wide">Purchase Page URL</p>
+                            <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                    </path>
+                                </svg>
+                                <a href="{{ $eventUrl }}" target="_blank"
+                                    class="text-sm text-primary hover:text-primary-700 font-medium truncate transition-colors">
+                                    {{ $eventUrl }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Download Button -->
+                        <a href="{{ $dataUri }}" download="qr-code-{{ $event->slug }}.png"
+                            class="block w-full py-3 bg-primary text-white font-bold rounded-xl text-center hover:bg-primary-700 transition-all shadow-lg shadow-primary/25 active:scale-[0.98] flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Download QR Code
+                        </a>
+
+                        <!-- Info Text -->
+                        <p class="text-xs text-gray-500 text-center leading-relaxed">
+                            Scan this QR code to access the event purchase page directly. Save and use it on printed
+                            materials, posters, or digital promotions.
+                        </p>
                     </div>
                 </div>
             </div>
