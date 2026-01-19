@@ -47,8 +47,8 @@ class PaymentController extends Controller
         $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
 
         // No manual fee calculation - Midtrans handles it automatically
-        // Show only GoPay and Bank Transfer options
-        $enabledPayments = ['gopay', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'cimb_va'];
+        // Show only GoPay, QRIS, and Bank Transfer options
+        $enabledPayments = ['gopay', 'qris', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'cimb_va'];
 
         // Update Transaction with base total (Midtrans adds fee automatically)
         $transaction->update([
@@ -100,6 +100,10 @@ class PaymentController extends Controller
                 'payment_fee_configs' => [
                     [
                         'payment_type' => 'gopay',
+                        'customer_percentage' => 100
+                    ],
+                    [
+                        'payment_type' => 'qris',
                         'customer_percentage' => 100
                     ],
                     [
