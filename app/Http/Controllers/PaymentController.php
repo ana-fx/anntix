@@ -208,6 +208,12 @@ class PaymentController extends Controller
 
     public function success(Transaction $transaction)
     {
+        // Guard: Redirect if not paid
+        if ($transaction->status !== 'paid') {
+            return redirect()->route('payment.show', $transaction->code)
+                ->with('error', 'Please complete your payment first.');
+        }
+
         // Simple success page
         return view('payment.success', compact('transaction'));
     }
