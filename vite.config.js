@@ -13,14 +13,12 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
-        host: true, // Allow external access
+        host: '127.0.0.1',
         hmr: {
-            protocol: 'wss', // Use secure websocket
-            host: 'localhost', // Will be overridden by ngrok
+            host: 'localhost',
         },
-        cors: true,
         watch: {
-            ignored: ['**/storage/framework/views/**'],
+            usePolling: true,
         },
     },
 });
