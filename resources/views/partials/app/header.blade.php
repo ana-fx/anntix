@@ -1,6 +1,6 @@
 <nav class="fixed w-full z-[100] transition-all duration-500 bg-white/80 backdrop-blur-2xl border-b border-gray-100/50"
-    x-data="{ 
-        mobileMenuOpen: false, 
+    x-data="{
+        mobileMenuOpen: false,
         scrolled: false,
         activeLink: '{{ request()->url() }}'
      }" @scroll.window="scrolled = (window.pageYOffset > 50)"
@@ -33,7 +33,7 @@
             </div>
 
             <!-- Desktop Navigation: Clean Editorial Style -->
-            <div class="hidden md:flex items-center gap-12">
+            <div class="hidden md:flex items-center gap-12" data-nosnippet>
                 <div class="flex items-center gap-10">
                     @php
                         $navLinks = [
@@ -59,7 +59,7 @@
             </div>
 
             <!-- Right: Language Switcher + Auth -->
-            <div class="hidden md:flex items-center gap-4">
+            <div class="hidden md:flex items-center gap-4" data-nosnippet>
                 <!-- Language Switcher -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" @click.away="open = false"
@@ -204,7 +204,7 @@
     <!-- Mobile Menu Overlay -->
     <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-        class="md:hidden absolute top-24 inset-x-6 z-50">
+        class="md:hidden absolute top-24 inset-x-6 z-50" data-nosnippet>
 
         <div class="bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden p-8">
             <div class="space-y-6">

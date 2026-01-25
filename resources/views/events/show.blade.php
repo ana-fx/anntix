@@ -4,7 +4,6 @@
         'keywords' => $event->seo_keywords ?? 'tiket ' . $event->name . ', event ' . $event->city . ', konser, festival',
         'image' => $event->banner_path ?? $event->thumbnail_path,
         'type' => 'website',
-        'canonical' => route('events.show', $event),
         'breadcrumbs' => [
             ['name' => __('common.home'), 'url' => route('home')],
             ['name' => __('common.events'), 'url' => route('events.index')],

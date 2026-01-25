@@ -17,16 +17,28 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if locale is in session
-        if (Session::has('locale')) {
+        $locale = null;
+
+        // 1. Check query parameter (Higher priority for SEO/Canonical Links)
+        if ($request->has('lang')) {
+            $lang = $request->input('lang');
+            if (in_array($lang, ['id', 'en'])) {
+                $locale = $lang;
+                Session::put('locale', $lang);
+            }
+        }
+
+        // 2. Check session if no query param
+        if (!$locale && Session::has('locale')) {
             $locale = Session::get('locale');
         }
-        // Otherwise check browser language
-        else {
+
+        // 3. Check browser preference
+        if (!$locale) {
             $locale = $request->getPreferredLanguage(['id', 'en']) ?? 'id';
         }
 
-        // Validate locale
+        // Final validation
         if (!in_array($locale, ['id', 'en'])) {
             $locale = 'id';
         }

@@ -40,7 +40,8 @@
     <link rel="shortcut icon" href="{{ $siteIcon }}?v=3">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="{{ $seo['canonical'] ?? url()->current() }}">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ $seo['canonical'] ?? request()->fullUrl() }}">
 
     <!-- Hreflang Tags for Multilingual SEO -->
     <link rel="alternate" hreflang="id" href="{{ url()->current() }}?lang=id">
