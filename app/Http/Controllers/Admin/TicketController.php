@@ -119,7 +119,10 @@ class TicketController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'required|string',
+            'is_active' => 'nullable|boolean',
         ]);
+
+        $validated['is_active'] = $request->has('is_active');
 
         $event->tickets()->create($validated);
 
@@ -151,11 +154,14 @@ class TicketController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
         ]);
+
+        $validated['is_active'] = $request->has('is_active');
 
         $ticket->update($validated);
 
-        return redirect()->route('admin.events.index')->with('success', 'Ticket updated successfully.');
+        return back()->with('success', 'Ticket updated successfully.');
     }
 
     public function destroy(Ticket $ticket)
@@ -163,5 +169,12 @@ class TicketController extends Controller
         $ticket->delete();
 
         return back()->with('success', 'Ticket deleted successfully.');
+    }
+
+    public function toggleActive(Ticket $ticket)
+    {
+        $ticket->update(['is_active' => !$ticket->is_active]);
+
+        return back()->with('success', 'Ticket status updated successfully.');
     }
 }

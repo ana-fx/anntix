@@ -19,11 +19,13 @@ class Ticket extends Model
         'start_date',
         'end_date',
         'description',
+        'is_active',
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     public function event()

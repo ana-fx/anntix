@@ -168,11 +168,19 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span
-                                                class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold
-                                                                                                                                                        {{ $ticket->quota > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                                {{ $ticket->quota > 0 ? 'Available' : 'Sold Out' }}
-                                            </span>
+                                            @if(!$ticket->is_active)
+                                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                                                    Disabled
+                                                </span>
+                                            @elseif($ticket->quota <= 0)
+                                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                                                    Sold Out
+                                                </span>
+                                            @else
+                                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                                    Available
+                                                </span>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
@@ -184,6 +192,41 @@
                                                             d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                                     </svg>
                                                 </a>
+
+                                                <form action="{{ route('admin.tickets-report.update', $ticket) }}"
+                                                    method="POST" class="inline-block">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <!-- Preserve existing values -->
+                                                    <input type="hidden" name="name" value="{{ $ticket->name }}">
+                                                    <input type="hidden" name="price" value="{{ $ticket->price }}">
+                                                    <input type="hidden" name="quota" value="{{ $ticket->quota }}">
+                                                    <input type="hidden" name="max_purchase_per_user" value="{{ $ticket->max_purchase_per_user }}">
+                                                    <input type="hidden" name="start_date" value="{{ $ticket->start_date->format('Y-m-d H:i') }}">
+                                                    <input type="hidden" name="end_date" value="{{ $ticket->end_date->format('Y-m-d H:i') }}">
+                                                    <input type="hidden" name="description" value="{{ $ticket->description }}">
+                                                    
+                                                    @if($ticket->is_active)
+                                                        <!-- To Disable: Do NOT include 'is_active' input so request->has('is_active') is false -->
+                                                        <button type="submit"
+                                                            class="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
+                                                            title="Disable Ticket">
+                                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                                            </svg>
+                                                        </button>
+                                                    @else
+                                                        <!-- To Enable: Include 'is_active' input so request->has('is_active') is true -->
+                                                        <input type="hidden" name="is_active" value="1">
+                                                        <button type="submit"
+                                                            class="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                                                            title="Enable Ticket">
+                                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                        </button>
+                                                    @endif
+                                                </form>
 
                                                 <form action="{{ route('admin.tickets-report.destroy', $ticket) }}"
                                                     method="POST"

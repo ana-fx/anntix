@@ -115,6 +115,7 @@
                                 class="bg-gray-50/50 border-b border-gray-100 text-[9px] uppercase tracking-wider text-gray-400 font-black">
                                 <th class="px-4 py-3">No</th>
                                 <th class="px-4 py-3 font-black text-dark">Ticket Variation</th>
+                                <th class="px-4 py-3 text-center">Status</th>
                                 <th class="px-4 py-3 text-center">Volume</th>
                                 <th class="px-4 py-3 text-center">Stock</th>
                                 <th class="px-4 py-3 text-right">Ticket Revenue</th>
@@ -180,6 +181,15 @@
                                         <div class="text-[9px] text-gray-400 font-bold uppercase mt-1">@ Rp
                                             {{ number_format($ticket->price, 0, ',', '.') }}
                                         </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($ticket->is_active)
+                                            <span
+                                                class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase tracking-wider">Active</span>
+                                        @else
+                                            <span
+                                                class="px-2 py-1 bg-red-100 text-red-700 rounded text-[10px] font-bold uppercase tracking-wider">Inactive</span>
+                                        @endif
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         <span class="px-3 py-1 bg-gray-100 rounded-full text-xs font-black text-dark">
