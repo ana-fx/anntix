@@ -80,10 +80,13 @@
                 <div>
                     <h3 class="font-bold text-white mb-6">{{ __('common.company') }}</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="{{ route('pages.about') }}" class="hover:text-primary transition-colors">{{ __('common.about') }}</a></li>
-                        <li><a href="{{ route('contact.index') }}" class="hover:text-primary transition-colors">{{ __('common.contact') }}</a></li>
+                        <li><a href="{{ route('pages.about') }}"
+                                class="hover:text-primary transition-colors">{{ __('common.about') }}</a></li>
+                        <li><a href="{{ route('contact.index') }}"
+                                class="hover:text-primary transition-colors">{{ __('common.contact') }}</a></li>
                         @guest
-                            <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">{{ __('common.login') }}</a></li>
+                            <li><a href="{{ route('login') }}"
+                                    class="hover:text-primary transition-colors">{{ __('common.login') }}</a></li>
                         @endguest
                     </ul>
                 </div>
@@ -122,16 +125,7 @@
                                 class="hover:text-primary transition-colors" itemprop="email">{{
                                 $global_settings['contact_email'] ?? 'hallo@anntix.id' }}</a>
                         </li>
-                        <!-- Phone - Must match Google Business Profile -->
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                            <a href="tel:+6287750581589" class="hover:text-primary transition-colors"
-                                itemprop="telephone">0877-5058-1589</a>
-                        </li>
+
                         <!-- WhatsApp -->
                         <li class="flex items-center gap-3">
                             <svg class="w-5 h-5 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -155,7 +149,8 @@
             <div class="flex gap-6 text-sm">
                 <a href="{{ route('pages.privacy') }}"
                     class="text-gray-500 hover:text-white transition-colors">{{ __('common.privacy_policy') }}</a>
-                <a href="{{ route('pages.terms') }}" class="text-gray-500 hover:text-white transition-colors">{{ __('common.terms_conditions') }}</a>
+                <a href="{{ route('pages.terms') }}"
+                    class="text-gray-500 hover:text-white transition-colors">{{ __('common.terms_conditions') }}</a>
                 <a href="{{ route('pages.cookie') }}"
                     class="text-gray-500 hover:text-white transition-colors">{{ __('common.cookie_policy') }}</a>
             </div>
