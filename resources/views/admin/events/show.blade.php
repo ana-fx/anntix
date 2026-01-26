@@ -125,11 +125,7 @@
                             </svg>
                             Ticket Information
                         </h3>
-                        @php
-                            $latestTicket = $event->tickets->sortByDesc('end_date')->first();
-                            $nextStartDate = $latestTicket ? $latestTicket->end_date->addDay()->format('Y-m-d H:i') : null;
-                        @endphp
-                        <a href="{{ route('admin.events.tickets-report.create', ['event' => $event, 'min_start_date' => $nextStartDate]) }}"
+                        <a href="{{ route('admin.events.tickets-report.create', ['event' => $event]) }}"
                             class="text-sm font-bold text-primary hover:text-primary-700 transition-colors">
                             + Add Ticket
                         </a>

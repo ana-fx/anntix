@@ -36,13 +36,18 @@ class HomeController extends Controller
         if (auth()->user()?->role === 'reseller') {
             return redirect()->route('reseller.transactions.create', $event);
         }
-        $event->load('tickets');
+        $event->load([
+            'tickets' => function ($query) {
+                $query->where('is_active', true);
+            }
+        ]);
 
         $relatedEvents = Event::where('status', 'active')
             ->where('id', '!=', $event->id)
             ->with([
                 'tickets' => function ($query) {
-                    $query->where('start_date', '<=', now())
+                    $query->where('is_active', true)
+                        ->where('start_date', '<=', now())
                         ->where('end_date', '>=', now())
                         ->orderBy('price', 'asc');
                 }

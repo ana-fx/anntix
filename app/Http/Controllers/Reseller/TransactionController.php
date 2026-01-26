@@ -24,6 +24,7 @@ class TransactionController extends Controller
             'tickets' => function ($query) {
                 $query->where('start_date', '<=', now())
                     ->where('end_date', '>=', now())
+                    ->where('is_active', true)
                     ->withSum([
                         'transactions as paid_qty' => function ($q) {
                             $q->where('status', 'paid');
@@ -67,7 +68,7 @@ class TransactionController extends Controller
             'gender' => 'required|in:male,female',
         ]);
 
-        $ticket = $event->tickets()->findOrFail($validated['ticket_id']);
+        $ticket = $event->tickets()->where('is_active', true)->findOrFail($validated['ticket_id']);
 
         // Validate Max Purchase
         if ($validated['quantity'] > $ticket->max_purchase_per_user) {
