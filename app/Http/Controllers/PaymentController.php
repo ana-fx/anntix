@@ -104,6 +104,7 @@ class PaymentController extends Controller
                     ],
                     [
                         'payment_type' => 'qris',
+                        'acquirer' => 'gopay',
                         'customer_percentage' => 100
                     ],
                     [
