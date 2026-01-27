@@ -236,6 +236,8 @@ class PaymentController extends Controller
 
     public function notification(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('Midtrans Notification Hit:', $request->all());
+
         // 1. Configure Midtrans
         \Midtrans\Config::$serverKey = config('midtrans.server_key');
         \Midtrans\Config::$isProduction = config('midtrans.is_production');
