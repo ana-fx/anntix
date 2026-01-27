@@ -35,7 +35,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
 
                 <!-- LEFT COLUMN: Payment Action & Event Info -->
-                <div class="lg:col-span-7">
+                <div class="lg:col-span-7" x-data="{ paymentMethod: null }">
 
                     <div
                         class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest mb-6">
@@ -146,17 +146,67 @@
                         </div>
                     @else
                         {{-- Single Pay Now Button --}}
+                        {{-- Payment Selection --}}
                         <div class="mb-16">
-                            <button id="pay-button"
-                                class="w-full px-12 py-6 bg-primary hover:bg-primary-dark text-white font-black rounded-2xl shadow-xl transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-4">
+                            <h3 class="font-bold text-dark text-xl mb-6 uppercase">{{ __('common.select_payment_method') }}
+                            </h3>
+
+                            <div class="grid grid-cols-1 gap-4 mb-8">
+                                <!-- QRIS Option -->
+                                <label
+                                    class="relative flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:bg-gray-50 focus-within:ring-2 ring-primary group"
+                                    :class="paymentMethod === 'qris' ? 'border-primary bg-primary/5' : 'border-gray-100'">
+                                    <input type="radio" name="payment_method" value="qris" class="hidden"
+                                        @change="paymentMethod = 'qris'">
+                                    <div class="flex items-center gap-4 w-full">
+                                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
+                                            :class="paymentMethod === 'qris' ? 'border-primary' : 'border-gray-300'">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-primary transform scale-0 transition-transform"
+                                                :class="paymentMethod === 'qris' ? 'scale-100' : ''"></div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="font-bold text-dark text-lg">QRIS / E-Wallet</div>
+                                            <div class="text-sm text-gray-500">GoPay, ShopeePay, Dana, dll.</div>
+                                        </div>
+                                        <div class="text-xs font-bold px-2 py-1 bg-gray-100 rounded text-gray-600">
+                                            Fee 0.7%
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <!-- Bank Transfer Option -->
+                                <label
+                                    class="relative flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:bg-gray-50 focus-within:ring-2 ring-primary group"
+                                    :class="paymentMethod === 'bank_transfer' ? 'border-primary bg-primary/5' : 'border-gray-100'">
+                                    <input type="radio" name="payment_method" value="bank_transfer" class="hidden"
+                                        @change="paymentMethod = 'bank_transfer'">
+                                    <div class="flex items-center gap-4 w-full">
+                                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
+                                            :class="paymentMethod === 'bank_transfer' ? 'border-primary' : 'border-gray-300'">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-primary transform scale-0 transition-transform"
+                                                :class="paymentMethod === 'bank_transfer' ? 'scale-100' : ''"></div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="font-bold text-dark text-lg">Bank Transfer (VA)</div>
+                                            <div class="text-sm text-gray-500">BCA, Mandiri, BNI, BRI, dll.</div>
+                                        </div>
+                                        <div class="text-xs font-bold px-2 py-1 bg-gray-100 rounded text-gray-600">
+                                            + Admin Fee
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <button id="pay-button" :disabled="!paymentMethod"
+                                class="w-full px-12 py-6 bg-primary hover:bg-primary-dark text-white font-black rounded-2xl shadow-xl transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                                 <span>{{ __('common.proceed_to_payment') }}</span>
                             </button>
-                            <p class="text-center text-sm text-gray-500 mt-4">
-                                {{ __('common.choose_payment_next_step') }}
+                            <p class="text-center text-sm text-gray-500 mt-4" x-show="!paymentMethod">
+                                {{ __('common.select_method_first') }}
                             </p>
                         </div>
                     @endif
@@ -321,14 +371,18 @@
                 payButton.innerHTML = "{{ __('common.processing') }}";
                 payButton.disabled = true;
 
-                // Fetch Token - Use 'gopay' to show all payment options
+                // Fetch Token
+                // We assume AlpineJS 'paymentMethod' is accessible via x-data scope logic or simple DOM check if Alpine scope is tricky here.
+                // Since this script is outside Alpine scope, we grab the checked radio input manually.
+                const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
                 fetch("{{ route('payment.token', $transaction->code) }}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    body: JSON.stringify({ payment_method: 'gopay' })
+                    body: JSON.stringify({ payment_method: selectedMethod })
                 })
                     .then(response => response.json())
                     .then(data => {
