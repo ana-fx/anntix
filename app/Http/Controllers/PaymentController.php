@@ -30,7 +30,7 @@ class PaymentController extends Controller
     public function generateToken(Request $request, Transaction $transaction)
     {
         $request->validate([
-            'payment_method' => 'required|in:qris,bank_transfer,gopay',
+            'payment_method' => 'required|in:qris,bank_transfer',
         ]);
 
         \Midtrans\Config::$serverKey = config('midtrans.server_key');
@@ -40,22 +40,14 @@ class PaymentController extends Controller
 
         // Fees from Settings
         $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
-        $qrisFeePercent = (float) \App\Models\Setting::getValue('fee_qris_percent', 0); // e.g. 0.7
-        $bankFeeFixed = (int) \App\Models\Setting::getValue('fee_bank_fixed', 0);
 
         $subtotal = $transaction->ticket->price * $transaction->quantity;
         $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
 
-        // No manual fee calculation - Midtrans handles it automatically
-        // Show only GoPay (QRIS included) and Bank Transfer options
-        $enabledPayments = ['gopay', 'qris', 'other_qris', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'cimb_va'];
+        $finalTotal = $baseTotal;
+        $enabledPayments = [];
+        $customerImposedFeeConfig = [];
 
-        // Update Transaction with base total (Midtrans adds fee automatically)
-        $transaction->update([
-            'total_price' => $baseTotal,
-        ]);
-
-        // Build Details
         $itemDetails = [
             [
                 'id' => $transaction->ticket_id,
@@ -74,64 +66,81 @@ class PaymentController extends Controller
             ];
         }
 
-        // No payment fee in item_details - Midtrans adds it automatically
+        // --- SPLIT LOGIC ---
+        if ($request->payment_method === 'qris') {
+            // MANUAL FEE CALCULATION FOR QRIS
+            // Adds fee manually to total to bypass API limitation for other_qris
 
-        // Build parameters with automatic fee imposition
-        // Midtrans will automatically calculate and add MDR fees
+            $qrisFeePercent = 0.7; // 0.7%
+            $manualFeeAmount = floor($baseTotal * ($qrisFeePercent / 100));
+
+            if ($manualFeeAmount > 0) {
+                $itemDetails[] = [
+                    'id' => 'QRIS-FEE',
+                    'price' => $manualFeeAmount,
+                    'quantity' => 1,
+                    'name' => 'QRIS Processing Fee',
+                ];
+                $finalTotal += $manualFeeAmount;
+            }
+
+            // Enable QRIS methods (including other_qris for mobile visibility)
+            $enabledPayments = ['qris', 'gopay', 'other_qris'];
+
+            // DISABLE automatic fee config for QRIS
+            $customerImposedFeeConfig = [
+                'enable' => false,
+                'payment_fee_configs' => []
+            ];
+
+        } else {
+            // BANK TRANSFER (Automatic Fee)
+            // Let Midtrans add the fee in popup
+
+            $enabledPayments = ['bni_va', 'bri_va', 'echannel', 'permata_va', 'cimb_va'];
+
+            // ENABLE automatic fee config
+            $customerImposedFeeConfig = [
+                'enable' => true,
+                'payment_fee_configs' => [
+                    ['payment_type' => 'bni_va', 'customer_percentage' => 100],
+                    ['payment_type' => 'bri_va', 'customer_percentage' => 100],
+                    ['payment_type' => 'echannel', 'customer_percentage' => 100],
+                    ['payment_type' => 'permata_va', 'customer_percentage' => 100],
+                    ['payment_type' => 'cimb_va', 'customer_percentage' => 100],
+                ]
+            ];
+        }
+
+        // Update Transaction
+        $transaction->update([
+            'total_price' => $finalTotal,
+        ]);
+
+        // Build parameters
         $params = [
             'transaction_details' => [
                 'order_id' => $transaction->code . '-' . time(),
-                'gross_amount' => (int) $baseTotal, // Base amount WITHOUT manual fee
+                'gross_amount' => (int) $finalTotal,
             ],
             'customer_details' => [
                 'first_name' => $transaction->name,
                 'email' => $transaction->email,
                 'phone' => $transaction->phone,
             ],
-            'item_details' => $itemDetails, // Only ticket + handling fee
+            'item_details' => $itemDetails,
             'enabled_payments' => $enabledPayments,
             'expiry' => [
                 'unit' => 'day',
                 'duration' => 1,
             ],
-            // Enable automatic fee imposition - Midtrans calculates the fee
-            'customer_imposed_payment_fee' => [
-                'enable' => true,
-                'payment_fee_configs' => [
-                    [
-                        'payment_type' => 'gopay',
-                        'customer_percentage' => 100
-                    ],
-                    [
-                        'payment_type' => 'qris',
-                        'acquirer' => 'gopay',
-                        'customer_percentage' => 100
-                    ],
-
-
-                    [
-                        'payment_type' => 'bni_va',
-                        'customer_percentage' => 100
-                    ],
-                    [
-                        'payment_type' => 'bri_va',
-                        'customer_percentage' => 100
-                    ],
-                    [
-                        'payment_type' => 'echannel', // Mandiri
-                        'customer_percentage' => 100
-                    ],
-                    [
-                        'payment_type' => 'permata_va',
-                        'customer_percentage' => 100
-                    ],
-                    [
-                        'payment_type' => 'cimb_va',
-                        'customer_percentage' => 100
-                    ],
-                ]
-            ],
+            'customer_imposed_payment_fee' => $customerImposedFeeConfig
         ];
+
+        // Remove customer_imposed_payment_fee if not enabled
+        if (!$customerImposedFeeConfig['enable']) {
+            unset($params['customer_imposed_payment_fee']);
+        }
 
         try {
             $snapToken = \Midtrans\Snap::getSnapToken($params);
@@ -140,8 +149,8 @@ class PaymentController extends Controller
             return response()->json([
                 'snap_token' => $snapToken,
                 'handling_fee' => $handlingFee,
-                'base_total' => $baseTotal, // Midtrans will add MDR fee automatically
-                'message' => 'Midtrans will automatically calculate payment fees'
+                'base_total' => $finalTotal,
+                'message' => 'Token generated'
             ]);
         } catch (\Exception $e) {
             logger()->error('Midtrans Snap Error: ' . $e->getMessage(), [

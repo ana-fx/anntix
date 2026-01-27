@@ -46,7 +46,7 @@ class SettingsSeeder extends Seeder
 
             // Payment Configuration
             ['key' => 'fee_qris_percent', 'value' => '0.7'],
-            ['key' => 'fee_bank_fixed', 'value' => '4000'],
+            ['key' => 'fee_bank_fixed', 'value' => '4440'],
             ['key' => 'handling_fee', 'value' => '5000'],
         ];
 

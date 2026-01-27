@@ -62,6 +62,7 @@ return [
     // Booking & Checkout
     'select_tickets' => 'Pilih Tiket',
     'ticket_quantity' => 'Jumlah',
+    'subtotal' => 'Subtotal',
     'total_price' => 'Total Harga',
     'checkout' => 'Checkout',
     'payment' => 'Pembayaran',
@@ -322,6 +323,8 @@ return [
     'information' => 'Informasi',
     'details' => 'Detail',
     'online_payment' => 'Pembayaran Online',
+    'select_payment_method' => 'Pilih Metode Pembayaran',
+    'select_method_first' => 'Silakan pilih metode pembayaran terlebih dahulu',
 
     // Checkout Form
     'secure_your_spot' => 'Amankan Tiket Anda',

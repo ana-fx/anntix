@@ -32,10 +32,35 @@
     <div class="bg-white min-h-screen pt-28 pb-20 px-4 sm:px-6">
         <div class="max-w-7xl mx-auto">
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20" x-data="{
+                paymentMethod: null,
+                baseTotal: {{ $baseTotal }},
+                qrisFee: {{ $qrisFee }},
+                bankFee: {{ $bankFixed }},
+                get currentTotal() {
+                    if (this.paymentMethod === 'qris') {
+                        return this.baseTotal + this.qrisFee;
+                    } else if (this.paymentMethod === 'bank_transfer') {
+                        return this.baseTotal + this.bankFee;
+                    }
+                    return this.baseTotal;
+                },
+                get displayFee() {
+                    if (this.paymentMethod === 'qris') {
+                        return this.qrisFee;
+                    }
+                    return this.bankFee;
+                },
+                get feeLabel() {
+                    if (this.paymentMethod === 'qris') {
+                        return 'QRIS Fee (0.7%)';
+                    }
+                    return 'Admin Fee';
+                }
+            }">
 
                 <!-- LEFT COLUMN: Payment Action & Event Info -->
-                <div class="lg:col-span-7" x-data="{ paymentMethod: null }">
+                <div class="lg:col-span-7">
 
                     <div
                         class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest mb-6">
@@ -154,58 +179,65 @@
                             <div class="grid grid-cols-1 gap-4 mb-8">
                                 <!-- QRIS Option -->
                                 <label
-                                    class="relative flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:bg-gray-50 focus-within:ring-2 ring-primary group"
-                                    :class="paymentMethod === 'qris' ? 'border-primary bg-primary/5' : 'border-gray-100'">
+                                    class="relative flex items-center p-5 rounded-2xl border-2 border-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-50 focus-within:ring-2 ring-primary group"
+                                    :class="{'!border-primary bg-primary/5': paymentMethod === 'qris'}">
                                     <input type="radio" name="payment_method" value="qris" class="hidden"
                                         @change="paymentMethod = 'qris'">
                                     <div class="flex items-center gap-4 w-full">
-                                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
-                                            :class="paymentMethod === 'qris' ? 'border-primary' : 'border-gray-300'">
-                                            <div class="w-2.5 h-2.5 rounded-full bg-primary transform scale-0 transition-transform"
-                                                :class="paymentMethod === 'qris' ? 'scale-100' : ''"></div>
+                                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center transition-colors"
+                                            :class="{'!border-primary': paymentMethod === 'qris'}">
+                                            <div class="w-3 h-3 rounded-full bg-primary transform scale-0 transition-transform duration-200"
+                                                :class="{'!scale-100': paymentMethod === 'qris'}"></div>
                                         </div>
-                                        <div class="flex-1">
-                                            <div class="font-bold text-dark text-lg">QRIS / E-Wallet</div>
-                                            <div class="text-sm text-gray-500">GoPay, ShopeePay, Dana, dll.</div>
-                                        </div>
-                                        <div class="text-xs font-bold px-2 py-1 bg-gray-100 rounded text-gray-600">
-                                            Fee 0.7%
+                                        <div class="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                            <div>
+                                                <div class="font-bold text-dark text-lg">QRIS / E-Wallet</div>
+                                                <div class="text-sm text-gray-500">GoPay, ShopeePay, Dana, dll.</div>
+                                            </div>
+                                            <div
+                                                class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-lg text-gray-600 self-start md:self-center whitespace-nowrap">
+                                                Fee 0.7%
+                                            </div>
                                         </div>
                                     </div>
                                 </label>
 
                                 <!-- Bank Transfer Option -->
                                 <label
-                                    class="relative flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:bg-gray-50 focus-within:ring-2 ring-primary group"
-                                    :class="paymentMethod === 'bank_transfer' ? 'border-primary bg-primary/5' : 'border-gray-100'">
+                                    class="relative flex items-center p-5 rounded-2xl border-2 border-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-50 focus-within:ring-2 ring-primary group"
+                                    :class="{'!border-primary bg-primary/5': paymentMethod === 'bank_transfer'}">
                                     <input type="radio" name="payment_method" value="bank_transfer" class="hidden"
                                         @change="paymentMethod = 'bank_transfer'">
                                     <div class="flex items-center gap-4 w-full">
-                                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
-                                            :class="paymentMethod === 'bank_transfer' ? 'border-primary' : 'border-gray-300'">
-                                            <div class="w-2.5 h-2.5 rounded-full bg-primary transform scale-0 transition-transform"
-                                                :class="paymentMethod === 'bank_transfer' ? 'scale-100' : ''"></div>
+                                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center transition-colors"
+                                            :class="{'!border-primary': paymentMethod === 'bank_transfer'}">
+                                            <div class="w-3 h-3 rounded-full bg-primary transform scale-0 transition-transform duration-200"
+                                                :class="{'!scale-100': paymentMethod === 'bank_transfer'}"></div>
                                         </div>
-                                        <div class="flex-1">
-                                            <div class="font-bold text-dark text-lg">Bank Transfer (VA)</div>
-                                            <div class="text-sm text-gray-500">BCA, Mandiri, BNI, BRI, dll.</div>
-                                        </div>
-                                        <div class="text-xs font-bold px-2 py-1 bg-gray-100 rounded text-gray-600">
-                                            + Admin Fee
+                                        <div class="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                            <div>
+                                                <div class="font-bold text-dark text-lg">Bank Transfer (VA)</div>
+                                                <div class="text-sm text-gray-500">BCA, Mandiri, BNI, BRI, dll.</div>
+                                            </div>
+                                            <div
+                                                class="text-xs font-bold px-3 py-1 bg-gray-100 rounded-lg text-gray-600 self-start md:self-center whitespace-nowrap">
+                                                + Admin Fee
+                                            </div>
                                         </div>
                                     </div>
                                 </label>
                             </div>
 
                             <button id="pay-button" :disabled="!paymentMethod"
-                                class="w-full px-12 py-6 bg-primary hover:bg-primary-dark text-white font-black rounded-2xl shadow-xl transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                                class="w-full px-12 py-6 bg-primary hover:bg-primary-dark text-white font-black rounded-2xl shadow-xl transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
                                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                                 <span>{{ __('common.proceed_to_payment') }}</span>
                             </button>
-                            <p class="text-center text-sm text-gray-500 mt-4" x-show="!paymentMethod">
+                            <p class="text-center text-sm text-gray-500 mt-4 h-6" x-show="!paymentMethod"
+                                x-transition.opacity>
                                 {{ __('common.select_method_first') }}
                             </p>
                         </div>
@@ -309,8 +341,27 @@
                                 @endif
                                 <div class="flex justify-between text-xl font-black pt-4 border-t border-gray-100">
                                     <span class="text-dark uppercase">{{ __('common.grand_total') }}</span>
-                                    <span class="text-primary tracking-tighter" id="grand-total-display">Rp
-                                        {{ number_format($baseTotal, 0, ',', '.') }}</span>
+                                    <span class="text-primary tracking-tighter" id="grand-total-display">
+                                        <span x-show="!paymentMethod">Rp
+                                            {{ number_format($baseTotal, 0, ',', '.') }}</span>
+                                        <span x-show="paymentMethod"
+                                            x-text="'Rp ' + currentTotal.toLocaleString('id-ID')"></span>
+                                    </span>
+                                </div>
+
+                                <!-- Fee Breakdown (shows when method selected) -->
+                                <div x-show="paymentMethod" x-transition
+                                    class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                    <div class="flex justify-between text-sm mb-2">
+                                        <span class="text-gray-600">Base Total</span>
+                                        <span class="font-bold text-dark"
+                                            x-text="'Rp ' + baseTotal.toLocaleString('id-ID')"></span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-600" x-text="feeLabel"></span>
+                                        <span class="font-bold text-primary"
+                                            x-text="'Rp ' + displayFee.toLocaleString('id-ID')"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

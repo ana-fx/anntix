@@ -61,6 +61,7 @@ return [
     // Booking & Checkout
     'select_tickets' => 'Select Tickets',
     'ticket_quantity' => 'Quantity',
+    'subtotal' => 'Subtotal',
     'total_price' => 'Total Price',
     'checkout' => 'Checkout',
     'payment' => 'Payment',
@@ -321,6 +322,8 @@ return [
     'information' => 'Information',
     'details' => 'Details',
     'online_payment' => 'Online Payment',
+    'select_payment_method' => 'Select Payment Method',
+    'select_method_first' => 'Please select a payment method first',
 
     // Checkout Form
     'secure_your_spot' => 'Secure Your Spot',
