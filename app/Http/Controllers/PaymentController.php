@@ -48,7 +48,7 @@ class PaymentController extends Controller
 
         // No manual fee calculation - Midtrans handles it automatically
         // Show only GoPay (QRIS included) and Bank Transfer options
-        $enabledPayments = ['gopay', 'qris', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'cimb_va'];
+        $enabledPayments = ['gopay', 'qris', 'other_qris', 'bni_va', 'bri_va', 'echannel', 'permata_va', 'cimb_va'];
 
         // Update Transaction with base total (Midtrans adds fee automatically)
         $transaction->update([
@@ -104,6 +104,11 @@ class PaymentController extends Controller
                     ],
                     [
                         'payment_type' => 'qris',
+                        'acquirer' => 'gopay',
+                        'customer_percentage' => 100
+                    ],
+                    [
+                        'payment_type' => 'other_qris',
                         'acquirer' => 'gopay',
                         'customer_percentage' => 100
                     ],
