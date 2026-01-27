@@ -341,6 +341,7 @@
 
                         // Open Snap
                         snap.pay(data.snap_token, {
+                            uiMode: 'qr',
                             onSuccess: function (result) {
                                 fetch("{{ route('payment.update', $transaction->code) }}", {
                                     method: "POST",
