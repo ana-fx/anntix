@@ -27,6 +27,7 @@
 
         // Potential Fees
         $qrisFee = floor($baseTotal * ($qrisPercent / 100)); // 0.7% of base total
+        $serviceFee = 0;
     @endphp
     <div class="bg-white min-h-screen pt-28 pb-20 px-4 sm:px-6">
         <div class="max-w-7xl mx-auto">
@@ -207,7 +208,8 @@
                     <!-- Items Summary -->
                     <div>
                         <h2 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">
-                            {{ __('common.your_selection') }}</h2>
+                            {{ __('common.your_selection') }}
+                        </h2>
 
                         <div class="space-y-4">
                             <!-- Table Header -->
@@ -248,10 +250,11 @@
                                     </div>
                                 @endif
 
-                                @if(!$transaction->reseller_id)
+                                @if(!$transaction->reseller_id && $serviceFee > 0)
                                     <div class="flex justify-between text-sm text-primary font-bold">
                                         <span>{{ __('common.service_fee') }}</span>
-                                        <span id="service-fee-display">Rp 0</span>
+                                        <span id="service-fee-display">Rp
+                                            {{ number_format($serviceFee, 0, ',', '.') }}</span>
                                     </div>
                                 @endif
                                 <div class="flex justify-between text-xl font-black pt-4 border-t border-gray-100">
@@ -266,7 +269,8 @@
                     <!-- Customer Identity -->
                     <div>
                         <h3 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">
-                            {{ __('common.buyer_details') }}</h3>
+                            {{ __('common.buyer_details') }}
+                        </h3>
 
                         <div class="space-y-4">
                             <!-- Rows -->
