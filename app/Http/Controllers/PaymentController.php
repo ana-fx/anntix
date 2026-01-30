@@ -176,8 +176,16 @@ class PaymentController extends Controller
             // Send Ticket Confirmation Email
             try {
                 Mail::to($transaction->email)->send(new PaymentSuccess($transaction));
+                \Illuminate\Support\Facades\Log::info('Payment success email queued from updateStatus', [
+                    'transaction_code' => $transaction->code,
+                    'email' => $transaction->email,
+                    'payment_type' => $request->payment_type
+                ]);
             } catch (\Exception $e) {
-                logger()->error('Failed to send payment success email: ' . $e->getMessage());
+                logger()->error('Failed to send payment success email from updateStatus: ' . $e->getMessage(), [
+                    'transaction_code' => $transaction->code,
+                    'email' => $transaction->email
+                ]);
             }
         }
 
@@ -213,8 +221,16 @@ class PaymentController extends Controller
             // 3. Send Email
             try {
                 Mail::to($transaction->email)->send(new PaymentSuccess($transaction));
+                \Illuminate\Support\Facades\Log::info('Payment success email queued from resellerComplete', [
+                    'transaction_code' => $transaction->code,
+                    'email' => $transaction->email,
+                    'reseller_id' => $reseller->id
+                ]);
             } catch (\Exception $e) {
-                logger()->error('Failed to send payment success email: ' . $e->getMessage());
+                logger()->error('Failed to send payment success email from resellerComplete: ' . $e->getMessage(), [
+                    'transaction_code' => $transaction->code,
+                    'email' => $transaction->email
+                ]);
             }
         }
 
@@ -236,7 +252,12 @@ class PaymentController extends Controller
 
     public function notification(Request $request)
     {
-        \Illuminate\Support\Facades\Log::info('Midtrans Notification Hit:', $request->all());
+        // Log incoming webhook with full payload
+        \Illuminate\Support\Facades\Log::info('🔔 Midtrans Webhook Received', [
+            'timestamp' => now()->toDateTimeString(),
+            'ip' => $request->ip(),
+            'payload' => $request->all()
+        ]);
 
         // 1. Configure Midtrans
         \Midtrans\Config::$serverKey = config('midtrans.server_key');
@@ -246,7 +267,12 @@ class PaymentController extends Controller
 
         try {
             $notif = new \Midtrans\Notification();
+            \Illuminate\Support\Facades\Log::info('✅ Midtrans notification parsed successfully');
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('❌ Failed to parse Midtrans notification', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['message' => 'Invalid notification'], 400);
         }
 
@@ -255,39 +281,109 @@ class PaymentController extends Controller
         $order_id = $notif->order_id;
         $fraud = $notif->fraud_status;
 
+        \Illuminate\Support\Facades\Log::info('📋 Webhook Details', [
+            'order_id' => $order_id,
+            'transaction_status' => $transaction,
+            'payment_type' => $type,
+            'fraud_status' => $fraud
+        ]);
+
         // Parse Order ID: ANNTIX-RANDOM-TIMESTAMP
         // We need to extract ANNTIX-RANDOM
 
         $parts = explode('-', $order_id);
-        // Assuming format is ANNTIX-RANDOMSTRING-TIMESTAMP (3 parts)
-        // OR ANNTIX-RANDOMSTRING (2 parts, old format)
-        // Let's rely on finding the DB record that matches the code prefix
 
-        $code = $parts[0] . '-' . $parts[1];
+        // Handle different formats:
+        // - ANNTIX-RANDOM-TIMESTAMP (3 parts)
+        // - ANNTIX-RANDOM (2 parts)
+        // - RES-ANNTIX-RANDOM-TIMESTAMP (4 parts for reseller)
+
+        if (count($parts) >= 2) {
+            // If starts with RES-, it's a reseller transaction
+            if ($parts[0] === 'RES' && count($parts) >= 3) {
+                $code = $parts[0] . '-' . $parts[1] . '-' . $parts[2];
+            } else {
+                $code = $parts[0] . '-' . $parts[1];
+            }
+        } else {
+            \Illuminate\Support\Facades\Log::error('❌ Invalid order_id format', [
+                'order_id' => $order_id,
+                'parts_count' => count($parts)
+            ]);
+            return response()->json(['message' => 'Invalid order_id format'], 400);
+        }
+
+        \Illuminate\Support\Facades\Log::info('🔍 Searching for transaction', [
+            'extracted_code' => $code,
+            'original_order_id' => $order_id
+        ]);
 
         $trx = Transaction::where('code', $code)->first();
 
         if (!$trx) {
+            \Illuminate\Support\Facades\Log::error('❌ Transaction not found in database', [
+                'code' => $code,
+                'order_id' => $order_id
+            ]);
             return response()->json(['message' => 'Transaction not found'], 404);
         }
 
+        \Illuminate\Support\Facades\Log::info('✅ Transaction found', [
+            'code' => $trx->code,
+            'current_status' => $trx->status,
+            'email' => $trx->email
+        ]);
+
+        // Process based on transaction status
         if ($transaction == 'capture') {
             if ($fraud == 'challenge') {
+                \Illuminate\Support\Facades\Log::warning('⚠️ Payment challenged', [
+                    'code' => $trx->code,
+                    'fraud_status' => $fraud
+                ]);
                 $trx->update(['status' => 'pending']);
             } else {
+                \Illuminate\Support\Facades\Log::info('💰 Processing capture payment', [
+                    'code' => $trx->code
+                ]);
                 $this->markAsPaid($trx, $type, $order_id);
             }
         } else if ($transaction == 'settlement') {
+            \Illuminate\Support\Facades\Log::info('💰 Processing settlement payment', [
+                'code' => $trx->code
+            ]);
             $this->markAsPaid($trx, $type, $order_id);
         } else if ($transaction == 'pending') {
+            \Illuminate\Support\Facades\Log::info('⏳ Payment pending', [
+                'code' => $trx->code
+            ]);
             $trx->update(['status' => 'pending']);
         } else if ($transaction == 'deny') {
+            \Illuminate\Support\Facades\Log::warning('❌ Payment denied', [
+                'code' => $trx->code
+            ]);
             $trx->update(['status' => 'failed']);
         } else if ($transaction == 'expire') {
+            \Illuminate\Support\Facades\Log::info('⏰ Payment expired', [
+                'code' => $trx->code
+            ]);
             $trx->update(['status' => 'expired']);
         } else if ($transaction == 'cancel') {
+            \Illuminate\Support\Facades\Log::info('🚫 Payment canceled', [
+                'code' => $trx->code
+            ]);
             $trx->update(['status' => 'canceled']);
+        } else {
+            \Illuminate\Support\Facades\Log::warning('⚠️ Unknown transaction status', [
+                'code' => $trx->code,
+                'status' => $transaction
+            ]);
         }
+
+        \Illuminate\Support\Facades\Log::info('✅ Webhook processed successfully', [
+            'code' => $trx->code,
+            'final_status' => $trx->fresh()->status
+        ]);
 
         return response()->json(['status' => 'ok']);
     }
@@ -303,7 +399,18 @@ class PaymentController extends Controller
 
             try {
                 Mail::to($trx->email)->send(new PaymentSuccess($trx));
+                \Illuminate\Support\Facades\Log::info('Payment success email queued', [
+                    'transaction_code' => $trx->code,
+                    'email' => $trx->email,
+                    'payment_type' => $type
+                ]);
             } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to queue payment success email', [
+                    'transaction_code' => $trx->code,
+                    'email' => $trx->email,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
             }
         }
     }
