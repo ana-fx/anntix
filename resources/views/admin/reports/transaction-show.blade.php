@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4" x-data="{ showConfirmModal: false }">
             @if($transaction->status === 'paid')
                 <a href="{{ route('payment.success', $transaction->code) }}" target="_blank"
                     class="hidden md:flex items-center gap-2 bg-white text-emerald-600 px-5 py-3 rounded-2xl border border-emerald-100 hover:bg-emerald-50 hover:border-emerald-200 transition-all font-bold text-xs shadow-sm group h-14">
@@ -40,6 +40,95 @@
                     </svg>
                     <span>View Success Page</span>
                 </a>
+            @endif
+
+            @if($transaction->status === 'pending')
+                <button @click="showConfirmModal = true"
+                    class="hidden md:flex items-center gap-2 bg-emerald-500 text-white px-5 py-3 rounded-2xl border border-emerald-400 hover:bg-emerald-600 transition-all font-bold text-xs shadow-lg shadow-emerald-500/20 group h-14 cursor-pointer">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Confirm Payment</span>
+                </button>
+
+                <!-- Modal -->
+                <div x-show="showConfirmModal" style="display: none;" class="relative z-[999]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <!-- Background backdrop -->
+                    <div x-show="showConfirmModal"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 bg-gray-900/75 transition-opacity fixed inset-0 z-[999]"></div>
+
+                    <div class="fixed inset-0 z-[999] w-screen overflow-y-auto">
+                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                            <div x-show="showConfirmModal"
+                                x-transition:enter="ease-out duration-300"
+                                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                x-transition:leave="ease-in duration-200"
+                                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                @click.away="showConfirmModal = false"
+                                class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+                                
+                                <form method="POST" action="{{ route('admin.reports.transactions.confirm-payment', $transaction->id) }}">
+                                    @csrf
+                                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                        <div class="sm:flex sm:items-start">
+                                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                </svg>
+                                            </div>
+                                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                                <h3 class="text-lg font-black leading-6 text-gray-900" id="modal-title">Confirm Payment</h3>
+                                                <div class="mt-2">
+                                                    <div class="bg-emerald-50 rounded-xl p-4 mb-4 border border-emerald-100">
+                                                        <div class="flex justify-between items-center mb-1">
+                                                            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">Customer</span>
+                                                            <span class="text-sm font-black text-dark">{{ $transaction->name }}</span>
+                                                        </div>
+                                                        <div class="flex justify-between items-center text-emerald-900">
+                                                            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">Total</span>
+                                                            <span class="text-lg font-black">Rp {{ number_format($transaction->total_price, 0, ',', '.') }}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label for="notes" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Confirmation Notes</label>
+                                                        <textarea name="notes" id="notes" rows="3" class="w-full rounded-xl border-gray-200 shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-200 focus:ring-opacity-50 text-sm font-medium" placeholder="e.g. Paid via Bank Transfer, Verified by Admin..."></textarea>
+                                                    </div>
+
+                                                    <div class="flex gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100 text-amber-800">
+                                                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                        </svg>
+                                                        <div class="text-xs leading-relaxed">
+                                                            <span class="font-bold block mb-1">Confirming will immediately:</span>
+                                                            <ul class="list-disc pl-3 space-y-0.5 opacity-90">
+                                                                <li>Mark status as <strong>PAID</strong></li>
+                                                                <li>Send QR ticket to customer</li>
+                                                                <li>Record in audit log</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+                                        <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-emerald-600 px-3 py-2.5 text-sm font-black text-white shadow-sm hover:bg-emerald-500 sm:w-auto transition-colors">Confirm & Send Ticket</button>
+                                        <button type="button" @click="showConfirmModal = false" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-bold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto transition-colors">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @endif
 
             @if($transaction->status === 'paid')
@@ -279,6 +368,65 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Audit Log Card -->
+            <div class="bg-white rounded-[3rem] shadow-xl shadow-primary/5 border border-gray-100 p-10 lg:p-12">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-2xl font-black text-dark tracking-tight flex items-center gap-4">
+                        <span class="w-2 h-10 bg-gray-800 rounded-full"></span>
+                        Audit Log
+                    </h3>
+                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">History</div>
+                </div>
+
+                @if($transaction->logs && $transaction->logs->count() > 0)
+                    <div class="space-y-6">
+                        @foreach($transaction->logs as $log)
+                            <div class="border-l-2 border-gray-100 pl-6 relative">
+                                <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full {{ $log->action === 'manual_payment_confirm' ? 'bg-emerald-500' : 'bg-gray-300' }}"></div>
+                                <div class="flex justify-between items-start mb-1">
+                                    <div>
+                                        <div class="text-xs font-black text-dark uppercase tracking-wide">
+                                            @if($log->action === 'manual_payment_confirm')
+                                                Manual Payment Confirmed
+                                            @elseif($log->action === 'resend_email')
+                                                Email Resent
+                                            @else
+                                                {{ ucwords(str_replace('_', ' ', $log->action)) }}
+                                            @endif
+                                        </div>
+                                        <div class="text-[10px] font-bold text-gray-400">
+                                            by <span class="text-primary">{{ $log->user->name ?? 'System' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] font-mono text-gray-400">{{ $log->created_at->format('d M H:i') }}</div>
+                                </div>
+                                
+                                @if($log->old_status && $log->new_status && $log->old_status !== $log->new_status)
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ $log->old_status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600' }}">{{ $log->old_status }}</span>
+                                        <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ $log->new_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600' }}">{{ $log->new_status }}</span>
+                                    </div>
+                                @endif
+
+                                @if($log->notes)
+                                    <div class="bg-gray-50 p-2.5 rounded-xl text-xs text-gray-600 italic border border-gray-100">
+                                        "{{ $log->notes }}"
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <div class="text-gray-300 mb-2">
+                            <svg class="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">No audit history found</div>
+                    </div>
+                @endif
             </div>
         </div>
 

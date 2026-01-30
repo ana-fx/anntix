@@ -84,6 +84,11 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'reseller_id');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(TransactionLog::class)->latest();
+    }
+
     public function getCommissionAttribute()
     {
         if (!$this->reseller_id || !$this->event || !$this->ticket) {
