@@ -12,6 +12,10 @@ class CheckoutController extends Controller
 {
     public function create(Event $event)
     {
+        if (!$event->is_online_sales_enabled) {
+            return redirect()->route('events.show', $event)
+                ->with('error', 'Online ticket sales are currently disabled for this event.');
+        }
         $event->load([
             'tickets' => function ($query) {
                 $query->where('is_active', true)
@@ -42,6 +46,10 @@ class CheckoutController extends Controller
 
     public function store(Request $request, Event $event)
     {
+        if (!$event->is_online_sales_enabled) {
+            return redirect()->route('events.show', $event)
+                ->with('error', 'Online ticket sales are currently disabled for this event.');
+        }
         $validated = $request->validate([
             'ticket_id' => 'required|exists:tickets,id',
             'quantity' => 'required|integer|min:1',

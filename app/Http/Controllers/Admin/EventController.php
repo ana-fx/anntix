@@ -80,6 +80,7 @@ class EventController extends Controller
             'organizer_fee_reseller' => 'nullable|numeric|min:0',
             'handling_fee_type' => 'nullable|in:default,fixed,percent',
             'handling_fee_value' => 'nullable|numeric|min:0',
+            'is_online_sales_enabled' => 'nullable|boolean',
         ]);
 
         $slug = Str::slug($validated['name']);
@@ -109,7 +110,12 @@ class EventController extends Controller
         $validated['organizer_fee_reseller_type'] = $validated['organizer_fee_reseller_type'] ?? 'fixed';
         $validated['organizer_fee_reseller'] = $validated['organizer_fee_reseller'] ?? 0;
         $validated['handling_fee_type'] = $validated['handling_fee_type'] ?? 'default';
+        $validated['handling_fee_type'] = $validated['handling_fee_type'] ?? 'default';
         $validated['handling_fee_value'] = $validated['handling_fee_value'] ?? 0;
+
+        if (!request()->has('is_online_sales_enabled')) {
+            $validated['is_online_sales_enabled'] = 0;
+        }
 
         $event = Event::create($validated);
 
@@ -236,6 +242,7 @@ class EventController extends Controller
             'organizer_fee_reseller' => 'nullable|numeric|min:0',
             'handling_fee_type' => 'nullable|in:default,fixed,percent',
             'handling_fee_value' => 'nullable|numeric|min:0',
+            'is_online_sales_enabled' => 'nullable|boolean',
         ]);
 
         // Regenerate slug if name changed

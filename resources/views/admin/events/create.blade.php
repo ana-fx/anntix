@@ -144,6 +144,26 @@
                         @error('status') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
+                    <div x-data="{ on: true }"
+                        class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-sm">Enable Online Sales</h4>
+                            <p class="text-xs text-gray-500 mt-1">Allow customers to buy tickets online</p>
+                        </div>
+
+                        <input type="hidden" name="is_online_sales_enabled" :value="on ? 1 : 0">
+
+                        <button type="button" @click="on = !on"
+                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                            :class="on ? 'bg-primary' : 'bg-gray-200'">
+                            <span class="sr-only">Use setting</span>
+                            <span aria-hidden="true"
+                                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                :class="on ? 'translate-x-5' : 'translate-x-0'"></span>
+                        </button>
+                    </div>
+                    @error('is_online_sales_enabled') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+
                     <div x-data
                         x-init="flatpickr($refs.picker, { enableTime: true, dateFormat: 'Y-m-d H:i', time_24hr: true, minDate: 'today', altInput: true, altFormat: 'd M Y, H:i', altInputClass: 'w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer' })">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Start Date</label>
@@ -303,7 +323,8 @@
                             <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
                                 :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7"></path>
+                                    d="M19 9l-7 7-7-7">
+                                </path>
                             </svg>
                         </button>
 
@@ -348,7 +369,8 @@
                             <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
                                 :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7"></path>
+                                    d="M19 9l-7 7-7-7">
+                                </path>
                             </svg>
                         </button>
 
@@ -391,7 +413,8 @@
                             <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
                                 :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7"></path>
+                                    d="M19 9l-7 7-7-7">
+                                </path>
                             </svg>
                         </button>
 
@@ -436,7 +459,8 @@
                             <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
                                 :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7"></path>
+                                    d="M19 9l-7 7-7-7">
+                                </path>
                             </svg>
                         </button>
 

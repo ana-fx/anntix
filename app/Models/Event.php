@@ -38,6 +38,13 @@ class Event extends Model
         'organizer_fee_online',
         'organizer_fee_reseller_type',
         'organizer_fee_reseller',
+        'is_online_sales_enabled',
+    ];
+
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'is_online_sales_enabled' => 'boolean',
     ];
 
     public function getHandlingFee($totalTicketPrice)
@@ -54,10 +61,7 @@ class Event extends Model
         return (int) \App\Models\Setting::getValue('handling_fee', 0);
     }
 
-    protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
+
 
     public function getRouteKeyName()
     {

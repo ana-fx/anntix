@@ -14,7 +14,7 @@
     @push('structured-data')
             <!-- Event Schema -->
             <script type="application/ld+json">
-                            {!! json_encode([
+                                            {!! json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'Event',
             'name' => $event->name,
@@ -62,7 +62,7 @@
                 'url' => url('/')
             ]
         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-                            </script>
+                                            </script>
     @endpush
 
     <div class="bg-white min-h-screen pt-32">
@@ -248,14 +248,28 @@
                                     @endforeach
                                 </div>
                             @endif
-                            <a href="{{ route('checkout.create', $event) }}"
-                                class="w-full py-6 bg-dark text-white text-center font-black rounded-2xl shadow-2xl hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-3 relative z-10">
-                                {{ __('common.reserve_tickets') }}
-                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                </svg>
-                            </a>
+                            @if($event->is_online_sales_enabled)
+                                <a href="{{ route('checkout.create', $event) }}"
+                                    class="w-full py-6 bg-dark text-white text-center font-black rounded-2xl shadow-2xl hover:bg-primary transition-all duration-300 transform hover:-translate-y-1 active:scale-95 text-xl flex items-center justify-center gap-3 relative z-10">
+                                    {{ __('common.reserve_tickets') }}
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    </svg>
+                                </a>
+                            @else
+                                <button disabled
+                                    class="w-full py-6 bg-gray-200 text-gray-500 text-center font-black rounded-2xl cursor-not-allowed text-xl flex items-center justify-center gap-3 relative z-10">
+                                    <span>Online Sales Unavailable</span>
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                    </svg>
+                                </button>
+                                <p class="text-center text-xs text-gray-400 mt-4 font-bold uppercase tracking-widest">
+                                    Tickets may be available via Reseller
+                                </p>
+                            @endif
                         </div>
 
                         <!-- Hosted By -->
@@ -305,7 +319,7 @@
                         @foreach($relatedEvents as $related)
                             @php
                                 $img = $related->banner_path ?? $related->thumbnail_path;
-                                $src = 'https://via.placeholder.com/1280x720';
+                                $src = null;
                                 if ($img) {
                                     $src = Str::startsWith($img, ['http', 'https'])
                                         ? $img
@@ -313,9 +327,22 @@
                                 }
                             @endphp
                             <a href="{{ route('events.show', $related) }}" class="group block">
-                                <div class="relative aspect-video rounded-[2rem] overflow-hidden shadow-2xl mb-8">
-                                    <img src="{{ $src }}"
-                                        class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                                <div class="relative aspect-video rounded-[2rem] overflow-hidden shadow-2xl mb-8 bg-gray-200">
+                                    @if($src)
+                                        <img src="{{ $src }}"
+                                            onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');"
+                                            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                            loading="lazy">
+                                    @endif
+
+                                    <!-- Fallback SVG -->
+                                    <div class="{{ $src ? 'hidden' : 'flex' }} absolute inset-0 w-full h-full bg-gray-200 items-center justify-center transition-transform duration-1000 group-hover:scale-110">
+                                        <svg class="w-16 h-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                    </div>
                                     <div class="absolute inset-0 bg-dark/20 group-hover:bg-dark/10 transition-colors"></div>
                                     <div class="absolute bottom-10 left-10 right-10 text-white">
                                         <div class="text-xs font-black uppercase tracking-widest mb-3 opacity-70">
