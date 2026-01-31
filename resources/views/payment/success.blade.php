@@ -20,6 +20,11 @@
 
         // Service fee remainder calculation
         $serviceFee = $transaction->total_price - $subtotal - ($handlingFee * $transaction->quantity);
+
+        // QR Code Visibility Logic
+        // Show if NOT reseller, OR if setting is enabled for resellers
+        $showQrForReseller = \App\Models\Setting::getValue('show_qr_for_reseller', 0);
+        $showQrCode = !$isReseller || $showQrForReseller;
     @endphp
     <div class="bg-white min-h-screen pt-32 pb-20 px-4 sm:px-6">
         <div class="max-w-7xl mx-auto">
@@ -111,7 +116,7 @@
                 <div class="lg:col-span-5 space-y-12">
 
                     <!-- QR Code Section (Moved here for easy access) -->
-                    @if(!$isReseller)
+                    @if($showQrCode)
                         <div class="bg-white p-6 rounded-xl border-2 border-dashed border-gray-200 text-center">
                             <p class="font-bold text-dark mb-4 text-sm uppercase tracking-wider">
                                 {{ __('common.your_ticket_qr') }}

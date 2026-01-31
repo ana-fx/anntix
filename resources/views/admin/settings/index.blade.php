@@ -269,6 +269,98 @@
                 </div>
             </div>
 
+            <!-- Reseller Configuration -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-5 py-3 border-b border-gray-50 bg-gray-50/50 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gray-50 text-dark flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-black text-dark uppercase tracking-tight">Reseller Configuration</h2>
+                </div>
+                <div class="p-5">
+                    <div x-data="{
+                            enabled: '{{ isset($settings['show_qr_for_reseller']) && $settings['show_qr_for_reseller'] == '1' ? '1' : '0' }}' === '1',
+                            modalOpen: false,
+                            tempState: false,
+                            toggle() {
+                                this.tempState = !this.enabled;
+                                this.modalOpen = true;
+                            },
+                            confirm() {
+                                this.enabled = this.tempState;
+                                this.modalOpen = false;
+                            }
+                        }" class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        
+                        <div>
+                            <label class="block text-sm font-black text-dark uppercase tracking-widest mb-1">Show QR Code</label>
+                            <p class="text-xs text-gray-500">Enable to show QR codes on success page for resellers.</p>
+                        </div>
+
+                        <input type="hidden" name="show_qr_for_reseller" :value="enabled ? '1' : '0'">
+
+                        <button type="button" 
+                            @click="toggle()"
+                            :class="enabled ? 'bg-primary' : 'bg-gray-200'"
+                            class="relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                            <span class="sr-only">Use setting</span>
+                            <span aria-hidden="true" 
+                                :class="enabled ? 'translate-x-6' : 'translate-x-0'"
+                                class="pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out">
+                            </span>
+                        </button>
+
+                        <!-- Confirmation Modal -->
+                        <div x-show="modalOpen" style="display: none;"
+                            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0">
+                            
+                            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 relative transform transition-all"
+                                @click.away="modalOpen = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 scale-95"
+                                x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95">
+                                
+                                <div class="text-center">
+                                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 mb-4">
+                                        <svg class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-black text-dark uppercase tracking-tight mb-2">Are you sure?</h3>
+                                    <p class="text-sm text-gray-500 mb-6">
+                                        Do you really want to <span x-text="tempState ? 'enable' : 'disable'" class="font-bold"></span> QR codes for resellers?
+                                    </p>
+                                    
+                                    <div class="flex gap-3 justify-center">
+                                        <button type="button" @click="modalOpen = false"
+                                            class="px-5 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">
+                                            Cancel
+                                        </button>
+                                        <button type="button" @click="confirm()"
+                                            class="px-5 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark shadow-lg shadow-primary/25 transition-colors">
+                                            Yes, Confirm
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <!-- Action Button -->
             <div class="flex justify-end pt-4">
                 <button type="submit"
