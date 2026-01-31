@@ -14,6 +14,14 @@ class PaymentController extends Controller
 {
     public function show(Transaction $transaction)
     {
+        // Guard: Check if transaction is already finalized
+        if ($transaction->status === 'paid') {
+            return redirect()->route('payment.success', $transaction->code);
+        }
+
+        if (in_array($transaction->status, ['failed', 'expired', 'canceled'])) {
+            return redirect()->route('home')->with('error', 'This transaction is ' . $transaction->status . '.');
+        }
         // Send Payment Required email if pending, not a reseller transaction, and not already sent in this session
         if (!$transaction->reseller_id && $transaction->status === 'pending' && !session()->has('payment_mail_sent_' . $transaction->id)) {
             try {
@@ -38,11 +46,12 @@ class PaymentController extends Controller
         \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
         \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
 
-        // Fees from Settings
-        $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+        // Fees from Event Settings (or Global fallback)
+        $unitPrice = $transaction->ticket->price;
+        $handlingFeePerUnit = (int) $transaction->event->getHandlingFee($unitPrice);
 
-        $subtotal = $transaction->ticket->price * $transaction->quantity;
-        $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
+        $subtotal = $unitPrice * $transaction->quantity;
+        $baseTotal = $subtotal + ($handlingFeePerUnit * $transaction->quantity);
 
         $finalTotal = $baseTotal;
         $enabledPayments = [];
@@ -57,10 +66,10 @@ class PaymentController extends Controller
             ]
         ];
 
-        if ($handlingFee > 0) {
+        if ($handlingFeePerUnit > 0) {
             $itemDetails[] = [
                 'id' => 'HANDLING-FEE',
-                'price' => $handlingFee,
+                'price' => $handlingFeePerUnit,
                 'quantity' => $transaction->quantity,
                 'name' => 'Handling Fee',
             ];
@@ -148,7 +157,7 @@ class PaymentController extends Controller
 
             return response()->json([
                 'snap_token' => $snapToken,
-                'handling_fee' => $handlingFee,
+                'handling_fee' => $handlingFeePerUnit,
                 'base_total' => $finalTotal,
                 'message' => 'Token generated'
             ]);

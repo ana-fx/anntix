@@ -14,7 +14,7 @@
     @push('structured-data')
             <!-- Event Schema -->
             <script type="application/ld+json">
-                    {!! json_encode([
+                            {!! json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'Event',
             'name' => $event->name,
@@ -62,7 +62,7 @@
                 'url' => url('/')
             ]
         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-                    </script>
+                            </script>
     @endpush
 
     <div class="bg-white min-h-screen pt-32">
@@ -101,11 +101,38 @@
                     <section>
                         <!-- Premium Thumbnail -->
                         <div
-                            class="aspect-square w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-gray-200/50 bg-gray-50 border border-gray-100">
-                            <img src="{{ Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path)) }}"
-                                class="w-full h-full object-cover"
-                                alt="Tiket {{ $event->name }} - Event {{ $event->category ?? 'Hiburan' }} di {{ $event->city }} {{ $event->start_date ? $event->start_date->format('d M Y') : '' }}"
-                                loading="lazy">
+                            class="aspect-square w-full rounded-[2.5rem] overflow-hidden mb-16 shadow-2xl shadow-gray-200/50 bg-gray-50 border border-gray-100 flex items-center justify-center">
+                            @php
+                                $thumbnail = $event->thumbnail_path;
+                                $imageUrl = null;
+
+                                if (Str::startsWith($thumbnail, ['http', 'https'])) {
+                                    $imageUrl = $thumbnail;
+                                } elseif (file_exists(public_path($thumbnail))) {
+                                    $imageUrl = asset($thumbnail);
+                                } elseif (file_exists(storage_path('app/public/' . $thumbnail))) {
+                                    $imageUrl = asset('storage/' . $thumbnail);
+                                }
+                            @endphp
+
+                            @if($imageUrl)
+                                <img src="{{ $imageUrl }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');"
+                                    class="w-full h-full object-cover"
+                                    alt="Tiket {{ $event->name }} - Event {{ $event->category ?? 'Hiburan' }} di {{ $event->city }} {{ $event->start_date ? $event->start_date->format('d M Y') : '' }}"
+                                    loading="lazy">
+                            @endif
+
+                            <!-- Fallback SVG -->
+                            <div
+                                class="{{ $imageUrl ? 'hidden' : 'flex' }} w-full h-full bg-gray-200 items-center justify-center">
+                                <svg class="w-32 h-32 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
                         </div>
                         <div class="mb-16">
                             <div class="inline-flex items-center gap-3 mb-6">

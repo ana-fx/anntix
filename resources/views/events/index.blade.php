@@ -11,7 +11,8 @@
 
                         <!-- Search -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.search') }}</label>
+                            <label
+                                class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.search') }}</label>
                             <div class="relative">
                                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -26,7 +27,8 @@
 
                         <!-- Category -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.category') }}</label>
+                            <label
+                                class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.category') }}</label>
                             <select name="category" onchange="this.form.submit()"
                                 class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl text-sm font-medium text-dark focus:border-primary focus:ring-primary/20 cursor-pointer transition-colors appearance-none">
                                 <option value="">{{ __('common.all_categories') }}</option>
@@ -39,7 +41,8 @@
 
                         <!-- City -->
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.location') }}</label>
+                            <label
+                                class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ __('common.location') }}</label>
                             <select name="city" onchange="this.form.submit()"
                                 class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl text-sm font-medium text-dark focus:border-primary focus:ring-primary/20 cursor-pointer transition-colors appearance-none">
                                 <option value="">{{ __('common.all_cities') }}</option>
@@ -121,7 +124,8 @@
                                     {{ Str::limit($event->location, 30) }}
                                 </p>
                                 <div class="flex items-center justify-between pt-3 border-t border-gray-50">
-                                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">{{ __('common.from') }}</span>
+                                    <span
+                                        class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">{{ __('common.from') }}</span>
                                     <span class="text-base font-black text-dark">
                                         @php
                                             $lowestPriceTicket = $event->tickets->sortBy('price')->first();

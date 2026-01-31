@@ -29,6 +29,21 @@ class ScanController extends Controller
         ]);
 
         $code = $request->code;
+
+        // Extract code from URL if it's a full URL
+        if (filter_var($code, FILTER_VALIDATE_URL)) {
+            // Case 1: /payment/success/{code}
+            if (str_contains($code, '/payment/success/')) {
+                $segments = explode('/', parse_url($code, PHP_URL_PATH));
+                $code = end($segments);
+            }
+            // Case 2: /payment/{code} if ever used directly
+            elseif (str_contains($code, '/payment/')) {
+                $segments = explode('/', parse_url($code, PHP_URL_PATH));
+                $code = end($segments);
+            }
+        }
+
         $eventId = $request->event_id;
 
         // Verify the scanner is assigned to this event

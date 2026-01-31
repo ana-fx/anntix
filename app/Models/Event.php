@@ -32,11 +32,27 @@ class Event extends Model
         'organizer_logo_path',
         'reseller_fee_type',
         'reseller_fee_value',
+        'handling_fee_type',
+        'handling_fee_value',
         'organizer_fee_online_type',
         'organizer_fee_online',
         'organizer_fee_reseller_type',
         'organizer_fee_reseller',
     ];
+
+    public function getHandlingFee($totalTicketPrice)
+    {
+        if ($this->handling_fee_type === 'percent') {
+            return $totalTicketPrice * ($this->handling_fee_value / 100);
+        }
+
+        if ($this->handling_fee_type === 'fixed') {
+            return $this->handling_fee_value;
+        }
+
+        // Default: use global setting
+        return (int) \App\Models\Setting::getValue('handling_fee', 0);
+    }
 
     protected $casts = [
         'start_date' => 'datetime',

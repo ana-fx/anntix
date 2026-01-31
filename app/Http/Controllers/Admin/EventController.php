@@ -78,6 +78,8 @@ class EventController extends Controller
             'organizer_fee_online' => 'nullable|numeric|min:0',
             'organizer_fee_reseller_type' => 'nullable|in:fixed,percent',
             'organizer_fee_reseller' => 'nullable|numeric|min:0',
+            'handling_fee_type' => 'nullable|in:default,fixed,percent',
+            'handling_fee_value' => 'nullable|numeric|min:0',
         ]);
 
         $slug = Str::slug($validated['name']);
@@ -106,6 +108,8 @@ class EventController extends Controller
         $validated['organizer_fee_online'] = $validated['organizer_fee_online'] ?? 0;
         $validated['organizer_fee_reseller_type'] = $validated['organizer_fee_reseller_type'] ?? 'fixed';
         $validated['organizer_fee_reseller'] = $validated['organizer_fee_reseller'] ?? 0;
+        $validated['handling_fee_type'] = $validated['handling_fee_type'] ?? 'default';
+        $validated['handling_fee_value'] = $validated['handling_fee_value'] ?? 0;
 
         $event = Event::create($validated);
 
@@ -230,6 +234,8 @@ class EventController extends Controller
             'organizer_fee_online' => 'nullable|numeric|min:0',
             'organizer_fee_reseller_type' => 'nullable|in:fixed,percent',
             'organizer_fee_reseller' => 'nullable|numeric|min:0',
+            'handling_fee_type' => 'nullable|in:default,fixed,percent',
+            'handling_fee_value' => 'nullable|numeric|min:0',
         ]);
 
         // Regenerate slug if name changed
@@ -268,6 +274,8 @@ class EventController extends Controller
         $validated['organizer_fee_online'] = $validated['organizer_fee_online'] ?? 0;
         $validated['organizer_fee_reseller_type'] = $validated['organizer_fee_reseller_type'] ?? 'fixed';
         $validated['organizer_fee_reseller'] = $validated['organizer_fee_reseller'] ?? 0;
+        $validated['handling_fee_type'] = $validated['handling_fee_type'] ?? 'default';
+        $validated['handling_fee_value'] = $validated['handling_fee_value'] ?? 0;
 
         $event->update($validated);
 

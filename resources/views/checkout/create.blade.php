@@ -9,9 +9,35 @@
                     <div class="relative rounded-3xl overflow-hidden shadow-2xl group">
                         <!-- Background Image with Overlay -->
                         <div class="absolute inset-0 bg-dark/40 group-hover:bg-dark/30 transition-colors z-10"></div>
-                        <img src="{{ Str::startsWith($event->thumbnail_path, ['http', 'https']) ? $event->thumbnail_path : (file_exists(public_path($event->thumbnail_path)) ? asset($event->thumbnail_path) : asset('storage/' . $event->thumbnail_path)) }}"
-                            alt="{{ $event->name }}"
-                            class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
+                        @php
+                            $thumbnail = $event->thumbnail_path;
+                            $imageUrl = null;
+
+                            if (Str::startsWith($thumbnail, ['http', 'https'])) {
+                                $imageUrl = $thumbnail;
+                            } elseif (file_exists(public_path($thumbnail))) {
+                                $imageUrl = asset($thumbnail);
+                            } elseif (file_exists(storage_path('app/public/' . $thumbnail))) {
+                                $imageUrl = asset('storage/' . $thumbnail);
+                            }
+                        @endphp
+
+                        @if($imageUrl)
+                            <img src="{{ $imageUrl }}"
+                                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');"
+                                alt="{{ $event->name }}"
+                                class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700">
+                        @endif
+
+                        <!-- Fallback SVG -->
+                        <div
+                            class="{{ $imageUrl ? 'hidden' : 'flex' }} w-full min-h-[500px] bg-gray-200 items-center justify-center transform group-hover:scale-105 transition-transform duration-700">
+                            <svg class="w-24 h-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
 
                         <!-- Content Overlay -->
                         <div class="absolute inset-0 z-20 p-8 flex flex-col justify-between text-white">
@@ -37,7 +63,8 @@
                                     </div>
                                     <div>
                                         <p class="text-xs text-white/60 font-medium uppercase tracking-wider">
-                                            {{ __('common.date') }}</p>
+                                            {{ __('common.date') }}
+                                        </p>
                                         <p class="font-bold">{{ $event->start_date->format('d M Y') }}</p>
                                     </div>
                                 </div>
@@ -88,8 +115,10 @@
         "description" => $t->description,
         "quota" => max(0, $available)
     ];
-})->toJson() }},
-                        handlingFee: {{ (int) \App\Models\Setting::getValue("handling_fee", 0) }},
+})->toJson(JSON_HEX_APOS) }},
+                        handlingFeeType: "{{ $event->handling_fee_type }}",
+                        handlingFeeValue: {{ $event->handling_fee_value }},
+                        globalHandlingFee: {{ (int) \App\Models\Setting::getValue("handling_fee", 0) }},
                         selectedTicketId: null,
                         selectedTicket: null,
                         quantity: 1,
@@ -105,8 +134,22 @@
                             this.quantity = 1;
                         },
 
+                        get currentHandlingFee() {
+                             if (!this.selectedTicket) return 0;
+                             let price = this.selectedTicket.price * this.quantity;
+                             
+                             if (this.handlingFeeType === "percent") {
+                                 return price * (this.handlingFeeValue / 100);
+                             } else if (this.handlingFeeType === "fixed") {
+                                 return this.handlingFeeValue * this.quantity;
+                             } else {
+                                 return this.globalHandlingFee * this.quantity;
+                             }
+                        },
+
                         get total() {
-                            return this.selectedTicket ? ((this.selectedTicket.price + this.handlingFee) * this.quantity) : 0;
+                            if (!this.selectedTicket) return 0;
+                            return (this.selectedTicket.price * this.quantity) + this.currentHandlingFee;
                         },
                         agreeTerms: false,
                         confirmData: false
@@ -128,7 +171,8 @@
                                 </div>
                                 <div class="flex-1 pt-1">
                                     <h4 class="text-sm font-black text-rose-900 uppercase tracking-widest mb-1">
-                                        {{ __('common.availability_conflict') }}</h4>
+                                        {{ __('common.availability_conflict') }}
+                                    </h4>
                                     @foreach ($errors->all() as $error)
                                         <p class="text-[13px] font-bold text-rose-600/80 leading-relaxed">{{ $error }}</p>
                                     @endforeach
@@ -139,7 +183,8 @@
                         <!-- Header -->
                         <div>
                             <h2 class="text-3xl font-heading font-bold text-dark mb-2">
-                                {{ __('common.secure_your_spot') }}</h2>
+                                {{ __('common.secure_your_spot') }}
+                            </h2>
                             <p class="text-black/70">{{ __('common.checkout_subtitle') }}</p>
                         </div>
 
@@ -289,7 +334,7 @@
                                         class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">{{ __('common.full_name') }}</label>
                                     <input type="text" name="name"
                                         class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
-                                        placeholder="John Doe" required>
+                                        placeholder="Your Name" required>
                                 </div>
 
                                 <div class="group">
@@ -297,7 +342,7 @@
                                         class="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2 ml-1">{{ __('common.your_email') }}</label>
                                     <input type="email" name="email"
                                         class="w-full bg-white border-b-2 border-gray-100 px-4 py-3 text-dark font-medium focus:outline-none focus:border-primary transition-all rounded-xl hover:bg-gray-50 focus:bg-white"
-                                        placeholder="john@example.com" required>
+                                        placeholder="example@anntix.id" required>
                                 </div>
                             </div>
 
@@ -383,7 +428,8 @@
                                         {{ __('common.inc_fees') }}
                                     </span>
                                     <span class="text-[10px] text-black/40">
-                                        Rp <span x-text="new Intl.NumberFormat('id-ID').format(handlingFee)"></span>
+                                        Rp <span
+                                            x-text="new Intl.NumberFormat('id-ID').format(currentHandlingFee)"></span>
                                         {{ __('common.handling_fee') }}
                                     </span>
                                 </div>

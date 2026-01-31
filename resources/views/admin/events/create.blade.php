@@ -419,6 +419,52 @@
                         @error('organizer_fee_reseller') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <!-- Handling Fee  -->
+                    <div class="col-span-1 md:col-span-2 border-t border-gray-100"></div>
+
+                    <div x-data="{
+                            open: false,
+                            selected: '{{ old('handling_fee_type', 'default') }}',
+                            label: '{{ old('handling_fee_type') == 'percent' ? 'Percent (%)' : (old('handling_fee_type') == 'fixed' ? 'Fixed' : 'Default') }}'
+                        }" class="relative">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Handling Fee Type</label>
+                        <input type="hidden" name="handling_fee_type" :value="selected">
+                        <button type="button" @click="open = !open" @click.away="open = false"
+                            class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white text-dark font-bold">
+                            <span x-text="label"></span>
+                            <svg class="w-4 h-4 text-gray-400 transition-transform duration-200"
+                                :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                            <div class="py-1">
+                                <button type="button" @click="selected = 'default'; label = 'Default'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Default</button>
+                                <button type="button" @click="selected = 'fixed'; label = 'Fixed'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Fixed</button>
+                                <button type="button" @click="selected = 'percent'; label = 'Percent (%)'; open = false"
+                                    class="w-full px-5 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-4 border-transparent hover:border-primary">Percent
+                                    (%)</button>
+                            </div>
+                        </div>
+                        @error('handling_fee_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Handling Fee Value</label>
+                        <input type="number" name="handling_fee_value" value="{{ old('handling_fee_value', 0) }}"
+                            min="0" step="0.01" placeholder="0"
+                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                        @error('handling_fee_value') <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </div>
 

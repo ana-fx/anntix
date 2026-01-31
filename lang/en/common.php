@@ -363,6 +363,7 @@ return [
     'authorize_access' => 'Authorize Access',
     'security_platform' => 'SECURITY PLATFORM',
     'restricted_access' => 'RESTRICTED ACCESS ONLY',
+    'password' => 'Password',
 
     // WhatsApp
     'chat_with_us' => 'Chat with us!',

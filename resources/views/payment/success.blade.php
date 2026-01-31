@@ -14,7 +14,8 @@
                 $handlingFee = $transaction->event->reseller_fee_value;
             }
         } else {
-            $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+            // Standard User Fee (Centralized Logic)
+            $handlingFee = $transaction->event->getHandlingFee($transaction->ticket->price);
         }
 
         // Service fee remainder calculation
@@ -53,18 +54,39 @@
                         </a>
                     </div>
 
-                    <!-- Banner / Promo Area (Mimicking the image) -->
-                    <div class="relative rounded-xl overflow-hidden group mb-12">
-                        <img src="{{
-    Str::startsWith($transaction->event->thumbnail_path, 'http')
-    ? $transaction->event->thumbnail_path
-    : (file_exists(public_path($transaction->event->thumbnail_path))
-        ? asset($transaction->event->thumbnail_path)
-        : asset('storage/' . $transaction->event->thumbnail_path))
-                        }}"
-                            class="w-full h-64 object-cover brightness-75 group-hover:brightness-50 transition-all duration-500">
+                    <!-- Banner / Promo Area -->
+                    <div class="relative rounded-xl overflow-hidden group mb-12 bg-gray-200">
+                        @php
+                            $thumbnail = $transaction->event->thumbnail_path;
+                            $imageUrl = null;
+
+                            if (Str::startsWith($thumbnail, ['http', 'https'])) {
+                                $imageUrl = $thumbnail;
+                            } elseif (file_exists(public_path($thumbnail))) {
+                                $imageUrl = asset($thumbnail);
+                            } elseif (file_exists(storage_path('app/public/' . $thumbnail))) {
+                                $imageUrl = asset('storage/' . $thumbnail);
+                            }
+                        @endphp
+
+                        @if($imageUrl)
+                            <img src="{{ $imageUrl }}"
+                                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');"
+                                class="w-full h-64 object-cover brightness-75 group-hover:brightness-50 transition-all duration-500">
+                        @endif
+
+                        <!-- Fallback SVG -->
+                        <div class="{{ $imageUrl ? 'hidden' : 'flex' }} w-full h-64 items-center justify-center">
+                            <svg class="w-24 h-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <h3 class="text-4xl font-heading font-bold text-white tracking-widest uppercase">
+                            <h3
+                                class="text-4xl font-heading font-bold text-white tracking-widest uppercase shadow-black drop-shadow-md">
                                 {{ $transaction->event->name }}
                             </h3>
                         </div>
@@ -92,7 +114,8 @@
                     @if(!$isReseller)
                         <div class="bg-white p-6 rounded-xl border-2 border-dashed border-gray-200 text-center">
                             <p class="font-bold text-dark mb-4 text-sm uppercase tracking-wider">
-                                {{ __('common.your_ticket_qr') }}</p>
+                                {{ __('common.your_ticket_qr') }}
+                            </p>
                             <div class="flex justify-center mb-4">
                                 @php
                                     $qrCode = (new Endroid\QrCode\Builder\Builder(
@@ -114,7 +137,8 @@
                     <!-- Items Ordered -->
                     <div>
                         <h2 class="font-bold text-dark text-xl mb-6 uppercase border-b border-gray-100 pb-2">
-                            {{ __('common.items_ordered') }}</h2>
+                            {{ __('common.items_ordered') }}
+                        </h2>
 
                         <div class="space-y-4">
                             <!-- Table Header -->

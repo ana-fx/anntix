@@ -37,4 +37,23 @@ class Ticket extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    /**
+     * Scope a query to only include tickets that are active and currently valid based on date.
+     */
+    public function scopeAvailable($query)
+    {
+        return $query->where('is_active', true)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now());
+    }
+
+    /**
+     * Scope a query to include tickets that should be expired.
+     */
+    public function scopeExpired($query)
+    {
+        return $query->where('is_active', true)
+            ->where('end_date', '<', now());
+    }
 }

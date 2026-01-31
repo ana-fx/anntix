@@ -364,6 +364,7 @@ return [
     'authorize_access' => 'Otorisasi Akses',
     'security_platform' => 'PLATFORM KEAMANAN',
     'restricted_access' => 'HANYA AKSES TERBATAS',
+    'password' => 'Kata Sandi',
 
     // WhatsApp
     'chat_with_us' => 'Chat dengan kami!',

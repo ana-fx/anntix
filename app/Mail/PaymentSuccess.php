@@ -42,7 +42,7 @@ class PaymentSuccess extends Mailable implements ShouldQueue
         $qrCode = (new \Endroid\QrCode\Builder\Builder(
             writer: new \Endroid\QrCode\Writer\PngWriter(),
             validateResult: false,
-            data: route('payment.success', $this->transaction->code),
+            data: $this->transaction->code,
             encoding: new \Endroid\QrCode\Encoding\Encoding('UTF-8'),
             errorCorrectionLevel: \Endroid\QrCode\ErrorCorrectionLevel::High,
             size: 300,

@@ -15,8 +15,9 @@
                 $handlingFee = ($transaction->ticket->price * ($transaction->event->reseller_fee_value / 100));
             }
         } else {
-            // Standard Standard Fee
-            $handlingFee = (int) \App\Models\Setting::getValue('handling_fee', 0);
+
+            // Standard User Fee (Centralized Logic)
+            $handlingFee = $transaction->event->getHandlingFee($transaction->ticket->price);
         }
 
         $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
@@ -244,15 +245,34 @@
                     @endif
 
                     <!-- Event Banner -->
-                    <div class="relative rounded-xl overflow-hidden group mb-12">
-                        <img src="{{
-    Str::startsWith($transaction->event->thumbnail_path, 'http')
-    ? $transaction->event->thumbnail_path
-    : (file_exists(public_path($transaction->event->thumbnail_path))
-        ? asset($transaction->event->thumbnail_path)
-        : asset('storage/' . $transaction->event->thumbnail_path))
-                        }}"
-                            class="w-full h-80 object-cover brightness-75 group-hover:brightness-50 transition-all duration-500">
+                    <div class="relative rounded-xl overflow-hidden group mb-12 bg-gray-200">
+                        @php
+                            $thumbnail = $transaction->event->thumbnail_path;
+                            $imageUrl = null;
+
+                            if (Str::startsWith($thumbnail, ['http', 'https'])) {
+                                $imageUrl = $thumbnail;
+                            } elseif (file_exists(public_path($thumbnail))) {
+                                $imageUrl = asset($thumbnail);
+                            } elseif (file_exists(storage_path('app/public/' . $thumbnail))) {
+                                $imageUrl = asset('storage/' . $thumbnail);
+                            }
+                        @endphp
+
+                        @if($imageUrl)
+                            <img src="{{ $imageUrl }}"
+                                onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');"
+                                class="w-full h-80 object-cover brightness-75 group-hover:brightness-50 transition-all duration-500">
+                        @endif
+
+                        <!-- Fallback SVG -->
+                        <div class="{{ $imageUrl ? 'hidden' : 'flex' }} w-full h-80 items-center justify-center">
+                            <svg class="w-24 h-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
                         <div class="absolute inset-0 flex items-center justify-center p-8 text-center">
                             <h3
                                 class="text-4xl md:text-5xl font-heading font-bold text-white tracking-widest uppercase shadow-black drop-shadow-2xl">
