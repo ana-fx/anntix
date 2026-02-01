@@ -8,4 +8,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Illuminate\Support\Facades\Schedule::command('db:backup')->daily();
-Illuminate\Support\Facades\Schedule::command('tickets:expire')->hourly();
+

@@ -6,9 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model; // Added this line
 use Illuminate\Database\Eloquent\SoftDeletes; // Added this line
 
+/**
+ * @property int $id
+ * @property string $organizer_fee_online_type
+ * @property float $organizer_fee_online
+ * @property string $organizer_fee_reseller_type
+ * @property float $organizer_fee_reseller
+ * @property-read float $total_withdrawn
+ * @property-read float $available_saldo
+ * @mixin \Illuminate\Database\Eloquent\Model
+ */
 class Event extends Model
 {
-    use HasFactory, SoftDeletes; // Modified this line
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
