@@ -13,9 +13,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $events = Event::with('tickets')
-            ->where('status', 'active')
-            ->latest()
+        $query = Event::with('tickets')
+            ->where('status', 'active');
+
+        // Filter: Hide offline-sales-only events for non-resellers
+        if (auth()->user()?->role !== 'reseller') {
+            $query->where('is_online_sales_enabled', true);
+        }
+
+        $events = $query->latest()
             ->take(8)
             ->get();
 

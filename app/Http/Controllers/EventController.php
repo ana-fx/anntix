@@ -16,6 +16,11 @@ class EventController extends Controller
         ])
             ->whereDate('start_date', '>=', now());
 
+        // Filter: Hide offline-sales-only events for non-resellers
+        if (auth()->user()?->role !== 'reseller') {
+            $query->where('is_online_sales_enabled', true);
+        }
+
         // Search
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
