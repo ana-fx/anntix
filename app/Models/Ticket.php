@@ -20,6 +20,10 @@ class Ticket extends Model
         'end_date',
         'description',
         'is_active',
+        'organizer_fee_online_type',
+        'organizer_fee_online',
+        'organizer_fee_reseller_type',
+        'organizer_fee_reseller',
     ];
 
     protected $casts = [

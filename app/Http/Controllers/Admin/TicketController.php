@@ -77,13 +77,19 @@ class TicketController extends Controller
             $onlineQty = $t->transactions()->where('status', 'paid')->whereNull('reseller_id')->sum('quantity');
             $resellerQty = $t->transactions()->where('status', 'paid')->whereNotNull('reseller_id')->sum('quantity');
 
-            $onlinePlatformFee = $event->organizer_fee_online_type === 'percent'
-                ? $t->price * ($event->organizer_fee_online / 100)
-                : $event->organizer_fee_online;
+            $onlineFeeType = $t->organizer_fee_online_type ?? $event->organizer_fee_online_type;
+            $onlineFeeValue = $t->organizer_fee_online ?? $event->organizer_fee_online;
 
-            $resellerPlatformFee = $event->organizer_fee_reseller_type === 'percent'
-                ? $t->price * ($event->organizer_fee_reseller / 100)
-                : $event->organizer_fee_reseller;
+            $onlinePlatformFee = $onlineFeeType === 'percent'
+                ? $t->price * ($onlineFeeValue / 100)
+                : $onlineFeeValue;
+
+            $resellerFeeType = $t->organizer_fee_reseller_type ?? $event->organizer_fee_reseller_type;
+            $resellerFeeValue = $t->organizer_fee_reseller ?? $event->organizer_fee_reseller;
+
+            $resellerPlatformFee = $resellerFeeType === 'percent'
+                ? $t->price * ($resellerFeeValue / 100)
+                : $resellerFeeValue;
 
             $totalOrgTax += ($onlineQty * $onlinePlatformFee) + ($resellerQty * $resellerPlatformFee);
             $totalHandling += ($onlineQty * $handlingFeeValue);
@@ -120,6 +126,10 @@ class TicketController extends Controller
             'end_date' => 'required|date|after:start_date',
             'description' => 'required|string',
             'is_active' => 'nullable|boolean',
+            'organizer_fee_online_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_online' => 'nullable|numeric|min:0',
+            'organizer_fee_reseller_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_reseller' => 'nullable|numeric|min:0',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
@@ -155,6 +165,10 @@ class TicketController extends Controller
             'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
+            'organizer_fee_online_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_online' => 'nullable|numeric|min:0',
+            'organizer_fee_reseller_type' => 'nullable|in:fixed,percent',
+            'organizer_fee_reseller' => 'nullable|numeric|min:0',
         ]);
 
         $validated['is_active'] = $request->has('is_active');

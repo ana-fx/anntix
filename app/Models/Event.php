@@ -134,13 +134,21 @@ class Event extends Model
             $revenue = ($onlineQty + $resellerQty) * $t->price;
 
             // 2. Platform Fees
-            $onlinePlatformFee = $this->organizer_fee_online_type === 'percent'
-                ? $t->price * ($this->organizer_fee_online / 100)
-                : $this->organizer_fee_online;
+            // Online Fee: Check Ticket Level -> Fallback to Event Level
+            $onlineFeeType = $t->organizer_fee_online_type ?? $this->organizer_fee_online_type;
+            $onlineFeeValue = $t->organizer_fee_online ?? $this->organizer_fee_online;
 
-            $resellerPlatformFee = $this->organizer_fee_reseller_type === 'percent'
-                ? $t->price * ($this->organizer_fee_reseller / 100)
-                : $this->organizer_fee_reseller;
+            $onlinePlatformFee = $onlineFeeType === 'percent'
+                ? $t->price * ($onlineFeeValue / 100)
+                : $onlineFeeValue;
+
+            // Reseller Fee: Check Ticket Level -> Fallback to Event Level
+            $resellerFeeType = $t->organizer_fee_reseller_type ?? $this->organizer_fee_reseller_type;
+            $resellerFeeValue = $t->organizer_fee_reseller ?? $this->organizer_fee_reseller;
+
+            $resellerPlatformFee = $resellerFeeType === 'percent'
+                ? $t->price * ($resellerFeeValue / 100)
+                : $resellerFeeValue;
 
             $totalPlatformFee = ($onlineQty * $onlinePlatformFee) + ($resellerQty * $resellerPlatformFee);
 
