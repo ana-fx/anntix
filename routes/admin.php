@@ -36,6 +36,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('reports/transactions', [\App\Http\Controllers\Admin\ReportController::class, 'transactions'])->name('reports.transactions');
     Route::get('reports/scanner', [\App\Http\Controllers\Admin\ReportController::class, 'scanner'])->name('reports.scanner');
     Route::get('reports/transactions/{transaction:id}', [\App\Http\Controllers\Admin\ReportController::class, 'showTransaction'])->name('reports.transactions.show');
+    Route::delete('reports/transactions/{transaction:id}', [\App\Http\Controllers\Admin\ReportController::class, 'destroy'])->name('reports.transactions.destroy');
     Route::post('reports/transactions/{transaction:id}/resend-email', [\App\Http\Controllers\Admin\ReportController::class, 'resendEmail'])->name('reports.resend-email');
     Route::post('reports/transactions/{transaction:id}/confirm-payment', [\App\Http\Controllers\Admin\ReportController::class, 'confirmPayment'])->name('reports.transactions.confirm-payment');
 

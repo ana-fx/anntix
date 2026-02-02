@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes; // Added this line
  * @property int $id
  * @property string $organizer_fee_online_type
  * @property float $organizer_fee_online
+ * @property string|null $reseller_fee_type
+ * @property float|null $reseller_fee_value
  * @property string $organizer_fee_reseller_type
  * @property float $organizer_fee_reseller
  * @property-read float $total_withdrawn

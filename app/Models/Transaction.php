@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Transaction extends Model
 {
+    use SoftDeletes;
 
     protected $fillable = [
         'code',
@@ -57,6 +59,7 @@ class Transaction extends Model
 
     protected $casts = [
         'redeemed_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function getRouteKeyName()

@@ -41,6 +41,10 @@ class PaymentController extends Controller
             'payment_method' => 'required|in:qris,bank_transfer',
         ]);
 
+        if ($transaction->status !== 'pending') {
+            return response()->json(['error' => 'Transaction cannot be processed (Status: ' . $transaction->status . ')'], 400);
+        }
+
         \Midtrans\Config::$serverKey = config('midtrans.server_key');
         \Midtrans\Config::$isProduction = config('midtrans.is_production');
         \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
@@ -212,7 +216,7 @@ class PaymentController extends Controller
         $reseller = Auth::user();
 
         // 2. Mark as Paid
-        if ($transaction->status !== 'paid') {
+        if ($transaction->status === 'pending') {
             // Check balance check removed as per request to allow negative balance/credit
 
             DB::transaction(function () use ($transaction, $reseller) {

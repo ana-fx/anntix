@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-4" x-data="{ showConfirmModal: false }">
+        <div class="flex items-center gap-4" x-data="{ showConfirmModal: false, showVoidModal: false }">
             @if($transaction->status === 'paid')
                 <a href="{{ route('payment.success', $transaction->code) }}" target="_blank"
                     class="hidden md:flex items-center gap-2 bg-white text-emerald-600 px-5 py-3 rounded-2xl border border-emerald-100 hover:bg-emerald-50 hover:border-emerald-200 transition-all font-bold text-xs shadow-sm group h-14">
@@ -130,6 +130,73 @@
                     </div>
                 </div>
             @endif
+
+            <!-- Void Button (Visible for all non-voided transactions) -->
+            <button @click="showVoidModal = true"
+                class="hidden md:flex items-center gap-2 bg-white text-rose-500 px-5 py-3 rounded-2xl border border-rose-100 hover:bg-rose-50 hover:border-rose-200 transition-all font-bold text-xs shadow-sm group h-14 cursor-pointer ml-2">
+                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                <span>Void</span>
+            </button>
+
+            <!-- Void Modal -->
+            <div x-show="showVoidModal" style="display: none;" class="relative z-[999]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div x-show="showVoidModal"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 bg-gray-900/75 transition-opacity fixed inset-0 z-[999]"></div>
+
+                <div class="fixed inset-0 z-[999] w-screen overflow-y-auto">
+                    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                        <div x-show="showVoidModal"
+                            x-transition:enter="ease-out duration-300"
+                            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                            x-transition:leave="ease-in duration-200"
+                            x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            @click.away="showVoidModal = false"
+                            class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+                            
+                            <form method="POST" action="{{ route('admin.reports.transactions.destroy', $transaction->id) }}">
+                                @csrf
+                                @method('DELETE')
+                                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                    <div class="sm:flex sm:items-start">
+                                        <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-rose-100 sm:mx-0 sm:h-10 sm:w-10">
+                                            <svg class="h-6 w-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                            </svg>
+                                        </div>
+                                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                            <h3 class="text-lg font-black leading-6 text-gray-900">Void Transaction?</h3>
+                                            <div class="mt-2">
+                                                <p class="text-sm text-gray-500 mb-4">
+                                                    Are you sure you want to void this transaction? This will soft-delete the record and remove it from revenue reports.
+                                                </p>
+                                                
+                                                <div class="mb-4">
+                                                    <label for="void_notes" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Reason for Void</label>
+                                                    <textarea name="notes" id="void_notes" rows="2" required class="w-full rounded-xl border-gray-200 shadow-sm focus:border-rose-500 focus:ring focus:ring-rose-200 focus:ring-opacity-50 text-sm font-medium" placeholder="e.g. Test transaction, duplicate payment..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-2">
+                                    <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-rose-600 px-3 py-2.5 text-sm font-black text-white shadow-sm hover:bg-rose-500 sm:w-auto transition-colors">Confirm Void</button>
+                                    <button type="button" @click="showVoidModal = false" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-3 py-2.5 text-sm font-bold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto transition-colors">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             @if($transaction->status === 'paid')
                 <div

@@ -232,6 +232,46 @@ class ReportController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
             return back()->with('error', 'Failed to confirm payment: ' . $e->getMessage());
+            return back()->with('error', 'Failed to confirm payment: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(Request $request, Transaction $transaction)
+    {
+        $request->validate([
+            'notes' => 'required|string|max:500',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $oldStatus = $transaction->status;
+
+            // Soft delete the transaction
+            $transaction->delete();
+
+            // Create audit log
+            TransactionLog::create([
+                'transaction_id' => $transaction->id,
+                'user_id' => auth()->id(),
+                'action' => 'void_transaction',
+                'old_status' => $oldStatus,
+                'new_status' => 'deleted',
+                'notes' => $request->notes,
+            ]);
+
+            // Log to system
+            \Log::warning('Transaction Soft Deleted (Void)', [
+                'transaction_code' => $transaction->code,
+                'deleted_by' => auth()->user()->name,
+                'notes' => $request->notes
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('admin.reports.transactions')->with('success', 'Transaction ' . $transaction->code . ' has been voided (soft deleted) successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to void transaction: ' . $e->getMessage());
         }
     }
 }

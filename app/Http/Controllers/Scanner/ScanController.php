@@ -54,13 +54,22 @@ class ScanController extends Controller
             ], 403);
         }
 
-        $transaction = Transaction::where('code', $code)->first();
+        // Check withTrashed to find voided/deleted tickets
+        $transaction = Transaction::where('code', $code)->withTrashed()->first();
 
         if (!$transaction) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Invalid ticket code.'
             ], 404);
+        }
+
+        // Check if ticket is voided (soft deleted)
+        if ($transaction->trashed()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'TICKET VOID / HANGUS.'
+            ], 400);
         }
 
         // Check if transaction belongs to the event
@@ -70,6 +79,8 @@ class ScanController extends Controller
                 'message' => 'This ticket does not belong to the selected event.'
             ], 400);
         }
+
+
 
         if ($transaction->status !== 'paid') {
             return response()->json([
@@ -142,6 +153,14 @@ class ScanController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Already redeemed.'
+            ], 400);
+        }
+
+        // Ensure ticket is strictly PAID
+        if ($transaction->status !== 'paid') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cannot redeem: Ticket status is ' . $transaction->status
             ], 400);
         }
 

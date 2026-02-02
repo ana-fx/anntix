@@ -116,19 +116,11 @@ class TicketController extends Controller
             'price' => 'required|numeric|min:0',
             'quota' => 'required|integer|min:1',
             'max_purchase_per_user' => 'required|integer|min:1',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
             'description' => 'required|string',
             'is_active' => 'nullable|boolean',
         ]);
-
-        // Default constraints for "Ignored" scheduling
-        if (empty($validated['start_date'])) {
-            $validated['start_date'] = now();
-        }
-        if (empty($validated['end_date'])) {
-            $validated['end_date'] = $event->end_date ?? now()->addYear();
-        }
 
         $validated['is_active'] = $request->has('is_active');
 
@@ -159,19 +151,11 @@ class TicketController extends Controller
             'price' => 'required|numeric|min:0',
             'quota' => 'required|integer|min:1',
             'max_purchase_per_user' => 'required|integer|min:1',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
         ]);
-
-        // Default constraints for "Ignored" scheduling (preserve if exists, else default)
-        if (empty($validated['start_date'])) {
-            $validated['start_date'] = $ticket->start_date;
-        }
-        if (empty($validated['end_date'])) {
-            $validated['end_date'] = $ticket->end_date;
-        }
 
         $validated['is_active'] = $request->has('is_active');
 
