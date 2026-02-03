@@ -152,9 +152,12 @@
                                     $ticketRevenue = $qty * $ticket->price;
 
                                     // Platform Tax Deduction
-                                    $orgFeePerUnit = $event->organizer_fee_online_type === 'percent'
-                                        ? $ticket->price * ($event->organizer_fee_online / 100)
-                                        : $event->organizer_fee_online;
+                                    $onlineFeeType = $ticket->organizer_fee_online_type ?? $event->organizer_fee_online_type;
+                                    $onlineFeeValue = $ticket->organizer_fee_online ?? $event->organizer_fee_online;
+
+                                    $orgFeePerUnit = $onlineFeeType === 'percent'
+                                        ? $ticket->price * ($onlineFeeValue / 100)
+                                        : $onlineFeeValue;
 
                                     $orgTaxTotal = $qty * $orgFeePerUnit;
                                     $netRevenue = $ticketRevenue - $orgTaxTotal;
@@ -311,9 +314,12 @@
                                     $ticketRevenue = $qty * $ticket->price;
 
                                     // Platform Tax Deduction
-                                    $orgFeePerUnit = $event->organizer_fee_reseller_type === 'percent'
-                                        ? $ticket->price * ($event->organizer_fee_reseller / 100)
-                                        : $event->organizer_fee_reseller;
+                                    $resellerFeeType = $ticket->organizer_fee_reseller_type ?? $event->organizer_fee_reseller_type;
+                                    $resellerFeeValue = $ticket->organizer_fee_reseller ?? $event->organizer_fee_reseller;
+
+                                    $orgFeePerUnit = $resellerFeeType === 'percent'
+                                        ? $ticket->price * ($resellerFeeValue / 100)
+                                        : $resellerFeeValue;
 
                                     $orgTaxTotal = $qty * $orgFeePerUnit;
                                     $netRevenue = $ticketRevenue - $orgTaxTotal;
@@ -382,19 +388,134 @@
         </div>
     </div>
 
+    <!-- EXPORT TABLES (HIDDEN) -->
+    <div class="hidden">
+        <!-- Online Export Table -->
+        <table id="online-table-export">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Ticket Variation</th>
+                    <th>Status</th>
+                    <th>Volume</th>
+                    <th>Stock</th>
+                    <th>Ticket Revenue</th>
+                    <th>Saldo</th>
+                    <th>Org Tax</th>
+                    <th>Handling Fee</th>
+                    <th>Platform Rev</th>
+                    <th>Service Fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($allTickets as $index => $ticket)
+                    @php
+                        $qty = (int) ($ticket->online_qty_paid ?? 0);
+                        $totalPaid = (float) ($ticket->online_total_paid ?? 0);
+
+                        // Original Ticket Revenue
+                        $ticketRevenue = $qty * $ticket->price;
+
+                        // Platform Tax Deduction
+                        $onlineFeeType = $ticket->organizer_fee_online_type ?? $event->organizer_fee_online_type;
+                        $onlineFeeValue = $ticket->organizer_fee_online ?? $event->organizer_fee_online;
+
+                        $orgFeePerUnit = $onlineFeeType === 'percent'
+                            ? $ticket->price * ($onlineFeeValue / 100)
+                            : $onlineFeeValue;
+
+                        $orgTaxTotal = $qty * $orgFeePerUnit;
+                        $netRevenue = $ticketRevenue - $orgTaxTotal;
+
+                        $handlingOnly = $qty * $handlingFeeValue;
+                        $serviceOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly)) : 0;
+
+                        $platformRev = $orgTaxTotal + $handlingOnly;
+
+                        // Stock Calculation
+                        $soldAll = $ticket->transactions_sum_quantity_paid ?? 0;
+                        $pendingAll = $ticket->transactions_sum_quantity_pending ?? 0;
+                        $currentAvailable = max(0, $ticket->quota - $soldAll - $pendingAll);
+                    @endphp
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $ticket->name }}</td>
+                        <td>{{ $ticket->is_active ? 'Active' : 'Inactive' }}</td>
+                        <td>{{ $qty }}</td>
+                        <td>{{ $currentAvailable }} / {{ $ticket->quota }}</td>
+                        <td>{{ $ticketRevenue }}</td>
+                        <td>{{ $netRevenue }}</td>
+                        <td>{{ $orgTaxTotal }}</td>
+                        <td>{{ $handlingOnly }}</td>
+                        <td>{{ $platformRev }}</td>
+                        <td>{{ $serviceOnly }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <!-- Reseller Export Table -->
+        <table id="reseller-table-export">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Ticket Variation</th>
+                    <th>Volume</th>
+                    <th>Ticket Revenue</th>
+                    <th>Saldo</th>
+                    <th>Org Tax</th>
+                    <th>Commission Fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($allTickets as $index => $ticket)
+                    @php
+                        $qty = (int) ($ticket->reseller_qty_paid ?? 0);
+                        $totalGross = (float) ($ticket->reseller_total_paid ?? 0);
+
+                        // Original Ticket Revenue
+                        $ticketRevenue = $qty * $ticket->price;
+
+                        // Platform Tax Deduction
+                        $resellerFeeType = $ticket->organizer_fee_reseller_type ?? $event->organizer_fee_reseller_type;
+                        $resellerFeeValue = $ticket->organizer_fee_reseller ?? $event->organizer_fee_reseller;
+
+                        $orgFeePerUnit = $resellerFeeType === 'percent'
+                            ? $ticket->price * ($resellerFeeValue / 100)
+                            : $resellerFeeValue;
+
+                        $orgTaxTotal = $qty * $orgFeePerUnit;
+                        $netRevenue = $ticketRevenue - $orgTaxTotal;
+
+                        $commissionOnly = max(0, $totalGross - $ticketRevenue);
+                    @endphp
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $ticket->name }}</td>
+                        <td>{{ $qty }}</td>
+                        <td>{{ $ticketRevenue }}</td>
+                        <td>{{ $netRevenue }}</td>
+                        <td>{{ $orgTaxTotal }}</td>
+                        <td>{{ $commissionOnly }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
     @push('scripts')
         <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
         <script>
             function exportToExcel() {
                 const wb = XLSX.utils.book_new();
 
-                const onlineTable = document.getElementById('online-table');
+                const onlineTable = document.getElementById('online-table-export');
                 if (onlineTable) {
                     const ws1 = XLSX.utils.table_to_sheet(onlineTable);
                     XLSX.utils.book_append_sheet(wb, ws1, "Online Sales");
                 }
 
-                const resellerTable = document.getElementById('reseller-table');
+                const resellerTable = document.getElementById('reseller-table-export');
                 if (resellerTable) {
                     const ws2 = XLSX.utils.table_to_sheet(resellerTable);
                     XLSX.utils.book_append_sheet(wb, ws2, "Reseller Sales");

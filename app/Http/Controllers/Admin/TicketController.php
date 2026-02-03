@@ -17,7 +17,7 @@ class TicketController extends Controller
     {
         $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
 
-        $tickets = $event->tickets()
+        $query = $event->tickets()
             ->withSum([
                 'transactions as online_qty_paid' => function ($query) {
                     $query->where('status', 'paid')->whereNull('reseller_id');
@@ -49,8 +49,10 @@ class TicketController extends Controller
                         ->where('created_at', '>=', now()->subDay());
                 }
             ], 'quantity')
-            ->latest()
-            ->paginate(10);
+            ->latest();
+
+        $tickets = (clone $query)->paginate(10);
+        $allTickets = (clone $query)->get();
 
         $recentSales = $event->transactions()
             ->where('status', 'paid')
@@ -106,7 +108,8 @@ class TicketController extends Controller
             'totalSaldo',
             'totalWithdrawn',
             'availableSaldo',
-            'totalPlatformRevenue'
+            'totalPlatformRevenue',
+            'allTickets'
         ));
     }
 
