@@ -142,6 +142,33 @@
                                 $oGrandHandling = 0;
                                 $oGrandAvailable = 0;
                                 $oGrandQuota = 0;
+
+                                foreach($allTickets as $t) {
+                                    $qty = (int) ($t->online_qty_paid ?? 0);
+                                    $totalPaid = (float) ($t->online_total_paid ?? 0);
+                                    $ticketPrice = $t->price;
+                                    $ticketRevenue = $qty * $ticketPrice;
+
+                                    $onlineFeeType = $t->organizer_fee_online_type ?? $event->organizer_fee_online_type;
+                                    $onlineFeeValue = $t->organizer_fee_online ?? $event->organizer_fee_online;
+                                    $orgFeePerUnit = $onlineFeeType === 'percent' ? $ticketPrice * ($onlineFeeValue / 100) : $onlineFeeValue;
+                                    $orgTaxTotal = $qty * $orgFeePerUnit;
+
+                                    $handlingOnly = $qty * (float) \App\Models\Setting::getValue('handling_fee', 0);
+                                    $serviceOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly)) : 0;
+
+                                    $oGrandQty += $qty;
+                                    $oGrandTicketRevenue += $ticketRevenue;
+                                    $oGrandOrgTax += $orgTaxTotal;
+                                    $oGrandNetRevenue += ($ticketRevenue - $orgTaxTotal);
+                                    $oGrandService += $serviceOnly;
+                                    $oGrandHandling += $handlingOnly;
+
+                                    $soldAll = $t->transactions_sum_quantity_paid ?? 0;
+                                    $pendingAll = $t->transactions_sum_quantity_pending ?? 0;
+                                    $oGrandAvailable += max(0, $t->quota - $soldAll - $pendingAll);
+                                    $oGrandQuota += $t->quota;
+                                }
                             @endphp
                             @foreach($tickets as $index => $ticket)
                                 @php
@@ -165,23 +192,10 @@
                                     $handlingOnly = $qty * $handlingFeeValue;
                                     $serviceOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly)) : 0;
 
-                                    $oGrandQty += $qty;
-                                    $oGrandTicketRevenue += $ticketRevenue;
-                                    $oGrandOrgTax += $orgTaxTotal;
-                                    $oGrandNetRevenue += $netRevenue;
-                                    $oGrandService += $serviceOnly;
-                                    $oGrandHandling += $handlingOnly;
-
-                                    // Stock Calculation
-                                    $soldAll = $ticket->transactions_sum_quantity_paid ?? 0;
-                                    $pendingAll = $ticket->transactions_sum_quantity_pending ?? 0;
                                     $currentAvailable = max(0, $ticket->quota - $soldAll - $pendingAll);
-
-                                    $oGrandAvailable += $currentAvailable;
-                                    $oGrandQuota += $ticket->quota;
                                 @endphp
                                 <tr class="hover:bg-primary/[0.02] transition-all group">
-                                    <td class="px-4 py-3 text-xs font-bold text-gray-300">{{ $index + 1 }}</td>
+                                    <td class="px-4 py-3 text-xs font-bold text-gray-300">{{ ($tickets->currentPage() - 1) * $tickets->perPage() + $loop->index + 1 }}</td>
                                     <td class="px-4 py-3">
                                         <div
                                             class="font-black text-dark text-sm group-hover:text-primary transition-colors">
@@ -266,6 +280,9 @@
                     </table>
                 </div>
             </div>
+            <div class="mt-6">
+                {{ $tickets->links() }}
+            </div>
         </div>
 
         <!-- Reseller Sales Report Section -->
@@ -304,6 +321,24 @@
                                 $rGrandOrgTax = 0;
                                 $rGrandNetRevenue = 0;
                                 $rGrandCommission = 0;
+
+                                foreach($allTickets as $t) {
+                                    $qty = (int) ($t->reseller_qty_paid ?? 0);
+                                    $totalGross = (float) ($t->reseller_total_paid ?? 0);
+                                    $ticketPrice = $t->price;
+                                    $ticketRevenue = $qty * $ticketPrice;
+
+                                    $resellerFeeType = $t->organizer_fee_reseller_type ?? $event->organizer_fee_reseller_type;
+                                    $resellerFeeValue = $t->organizer_fee_reseller ?? $event->organizer_fee_reseller;
+                                    $orgFeePerUnit = $resellerFeeType === 'percent' ? $ticketPrice * ($resellerFeeValue / 100) : $resellerFeeValue;
+                                    $orgTaxTotal = $qty * $orgFeePerUnit;
+
+                                    $rGrandQty += $qty;
+                                    $rGrandTicketRevenue += $ticketRevenue;
+                                    $rGrandOrgTax += $orgTaxTotal;
+                                    $rGrandNetRevenue += ($ticketRevenue - $orgTaxTotal);
+                                    $rGrandCommission += max(0, $totalGross - $ticketRevenue);
+                                }
                             @endphp
                             @foreach($tickets as $index => $ticket)
                                 @php
@@ -325,15 +360,9 @@
                                     $netRevenue = $ticketRevenue - $orgTaxTotal;
 
                                     $commissionOnly = max(0, $totalGross - $ticketRevenue);
-
-                                    $rGrandQty += $qty;
-                                    $rGrandTicketRevenue += $ticketRevenue;
-                                    $rGrandOrgTax += $orgTaxTotal;
-                                    $rGrandNetRevenue += $netRevenue;
-                                    $rGrandCommission += $commissionOnly;
                                 @endphp
                                 <tr class="hover:bg-primary/[0.02] transition-all group">
-                                    <td class="px-4 py-3 text-xs font-bold text-gray-300">{{ $index + 1 }}</td>
+                                    <td class="px-4 py-3 text-xs font-bold text-gray-300">{{ ($tickets->currentPage() - 1) * $tickets->perPage() + $loop->index + 1 }}</td>
                                     <td class="px-4 py-3">
                                         <div
                                             class="font-black text-dark text-sm group-hover:text-primary transition-colors">
@@ -384,6 +413,9 @@
                         </tfoot>
                     </table>
                 </div>
+            </div>
+            <div class="mt-6">
+                {{ $tickets->links() }}
             </div>
         </div>
     </div>

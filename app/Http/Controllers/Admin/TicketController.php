@@ -51,7 +51,7 @@ class TicketController extends Controller
             ], 'quantity')
             ->latest();
 
-        $tickets = (clone $query)->paginate(10);
+        $tickets = (clone $query)->paginate(100);
         $allTickets = (clone $query)->get();
 
         $recentSales = $event->transactions()
