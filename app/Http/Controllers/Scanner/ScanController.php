@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Scanner;
 
 use App\Http\Controllers\Controller;
-use App\Models\Event;
-use App\Models\Ticket;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,8 +11,11 @@ class ScanController extends Controller
 {
     public function index()
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         // Get events assigned to this scanner
-        $events = Auth::user()->scannedEvents()
+        $events = $user->scannedEvents()
             ->where('end_date', '>=', now())
             ->get();
 
@@ -46,8 +47,11 @@ class ScanController extends Controller
 
         $eventId = $request->event_id;
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         // Verify the scanner is assigned to this event
-        if (!Auth::user()->scannedEvents()->where('events.id', $eventId)->exists()) {
+        if (!$user->scannedEvents()->where('events.id', $eventId)->exists()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to scan for this event.'
@@ -89,21 +93,28 @@ class ScanController extends Controller
             ], 400);
         }
 
-        // CHANGED: Check if already redeemed but RETURN the data (don't block)
-        $alreadyRedeemed = $transaction->redeemed_at !== null;
+        $scanCount = $transaction->scans()->count();
+        $maxScans = $transaction->ticket->max_scans;
+        $remainingScans = max(0, $maxScans - $scanCount);
 
-        // Get scanner information if already redeemed
+        // Check if fully redeemed
+        $alreadyRedeemed = $scanCount >= $maxScans;
+
+        // Get scanner information for the latest scan (if any)
+        $latestScan = $transaction->scans()->latest()->first();
         $scannedBy = null;
-        if ($alreadyRedeemed && $transaction->redeemed_by) {
-            $scanner = \App\Models\User::find($transaction->redeemed_by);
-            $scannedBy = $scanner ? $scanner->name : 'Unknown Scanner';
+        if ($latestScan && $latestScan->scanner) {
+            $scannedBy = $latestScan->scanner->name;
         }
+
+        $nextScan = $scanCount + 1;
+        $message = $alreadyRedeemed
+            ? "Ticket sudah di claim sepenuhnya ({$scanCount}/{$maxScans})"
+            : "Ticket day {$nextScan} siap di claim";
 
         return response()->json([
             'status' => $alreadyRedeemed ? 'warning' : 'pending',
-            'message' => $alreadyRedeemed
-                ? 'Already scanned at ' . $transaction->redeemed_at->format('H:i:s')
-                : 'Ready to check in',
+            'message' => $message,
             'already_redeemed' => $alreadyRedeemed,
             'data' => [
                 'transaction_id' => $transaction->id,
@@ -116,8 +127,10 @@ class ScanController extends Controller
                 'gender' => $transaction->gender,
                 'ticket_type' => $transaction->ticket->name,
                 'quantity' => $transaction->quantity,
-                'redeemed_at' => $transaction->redeemed_at?->format('d M Y, H:i:s'),
+                'redeemed_at' => $latestScan ? $latestScan->created_at->format('d M Y, H:i:s') : null,
                 'scanned_by' => $scannedBy,
+                'max_scans' => $maxScans,
+                'scan_count' => $scanCount,
             ]
         ]);
     }
@@ -132,8 +145,11 @@ class ScanController extends Controller
         $transaction = Transaction::findOrFail($request->transaction_id);
         $eventId = $request->event_id;
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         // Verify scanner authorization
-        if (!Auth::user()->scannedEvents()->where('events.id', $eventId)->exists()) {
+        if (!$user->scannedEvents()->where('events.id', $eventId)->exists()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized.'
@@ -148,11 +164,14 @@ class ScanController extends Controller
             ], 400);
         }
 
-        // Check if already redeemed
-        if ($transaction->redeemed_at) {
+        // Check max scans
+        $scanCount = $transaction->scans()->count();
+        $maxScans = $transaction->ticket->max_scans;
+
+        if ($scanCount >= $maxScans) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Already redeemed.'
+                'message' => 'Ticket has reached maximum allowed scans (' . $maxScans . ').'
             ], 400);
         }
 
@@ -164,16 +183,26 @@ class ScanController extends Controller
             ], 400);
         }
 
-        // Mark as redeemed
+        // Record the scan
+        $scan = $transaction->scans()->create([
+            'scanned_by' => Auth::id(),
+        ]);
+
+        // Update legacy redeemed_at/by to latest scan for compatibility with old reports
         $transaction->redeemed_at = now();
         $transaction->redeemed_by = Auth::id();
         $transaction->save();
 
+        $newScanCount = $scanCount + 1;
+        $remainingScans = max(0, $maxScans - $newScanCount);
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Check-in successful!',
+            'message' => "Ticket day {$newScanCount} berhasil di claim",
             'data' => [
-                'redeemed_at' => $transaction->redeemed_at->format('H:i:s'),
+                'redeemed_at' => $scan->created_at->format('H:i:s'),
+                'scan_count' => $newScanCount,
+                'max_scans' => $maxScans,
             ]
         ]);
     }

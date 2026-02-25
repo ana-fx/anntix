@@ -15,6 +15,7 @@ class Ticket extends Model
         'name',
         'price',
         'quota',
+        'max_scans',
         'max_purchase_per_user',
         'start_date',
         'end_date',

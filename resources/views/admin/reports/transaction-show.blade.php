@@ -61,7 +61,7 @@
                         x-transition:leave="ease-in duration-200"
                         x-transition:leave-start="opacity-100"
                         x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 bg-gray-900/75 transition-opacity fixed inset-0 z-[999]"></div>
+                        class="fixed inset-0 bg-gray-900/75 transition-opacity z-[999]"></div>
 
                     <div class="fixed inset-0 z-[999] w-screen overflow-y-auto">
                         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -74,7 +74,7 @@
                                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                                 @click.away="showConfirmModal = false"
                                 class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
-                                
+
                                 <form method="POST" action="{{ route('admin.reports.transactions.confirm-payment', $transaction->id) }}">
                                     @csrf
                                     <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -149,7 +149,7 @@
                     x-transition:leave="ease-in duration-200"
                     x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
-                    class="fixed inset-0 bg-gray-900/75 transition-opacity fixed inset-0 z-[999]"></div>
+                    class="fixed inset-0 bg-gray-900/75 transition-opacity z-[999]"></div>
 
                 <div class="fixed inset-0 z-[999] w-screen overflow-y-auto">
                     <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
@@ -162,7 +162,7 @@
                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                             @click.away="showVoidModal = false"
                             class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
-                            
+
                             <form method="POST" action="{{ route('admin.reports.transactions.destroy', $transaction->id) }}">
                                 @csrf
                                 @method('DELETE')
@@ -179,7 +179,7 @@
                                                 <p class="text-sm text-gray-500 mb-4">
                                                     Are you sure you want to void this transaction? This will soft-delete the record and remove it from revenue reports.
                                                 </p>
-                                                
+
                                                 <div class="mb-4">
                                                     <label for="void_notes" class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Reason for Void</label>
                                                     <textarea name="notes" id="void_notes" rows="2" required class="w-full rounded-xl border-gray-200 shadow-sm focus:border-rose-500 focus:ring focus:ring-rose-200 focus:ring-opacity-50 text-sm font-medium" placeholder="e.g. Test transaction, duplicate payment..."></textarea>
@@ -469,7 +469,7 @@
                                     </div>
                                     <div class="text-[10px] font-mono text-gray-400">{{ $log->created_at->format('d M H:i') }}</div>
                                 </div>
-                                
+
                                 @if($log->old_status && $log->new_status && $log->old_status !== $log->new_status)
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ $log->old_status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600' }}">{{ $log->old_status }}</span>
@@ -495,6 +495,47 @@
                     </div>
                 @endif
             </div>
+        </div>
+
+        <!-- Scan History Card -->
+        <div class="bg-white rounded-[3rem] shadow-xl shadow-primary/5 border border-gray-100 p-10 lg:p-12 mb-10">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-2xl font-black text-dark tracking-tight flex items-center gap-4">
+                    <span class="w-2 h-10 bg-indigo-500 rounded-full"></span>
+                    Scan History
+                </h3>
+                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    {{ $transaction->scans->count() }} / {{ $transaction->ticket->max_scans }} Scans
+                </div>
+            </div>
+
+            @if($transaction->scans && $transaction->scans->count() > 0)
+                <div class="space-y-6">
+                    @foreach($transaction->scans as $index => $scan)
+                        <div class="border-l-2 border-indigo-100 pl-6 relative">
+                            <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-indigo-500"></div>
+                            <div class="flex justify-between items-start mb-1">
+                                <div>
+                                    <div class="text-xs font-black text-dark uppercase tracking-wide">
+                                        Scan #{{ $index + 1 }}
+                                    </div>
+                                    <div class="text-[10px] font-bold text-gray-400">
+                                        by <span class="text-primary">{{ $scan->scanner->name ?? 'System' }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-[10px] font-mono text-gray-400">{{ $scan->created_at->format('d M y, H:i:s') }}</div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <div class="text-gray-300 mb-2">
+                        <svg class="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                    </div>
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-widest">No scans recorded yet</div>
+                </div>
+            @endif
         </div>
 
         <!-- Right Side: Financial & Timeline -->

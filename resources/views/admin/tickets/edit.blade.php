@@ -60,6 +60,16 @@
                     @error('max_purchase_per_user') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
 
+                <!-- Maximum Scans -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Maximum Scans</label>
+                    <input type="number" name="max_scans" value="{{ old('max_scans', $ticket->max_scans) }}" min="1" step="1"
+                        placeholder="Enter Maximum Scans per Ticket"
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                    <p class="text-xs text-gray-500 mt-1">* How many times this ticket can be scanned (default: 1)</p>
+                    @error('max_scans') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+
                 <!-- Sale Period -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div x-data

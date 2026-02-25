@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\TransactionLog;
-use App\Models\Event;
 use App\Mail\PaymentSuccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -116,7 +117,7 @@ class ReportController extends Controller
 
     public function showTransaction(Transaction $transaction)
     {
-        $transaction->load(['event', 'ticket', 'logs.user']);
+        $transaction->load(['event', 'ticket', 'logs.user', 'scans.scanner']);
         $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
 
         $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
@@ -132,7 +133,7 @@ class ReportController extends Controller
         $search = $request->input('search');
 
         $query = Transaction::whereNotNull('redeemed_at')
-            ->with(['event:id,name', 'ticket:id,name', 'scanner:id,name'])
+            ->with(['event:id,name', 'ticket:id,name,max_scans', 'scanner:id,name', 'scans'])
             ->latest('redeemed_at');
 
         if ($search) {
@@ -164,7 +165,7 @@ class ReportController extends Controller
             // Log the resend action
             TransactionLog::create([
                 'transaction_id' => $transaction->id,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'action' => 'resend_email',
                 'old_status' => $transaction->status,
                 'new_status' => $transaction->status,
@@ -199,10 +200,13 @@ class ReportController extends Controller
                 'midtrans_transaction_id' => 'MANUAL-' . strtoupper(Str::random(10)),
             ]);
 
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
             // Create audit log
             TransactionLog::create([
                 'transaction_id' => $transaction->id,
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'action' => 'manual_payment_confirm',
                 'old_status' => $oldStatus,
                 'new_status' => 'paid',
@@ -214,10 +218,10 @@ class ReportController extends Controller
             Mail::to($transaction->email)->send(new PaymentSuccess($transaction));
 
             // Log to Laravel log
-            \Log::info('Manual payment confirmation', [
+            Log::info('Manual payment confirmation', [
                 'transaction_code' => $transaction->code,
                 'email' => $transaction->email,
-                'confirmed_by' => auth()->user()->name,
+                'confirmed_by' => $user->name,
                 'notes' => $request->notes,
             ]);
 
@@ -226,7 +230,7 @@ class ReportController extends Controller
             return back()->with('success', 'Payment confirmed successfully! Success email has been sent to ' . $transaction->email);
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Manual payment confirmation failed', [
+            Log::error('Manual payment confirmation failed', [
                 'transaction_code' => $transaction->code,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -249,10 +253,13 @@ class ReportController extends Controller
             // Soft delete the transaction
             $transaction->delete();
 
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
             // Create audit log
             TransactionLog::create([
                 'transaction_id' => $transaction->id,
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'action' => 'void_transaction',
                 'old_status' => $oldStatus,
                 'new_status' => 'deleted',
@@ -260,9 +267,9 @@ class ReportController extends Controller
             ]);
 
             // Log to system
-            \Log::warning('Transaction Soft Deleted (Void)', [
+            Log::warning('Transaction Soft Deleted (Void)', [
                 'transaction_code' => $transaction->code,
-                'deleted_by' => auth()->user()->name,
+                'deleted_by' => $user->name,
                 'notes' => $request->notes
             ]);
 

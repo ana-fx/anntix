@@ -93,6 +93,11 @@ class Transaction extends Model
         return $this->hasMany(TransactionLog::class)->latest();
     }
 
+    public function scans()
+    {
+        return $this->hasMany(TransactionScan::class)->latest();
+    }
+
     public function getCommissionAttribute()
     {
         if (!$this->reseller_id || !$this->event || !$this->ticket) {

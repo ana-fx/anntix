@@ -28,8 +28,9 @@
                         <th class="px-4 py-3">Customer</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Created Date</th>
-                        <th class="px-4 py-3">Scanned Date</th>
-                        <th class="px-4 py-3">Scanned By</th>
+                        <th class="px-4 py-3">Scans</th>
+                        <th class="px-4 py-3">Latest Scan Date</th>
+                        <th class="px-4 py-3">Latest Scanned By</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -56,7 +57,12 @@
                                     {{ $trx->created_at->format('H:i:s') }}</div>
                             </td>
                             <td class="px-4 py-3">
-                                <div class="text-xs font-bold text-dark font-black">
+                                <span class="inline-flex px-3 py-1 pb-1.5 rounded-full text-[12px] font-black uppercase tracking-widest {{ $trx->scans->count() >= $trx->ticket->max_scans ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600' }}">
+                                    {{ $trx->scans->count() }} / {{ $trx->ticket->max_scans }} Scans
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="text-xs text-dark font-black">
                                     {{ $trx->redeemed_at->format('d M Y') }}</div>
                                 <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">
                                     {{ $trx->redeemed_at->format('H:i:s') }}</div>
