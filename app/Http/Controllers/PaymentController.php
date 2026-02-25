@@ -7,29 +7,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentSuccess;
-use App\Mail\PaymentRequired;
 use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
     public function show(Transaction $transaction)
     {
-        // Guard: Check if transaction is already finalized
-        if ($transaction->status === 'paid') {
-            return redirect()->route('payment.success', $transaction->code);
-        }
+        // Guard: Check transaction status and redirect accordingly
+        $redirectResponse = match ($transaction->status) {
+            'paid' => redirect()->route('payment.success', $transaction->code),
+            'failed', 'expired', 'canceled' => redirect()->route('home')->with('error', 'This transaction is ' . $transaction->status . '.'),
+            'pending' => !$transaction->ticket->is_active
+            ? redirect()->route('home')->with('error', 'Maaf, tipe tiket untuk transaksi ini sudah tidak tersedia.')
+            : null,
+            default => null,
+        };
 
-        if (in_array($transaction->status, ['failed', 'expired', 'canceled'])) {
-            return redirect()->route('home')->with('error', 'This transaction is ' . $transaction->status . '.');
-        }
-        // Send Payment Required email if pending, not a reseller transaction, and not already sent in this session
-        if (!$transaction->reseller_id && $transaction->status === 'pending' && !session()->has('payment_mail_sent_' . $transaction->id)) {
-            try {
-                Mail::to($transaction->email)->send(new PaymentRequired($transaction));
-                session()->put('payment_mail_sent_' . $transaction->id, true);
-            } catch (\Exception $e) {
-                logger()->error('Failed to send payment required email from payment page: ' . $e->getMessage());
-            }
+        if ($redirectResponse) {
+            return $redirectResponse;
         }
 
         return view('payment.show', compact('transaction'));
@@ -43,6 +38,10 @@ class PaymentController extends Controller
 
         if ($transaction->status !== 'pending') {
             return response()->json(['error' => 'Transaction cannot be processed (Status: ' . $transaction->status . ')'], 400);
+        }
+
+        if (!$transaction->ticket->is_active) {
+            return response()->json(['error' => 'Maaf, tipe tiket ini sudah tidak tersedia.'], 400);
         }
 
         \Midtrans\Config::$serverKey = config('midtrans.server_key');
@@ -214,6 +213,10 @@ class PaymentController extends Controller
 
         /** @var \App\Models\User $reseller */
         $reseller = Auth::user();
+
+        if ($transaction->status === 'pending' && !$transaction->ticket->is_active) {
+            return redirect()->route('home')->with('error', 'Maaf, tipe tiket untuk transaksi ini sudah tidak tersedia.');
+        }
 
         // 2. Mark as Paid
         if ($transaction->status === 'pending') {
