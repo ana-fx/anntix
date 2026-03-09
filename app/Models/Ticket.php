@@ -25,6 +25,10 @@ class Ticket extends Model
         'organizer_fee_online',
         'organizer_fee_reseller_type',
         'organizer_fee_reseller',
+        'reseller_fee_type',
+        'reseller_fee_value',
+        'handling_fee_type',
+        'handling_fee_value',
     ];
 
     protected $casts = [
@@ -41,6 +45,60 @@ class Ticket extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get the effective handling fee for this ticket.
+     *
+     * Priority:
+     * 1. Ticket-level override (if handling_fee_type is explicitly set)
+     * 2. Event-level override
+     * 3. Global setting (Setting::getValue('handling_fee'))
+     */
+    public function getHandlingFee(): float
+    {
+        // 1. Ticket-level override first
+        if (!empty($this->handling_fee_type) && $this->handling_fee_type !== 'default') {
+            if ($this->handling_fee_type === 'percent') {
+                return (float) ($this->price * ($this->handling_fee_value / 100));
+            }
+            if ($this->handling_fee_type === 'fixed') {
+                return (float) $this->handling_fee_value;
+            }
+        }
+
+        // 2. Fall back to event-level handling fee (which already falls back to global Setting)
+        return (float) $this->event->getHandlingFee($this->price);
+    }
+
+    /**
+     * Get rincian biaya (Breakdown) berdasarkan sumbernya.
+     * Service Fee = Dari Setting Global (Rp 5.000)
+     * Handling Fee = Dari Override di level Tiket atau Event
+     */
+    public function getFeeBreakdown(): array
+    {
+        // 1. Cek Override di Tiket
+        if (!empty($this->handling_fee_type) && $this->handling_fee_type !== 'default') {
+            return [
+                'service' => 0,
+                'handling' => $this->getHandlingFee(),
+            ];
+        }
+
+        // 2. Cek Override di Event
+        if (!empty($this->event->handling_fee_type) && $this->event->handling_fee_type !== 'default') {
+            return [
+                'service' => 0,
+                'handling' => $this->getHandlingFee(),
+            ];
+        }
+
+        // 3. Fallback ke Global (Semua masuk Service Fee)
+        return [
+            'service' => $this->getHandlingFee(),
+            'handling' => 0,
+        ];
     }
 
     /**

@@ -1,21 +1,15 @@
-<x-layouts.admin>
+<x-layouts.organizer>
+    <x-slot name="title">Ticket Report - {{ $event->name }}</x-slot>
     <div>
         <div class="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-6">
             <div class="flex items-center gap-4">
-                <a href="{{ route('admin.events.index') }}"
+                <a href="{{ route('organizer.events.index') }}"
                     class="inline-flex items-center text-sm font-bold text-gray-400 hover:text-primary transition-colors gap-2">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Back to Events
-                </a>
-                <a href="{{ route('admin.events.tickets-report.create', $event) }}"
-                    class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary/20 gap-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Create Ticket
                 </a>
             </div>
 
@@ -52,23 +46,17 @@
                             Rp {{ number_format($availableSaldo, 0, ',', '.') }}
                         </div>
                     </div>
-                    <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Platform Rev</div>
-                        <div class="font-black text-gray-500 text-base leading-tight">
-                            Rp {{ number_format($totalPlatformRevenue, 0, ',', '.') }}
-                        </div>
-                    </div>
                 </div>
 
                 <div class="flex flex-col gap-2 w-full md:w-auto">
-                    <a href="{{ route('admin.events.withdrawals.create_for_event', $event) }}"
-                        class="group flex items-center justify-center w-full px-5 py-3 bg-dark text-white rounded-2xl font-bold text-xs hover:bg-black transition-all shadow-lg shadow-dark/10 gap-2">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <a href="{{ route('organizer.events.withdrawals.index', $event) }}"
+                        class="group flex items-center justify-center w-full px-5 py-3 bg-primary text-white hover:bg-primary-600 rounded-2xl font-bold text-xs transition-all shadow-sm gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        Withdraw
+                        Withdraw Funds
                     </a>
+
                     <button onclick="exportToExcel()"
                         class="group flex items-center justify-center w-full px-5 py-3 bg-white text-gray-400 rounded-2xl font-bold text-xs hover:bg-gray-50 transition-all border border-gray-100 shadow-sm gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,20 +80,6 @@
                 {{ session('success') }}
             </div>
         @endif
-
-        @if ($errors->any())
-            <div class="mb-6 p-4 rounded-3xl bg-red-50 text-red-700 border border-red-100 font-bold text-sm">
-                <ul class="list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-
-
-
 
         <div x-data="{ activeTab: 'all' }" class="w-full">
             <!-- Tabs Navigation -->
@@ -161,10 +135,7 @@
                                     <th class="px-4 py-3 text-center">Volume</th>
                                     <th class="px-4 py-3 text-right">Ticket Revenue</th>
                                     <th class="px-4 py-3 text-right">Saldo</th>
-                                    <th class="px-4 py-3 text-right">Org Tax</th>
-                                    <th class="px-4 py-3 text-right">Handling</th>
-                                    <th class="px-4 py-3 text-right">Platform</th>
-                                    <th class="px-4 py-3 text-right">Service</th>
+                                    <th class="px-4 py-3 text-right">Admin Fee</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50">
@@ -173,16 +144,12 @@
                                     $gGrandTicketRevenue = 0;
                                     $gGrandOrgTax = 0;
                                     $gGrandNetRevenue = 0;
-                                    $gGrandService = 0;
-                                    $gGrandHandling = 0;
-                                    $hFee = (float) \App\Models\Setting::getValue('handling_fee', 0);
 
                                     foreach($allTickets as $t) {
                                         $oQty = (int) ($t->online_qty_paid ?? 0);
                                         $rQty = (int) ($t->reseller_qty_paid ?? 0);
                                         $qty = $oQty + $rQty;
 
-                                        $onlineTotalPaid = (float) ($t->online_total_paid ?? 0);
                                         $ticketPrice = $t->price;
                                         $ticketRevenue = $qty * $ticketPrice;
 
@@ -200,15 +167,10 @@
 
                                         $totalOrgTax = $onlineOrgTaxTotal + $resellerOrgTaxTotal;
 
-                                        $handlingOnly = $oQty * $hFee;
-                                        $serviceOnly = $onlineTotalPaid > 0 ? max(0, $onlineTotalPaid - (($oQty * $ticketPrice) + $handlingOnly)) : 0;
-
                                         $gGrandQty += $qty;
                                         $gGrandTicketRevenue += $ticketRevenue;
                                         $gGrandOrgTax += $totalOrgTax;
                                         $gGrandNetRevenue += ($ticketRevenue - $totalOrgTax);
-                                        $gGrandService += $serviceOnly;
-                                        $gGrandHandling += $handlingOnly;
                                     }
                                 @endphp
                                 @foreach($tickets as $index => $ticket)
@@ -217,7 +179,6 @@
                                         $rQty = (int) ($ticket->reseller_qty_paid ?? 0);
                                         $qty = $oQty + $rQty;
 
-                                        $onlineTotalPaid = (float) ($ticket->online_total_paid ?? 0);
                                         $ticketRevenue = $qty * $ticket->price;
 
                                         // Online Tax
@@ -234,10 +195,6 @@
 
                                         $totalOrgTax = $onlineOrgTaxTotal + $resellerOrgTaxTotal;
                                         $netRevenue = $ticketRevenue - $totalOrgTax;
-
-                                        $handlingOnly = $oQty * $hFee;
-                                        $serviceOnly = $onlineTotalPaid > 0 ? max(0, $onlineTotalPaid - (($oQty * $ticket->price) + $handlingOnly)) : 0;
-                                        $platformRev = $totalOrgTax + $handlingOnly + $serviceOnly;
                                     @endphp
                                     <tr class="hover:bg-primary/[0.02] transition-all group">
                                         <td class="px-4 py-3 text-xs font-bold text-gray-300">{{ $loop->iteration }}</td>
@@ -261,15 +218,6 @@
                                         <td class="px-4 py-3 text-right text-xs text-gray-500 font-bold">
                                             Rp {{ number_format($totalOrgTax, 0, ',', '.') }}
                                         </td>
-                                        <td class="px-4 py-3 text-right text-xs text-primary font-black">
-                                            Rp {{ number_format($handlingOnly, 0, ',', '.') }}
-                                        </td>
-                                        <td class="px-4 py-3 text-right text-xs text-gray-500 font-bold">
-                                            Rp {{ number_format($platformRev, 0, ',', '.') }}
-                                        </td>
-                                        <td class="px-4 py-3 text-right text-xs text-primary font-black">
-                                            Rp {{ number_format($serviceOnly, 0, ',', '.') }}
-                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -280,9 +228,6 @@
                                     <td class="px-4 py-4 text-right">Rp {{ number_format($gGrandTicketRevenue, 0, ',', '.') }}</td>
                                     <td class="px-4 py-4 text-right text-primary font-black">Rp {{ number_format($gGrandNetRevenue, 0, ',', '.') }}</td>
                                     <td class="px-4 py-4 text-right text-gray-500">Rp {{ number_format($gGrandOrgTax, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-primary font-black">Rp {{ number_format($gGrandHandling, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-gray-500 font-bold">Rp {{ number_format($gGrandOrgTax + $gGrandHandling + $gGrandService, 0, ',', '.') }}</td>
-                                    <td class="px-4 py-4 text-right text-primary font-black">Rp {{ number_format($gGrandService, 0, ',', '.') }}</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -295,14 +240,12 @@
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h2 class="text-3xl font-black text-dark tracking-tight">Online Revenue Digest</h2>
-                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-2">Platform direct sales
-                        analytics</p>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-2">Platform direct sales analytics</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="px-5 py-2.5 bg-primary/5 rounded-2xl border border-primary/10 flex items-center gap-3">
                         <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                        <span class="text-[9px] font-black text-primary uppercase tracking-widest">Online
-                            Channel</span>
+                        <span class="text-[9px] font-black text-primary uppercase tracking-widest">Online Channel</span>
                     </div>
                 </div>
             </div>
@@ -356,7 +299,6 @@
                                         $handlingOnly = $qty * $breakdown['handling'];
                                         $serviceOnly = $qty * $breakdown['service'];
 
-                                        // Midtrans Fee = Total Bayar - (Revenue + Admin/Platform Fees)
                                         $midtransOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly + $serviceOnly)) : 0;
 
                                         $oGrandQty += $qty;
@@ -377,17 +319,11 @@
                                     /** @var \App\Models\Ticket $ticket */
                                     $qty = (int) ($ticket->online_qty_paid ?? 0);
                                     $totalPaid = (float) ($ticket->online_total_paid ?? 0);
-
-                                    // Original Ticket Revenue
                                     $ticketRevenue = $qty * $ticket->price;
 
-                                    // Platform Tax Deduction
                                     $onlineFeeType = $ticket->organizer_fee_online_type ?? $event->organizer_fee_online_type;
                                     $onlineFeeValue = $ticket->organizer_fee_online ?? $event->organizer_fee_online;
-
-                                    $orgFeePerUnit = $onlineFeeType === 'percent'
-                                        ? $ticket->price * ($onlineFeeValue / 100)
-                                        : $onlineFeeValue;
+                                    $orgFeePerUnit = $onlineFeeType === 'percent' ? $ticket->price * ($onlineFeeValue / 100) : $onlineFeeValue;
 
                                     $orgTaxTotal = $qty * $orgFeePerUnit;
                                     $netRevenue = $ticketRevenue - $orgTaxTotal;
@@ -395,8 +331,6 @@
                                     $breakdown = $ticket->getFeeBreakdown();
                                     $handlingOnly = $qty * $breakdown['handling'];
                                     $serviceOnly = $qty * $breakdown['service'];
-
-                                    // Midtrans Fee calculation
                                     $midtransOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly + $serviceOnly)) : 0;
 
                                     $soldAll = $ticket->transactions_sum_quantity_paid ?? 0;
@@ -405,21 +339,16 @@
                                 <tr class="hover:bg-primary/[0.02] transition-all group">
                                     <td class="px-4 py-3 text-xs font-bold text-gray-300">{{ $loop->iteration }}</td>
                                     <td class="px-4 py-3">
-                                        <div
-                                            class="font-black text-dark text-sm group-hover:text-primary transition-colors">
+                                        <div class="font-black text-dark text-sm group-hover:text-primary transition-colors">
                                             {{ $ticket->name }}
                                         </div>
-                                        <div class="text-[9px] text-gray-400 font-bold uppercase mt-1">@ Rp
-                                            {{ number_format($ticket->price, 0, ',', '.') }}
-                                        </div>
+                                        <div class="text-[9px] text-gray-400 font-bold uppercase mt-1">@ Rp {{ number_format($ticket->price, 0, ',', '.') }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         @if($ticket->is_active)
-                                            <span
-                                                class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase tracking-wider">Active</span>
+                                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase tracking-wider">Active</span>
                                         @else
-                                            <span
-                                                class="px-2 py-1 bg-red-100 text-red-700 rounded text-[10px] font-bold uppercase tracking-wider">Inactive</span>
+                                            <span class="px-2 py-1 bg-red-100 text-red-700 rounded text-[10px] font-bold uppercase tracking-wider">Inactive</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-3 text-center">
@@ -428,11 +357,8 @@
                                         </span>
                                     </td>
                                     <td class="px-4 py-3 text-center">
-                                        <div class="font-black text-dark text-sm">{{ number_format($currentAvailable) }}
-                                        </div>
-                                        <div class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">/
-                                            {{ number_format($ticket->quota) }}
-                                        </div>
+                                        <div class="font-black text-dark text-sm">{{ number_format($currentAvailable) }}</div>
+                                        <div class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">/ {{ number_format($ticket->quota) }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-right font-bold text-dark text-sm">
                                         Rp {{ number_format($ticketRevenue, 0, ',', '.') }}
@@ -460,35 +386,20 @@
                         </tbody>
                         <tfoot class="bg-gray-50/80 border-t-2 border-primary/20 text-xs">
                             <tr class="font-black text-dark">
-                                <td colspan="2" class="px-4 py-4 text-[11px] uppercase tracking-[0.25em] text-gray-400">
-                                    Total Performance</td>
+                                <td colspan="2" class="px-4 py-4 text-[11px] uppercase tracking-[0.25em] text-gray-400">Total Performance</td>
+                                <td class="px-4 py-4 text-center text-lg text-dark"></td>
                                 <td class="px-4 py-4 text-center text-lg text-dark">{{ number_format($oGrandQty) }}</td>
-                                <td class="px-4 py-4 text-center text-lg text-dark">
+                                <td class="px-4 py-4 text-center text-base text-dark">
                                     {{ number_format($oGrandAvailable) }}
-                                    <span class="text-[9px] text-gray-400 block font-bold uppercase mt-0.5">/
-                                        {{ number_format($oGrandQuota) }}</span>
+                                    <span class="text-[9px] text-gray-400 block font-bold uppercase mt-0.5">/ {{ number_format($oGrandQuota) }}</span>
                                 </td>
-                                <td class="px-4 py-4 text-right">Rp
-                                    {{ number_format($oGrandTicketRevenue, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-primary font-black">Rp
-                                    {{ number_format($oGrandNetRevenue, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-gray-500">Rp
-                                    {{ number_format($oGrandOrgTax, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-primary font-black">Rp
-                                    {{ number_format($oGrandHandling, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-gray-400 font-bold">Rp
-                                    {{ number_format($oGrandService, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-amber-600 font-bold">Rp
-                                    {{ number_format($oGrandMidtrans, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-gray-500 font-black text-sm">Rp
-                                    {{ number_format($oGrandOrgTax + $oGrandHandling + $oGrandService + $oGrandMidtrans, 0, ',', '.') }}
-                                </td>
+                                <td class="px-4 py-4 text-right">Rp {{ number_format($oGrandTicketRevenue, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-primary font-black">Rp {{ number_format($oGrandNetRevenue, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-gray-500">Rp {{ number_format($oGrandOrgTax, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-primary font-black">Rp {{ number_format($oGrandHandling, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-gray-400 font-bold">Rp {{ number_format($oGrandService, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-amber-600 font-bold">Rp {{ number_format($oGrandMidtrans, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-gray-500 font-black text-sm">Rp {{ number_format($oGrandOrgTax + $oGrandHandling + $oGrandService + $oGrandMidtrans, 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -501,8 +412,7 @@
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h2 class="text-3xl font-black text-dark tracking-tight">Reseller Sales Performance</h2>
-                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-2">B2B Channel Distribution
-                        Summary</p>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-2">B2B Channel Distribution Summary</p>
                 </div>
                 <div class="px-5 py-2.5 bg-primary/5 rounded-2xl border border-primary/10 flex items-center gap-3">
                     <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
@@ -521,8 +431,8 @@
                                 <th class="px-4 py-3 text-center">Volume</th>
                                 <th class="px-4 py-3 text-right">Ticket Revenue</th>
                                 <th class="px-4 py-3 text-right">Saldo</th>
-                                <th class="px-4 py-3 text-right">Org Tax</th>
-                                <th class="px-4 py-3 text-right">Commission Fee</th>
+                                <th class="px-4 py-3 text-right">Admin Fee</th>
+                                <th class="px-4 py-3 text-right">Reseller Comm.</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
@@ -555,33 +465,23 @@
                                 @php
                                     $qty = (int) ($ticket->reseller_qty_paid ?? 0);
                                     $totalGross = (float) ($ticket->reseller_total_paid ?? 0);
-
-                                    // Original Ticket Revenue
                                     $ticketRevenue = $qty * $ticket->price;
 
-                                    // Platform Tax Deduction
                                     $resellerFeeType = $ticket->organizer_fee_reseller_type ?? $event->organizer_fee_reseller_type;
                                     $resellerFeeValue = $ticket->organizer_fee_reseller ?? $event->organizer_fee_reseller;
-
-                                    $orgFeePerUnit = $resellerFeeType === 'percent'
-                                        ? $ticket->price * ($resellerFeeValue / 100)
-                                        : $resellerFeeValue;
+                                    $orgFeePerUnit = $resellerFeeType === 'percent' ? $ticket->price * ($resellerFeeValue / 100) : $resellerFeeValue;
 
                                     $orgTaxTotal = $qty * $orgFeePerUnit;
                                     $netRevenue = $ticketRevenue - $orgTaxTotal;
-
                                     $commissionOnly = max(0, $totalGross - $ticketRevenue);
                                 @endphp
                                 <tr class="hover:bg-primary/[0.02] transition-all group">
                                     <td class="px-4 py-3 text-xs font-bold text-gray-300">{{ $loop->iteration }}</td>
                                     <td class="px-4 py-3">
-                                        <div
-                                            class="font-black text-dark text-sm group-hover:text-primary transition-colors">
+                                        <div class="font-black text-dark text-sm group-hover:text-primary transition-colors">
                                             {{ $ticket->name }}
                                         </div>
-                                        <div class="text-[9px] text-gray-400 font-bold uppercase mt-1">@ Rp
-                                            {{ number_format($ticket->price, 0, ',', '.') }}
-                                        </div>
+                                        <div class="text-[9px] text-gray-400 font-bold uppercase mt-1">@ Rp {{ number_format($ticket->price, 0, ',', '.') }}</div>
                                     </td>
                                     <td class="px-4 py-3 text-center">
                                         <span class="px-3 py-1 bg-gray-100 rounded-full text-xs font-black text-dark">
@@ -605,21 +505,12 @@
                         </tbody>
                         <tfoot class="bg-gray-50/80 border-t-2 border-primary/20 text-xs">
                             <tr class="font-black text-dark">
-                                <td colspan="2" class="px-4 py-4 text-[11px] uppercase tracking-[0.25em] text-gray-400">
-                                    Total Performance</td>
+                                <td colspan="2" class="px-4 py-4 text-[11px] uppercase tracking-[0.25em] text-gray-400">Total Performance</td>
                                 <td class="px-4 py-4 text-center text-lg text-dark">{{ number_format($rGrandQty) }}</td>
-                                <td class="px-4 py-4 text-right">Rp
-                                    {{ number_format($rGrandTicketRevenue, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-primary font-black">Rp
-                                    {{ number_format($rGrandNetRevenue, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-gray-500">Rp
-                                    {{ number_format($rGrandOrgTax, 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-right text-primary font-black text-sm">Rp
-                                    {{ number_format($rGrandCommission, 0, ',', '.') }}
-                                </td>
+                                <td class="px-4 py-4 text-right">Rp {{ number_format($rGrandTicketRevenue, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-primary font-black">Rp {{ number_format($rGrandNetRevenue, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-gray-500">Rp {{ number_format($rGrandOrgTax, 0, ',', '.') }}</td>
+                                <td class="px-4 py-4 text-right text-primary font-black text-sm">Rp {{ number_format($rGrandCommission, 0, ',', '.') }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -628,7 +519,7 @@
         </div>
     </div>
 
-    <!-- EXPORT TABLES (HIDDEN) -->
+    <!-- EXPORT TABLES (HIDDEN) - Reuse logic from admin but simplified labels -->
     <div class="hidden">
         <!-- All Sales Export Table -->
         <table id="all-table-export">
@@ -639,23 +530,16 @@
                     <th>Volume</th>
                     <th>Ticket Revenue</th>
                     <th>Saldo</th>
-                    <th>Org Tax</th>
-                    <th>Handling Fee</th>
-                    <th>Platform Rev</th>
-                    <th>Service Fee</th>
+                    <th>Admin Fee</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $hFeeGlobal = (float) \App\Models\Setting::getValue('handling_fee', 0);
-                @endphp
                 @foreach($allTickets as $index => $ticket)
                     @php
                         $oQty = (int) ($ticket->online_qty_paid ?? 0);
                         $rQty = (int) ($ticket->reseller_qty_paid ?? 0);
                         $qty = $oQty + $rQty;
 
-                        $onlineTotalPaid = (float) ($ticket->online_total_paid ?? 0);
                         $ticketPrice = $ticket->price;
                         $ticketRevenue = $qty * $ticketPrice;
 
@@ -673,10 +557,6 @@
 
                         $totalOrgTax = $onlineOrgTaxTotal + $resellerOrgTaxTotal;
                         $netRevenue = $ticketRevenue - $totalOrgTax;
-
-                        $handlingOnly = $oQty * $hFeeGlobal;
-                        $serviceOnly = $onlineTotalPaid > 0 ? max(0, $onlineTotalPaid - (($oQty * $ticket->price) + $handlingOnly)) : 0;
-                        $platformRev = $totalOrgTax + $handlingOnly + $serviceOnly;
                     @endphp
                     <tr>
                         <td>{{ $index + 1 }}</td>
@@ -685,15 +565,11 @@
                         <td>{{ $ticketRevenue }}</td>
                         <td>{{ $netRevenue }}</td>
                         <td>{{ $totalOrgTax }}</td>
-                        <td>{{ $handlingOnly }}</td>
-                        <td>{{ $platformRev }}</td>
-                        <td>{{ $serviceOnly }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <!-- Online Export Table -->
         <table id="online-table-export">
             <thead>
                 <tr>
@@ -704,60 +580,35 @@
                     <th>Stock</th>
                     <th>Ticket Revenue</th>
                     <th>Saldo</th>
-                    <th>Org Tax</th>
-                    <th>Handling Fee</th>
-                    <th>Platform Rev</th>
-                    <th>Service Fee</th>
+                    <th>Admin Fee</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($allTickets as $index => $ticket)
                     @php
                         $qty = (int) ($ticket->online_qty_paid ?? 0);
-                        $totalPaid = (float) ($ticket->online_total_paid ?? 0);
-
-                        // Original Ticket Revenue
                         $ticketRevenue = $qty * $ticket->price;
-
-                        // Platform Tax Deduction
                         $onlineFeeType = $ticket->organizer_fee_online_type ?? $event->organizer_fee_online_type;
                         $onlineFeeValue = $ticket->organizer_fee_online ?? $event->organizer_fee_online;
-
-                        $orgFeePerUnit = $onlineFeeType === 'percent'
-                            ? $ticket->price * ($onlineFeeValue / 100)
-                            : $onlineFeeValue;
-
+                        $orgFeePerUnit = $onlineFeeType === 'percent' ? $ticket->price * ($onlineFeeValue / 100) : $onlineFeeValue;
                         $orgTaxTotal = $qty * $orgFeePerUnit;
-                        $netRevenue = $ticketRevenue - $orgTaxTotal;
-
-                        $handlingOnly = $qty * $ticket->getHandlingFee();
-                        $serviceOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly)) : 0;
-
-                        $platformRev = $orgTaxTotal + $handlingOnly;
-
-                        // Stock Calculation
                         $soldAll = $ticket->transactions_sum_quantity_paid ?? 0;
                         $pendingAll = $ticket->transactions_sum_quantity_pending ?? 0;
-                        $currentAvailable = max(0, $ticket->quota - $soldAll - $pendingAll);
                     @endphp
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $ticket->name }}</td>
                         <td>{{ $ticket->is_active ? 'Active' : 'Inactive' }}</td>
                         <td>{{ $qty }}</td>
-                        <td>{{ $currentAvailable }} / {{ $ticket->quota }}</td>
+                        <td>{{ max(0, $ticket->quota - $soldAll - $pendingAll) }} / {{ $ticket->quota }}</td>
                         <td>{{ $ticketRevenue }}</td>
-                        <td>{{ $netRevenue }}</td>
+                        <td>{{ $ticketRevenue - $orgTaxTotal }}</td>
                         <td>{{ $orgTaxTotal }}</td>
-                        <td>{{ $handlingOnly }}</td>
-                        <td>{{ $platformRev }}</td>
-                        <td>{{ $serviceOnly }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <!-- Reseller Export Table -->
         <table id="reseller-table-export">
             <thead>
                 <tr>
@@ -766,8 +617,8 @@
                     <th>Volume</th>
                     <th>Ticket Revenue</th>
                     <th>Saldo</th>
-                    <th>Org Tax</th>
-                    <th>Commission Fee</th>
+                    <th>Admin Fee</th>
+                    <th>Reseller Commission</th>
                 </tr>
             </thead>
             <tbody>
@@ -775,31 +626,20 @@
                     @php
                         $qty = (int) ($ticket->reseller_qty_paid ?? 0);
                         $totalGross = (float) ($ticket->reseller_total_paid ?? 0);
-
-                        // Original Ticket Revenue
                         $ticketRevenue = $qty * $ticket->price;
-
-                        // Platform Tax Deduction
                         $resellerFeeType = $ticket->organizer_fee_reseller_type ?? $event->organizer_fee_reseller_type;
                         $resellerFeeValue = $ticket->organizer_fee_reseller ?? $event->organizer_fee_reseller;
-
-                        $orgFeePerUnit = $resellerFeeType === 'percent'
-                            ? $ticket->price * ($resellerFeeValue / 100)
-                            : $resellerFeeValue;
-
+                        $orgFeePerUnit = $resellerFeeType === 'percent' ? $ticket->price * ($resellerFeeValue / 100) : $resellerFeeValue;
                         $orgTaxTotal = $qty * $orgFeePerUnit;
-                        $netRevenue = $ticketRevenue - $orgTaxTotal;
-
-                        $commissionOnly = max(0, $totalGross - $ticketRevenue);
                     @endphp
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $ticket->name }}</td>
                         <td>{{ $qty }}</td>
                         <td>{{ $ticketRevenue }}</td>
-                        <td>{{ $netRevenue }}</td>
+                        <td>{{ $ticketRevenue - $orgTaxTotal }}</td>
                         <td>{{ $orgTaxTotal }}</td>
-                        <td>{{ $commissionOnly }}</td>
+                        <td>{{ max(0, $totalGross - $ticketRevenue) }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -823,15 +663,13 @@
                     const ws1 = XLSX.utils.table_to_sheet(onlineTable);
                     XLSX.utils.book_append_sheet(wb, ws1, "Online Sales");
                 }
-
                 const resellerTable = document.getElementById('reseller-table-export');
                 if (resellerTable) {
                     const ws2 = XLSX.utils.table_to_sheet(resellerTable);
                     XLSX.utils.book_append_sheet(wb, ws2, "Reseller Sales");
                 }
-
                 XLSX.writeFile(wb, "Ticket_Report_{{ $event->slug }}_" + new Date().toISOString().split('T')[0] + ".xlsx");
             }
         </script>
     @endpush
-</x-layouts.admin>
+</x-layouts.organizer>
