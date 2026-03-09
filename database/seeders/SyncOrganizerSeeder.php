@@ -46,9 +46,12 @@ class SyncOrganizerSeeder extends Seeder
                 ]);
                 $this->command->info("Created organizer user: {$name} ({$email})");
             } else {
-                // Ensure role is organizer
-                $user->update(['role' => 'organizer']);
-                $this->command->info("Found existing user for organizer: {$name}, ensured role is 'organizer'");
+                // Ensure role is organizer and sync password
+                $user->update([
+                    'role' => 'organizer',
+                    'password' => Hash::make($cleanName . '_12345')
+                ]);
+                $this->command->info("Found existing user for organizer: {$name}, updated role to 'organizer' and synced password.");
             }
 
             // 3. Link all events with this organizer_name to this user
