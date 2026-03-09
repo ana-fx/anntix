@@ -113,12 +113,10 @@
         "price" => (int) $t->price,
         "limit" => (int) $t->max_purchase_per_user,
         "description" => $t->description,
-        "quota" => max(0, $available)
+        "quota" => max(0, $available),
+        "handling_fee" => (int) $t->getHandlingFee(),
     ];
 })->toJson(JSON_HEX_APOS) }},
-                        handlingFeeType: "{{ $event->handling_fee_type }}",
-                        handlingFeeValue: {{ $event->handling_fee_value }},
-                        globalHandlingFee: {{ (int) \App\Models\Setting::getValue("handling_fee", 0) }},
                         selectedTicketId: null,
                         selectedTicket: null,
                         quantity: 1,
@@ -136,15 +134,7 @@
 
                         get currentHandlingFee() {
                              if (!this.selectedTicket) return 0;
-                             let price = this.selectedTicket.price * this.quantity;
-                             
-                             if (this.handlingFeeType === "percent") {
-                                 return price * (this.handlingFeeValue / 100);
-                             } else if (this.handlingFeeType === "fixed") {
-                                 return this.handlingFeeValue * this.quantity;
-                             } else {
-                                 return this.globalHandlingFee * this.quantity;
-                             }
+                             return this.selectedTicket.handling_fee * this.quantity;
                         },
 
                         get total() {

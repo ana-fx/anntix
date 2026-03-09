@@ -36,6 +36,9 @@ class CheckoutController extends Controller
             }
         ]);
 
+        // Set the event relation on each ticket to avoid N+1 queries when computing fees
+        $event->tickets->each(fn($t) => $t->setRelation('event', $event));
+
         if ($event->tickets->isEmpty()) {
             return redirect()->route('events.show', $event)
                 ->with('error', 'No tickets are currently available for this event.');
@@ -83,9 +86,9 @@ class CheckoutController extends Controller
             ])->withInput();
         }
 
-        // Calculate per-unit handling fee
+        // Calculate per-unit handling fee (ticket-level > event-level > global)
         $unitPrice = $ticket->price;
-        $unitHandlingFee = (int) $event->getHandlingFee($unitPrice);
+        $unitHandlingFee = (int) $ticket->getHandlingFee();
 
         $totalPrice = ($unitPrice + $unitHandlingFee) * $validated['quantity'];
 

@@ -45,7 +45,8 @@ class EventController extends Controller
      */
     public function create()
     {
-        return view('admin.events.create');
+        $organizers = \App\Models\User::where('role', 'organizer')->get();
+        return view('admin.events.create', compact('organizers'));
     }
 
     /**
@@ -57,6 +58,7 @@ class EventController extends Controller
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'status' => 'required|string|in:draft,active,ended',
+            'organizer_id' => 'nullable|exists:users,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'required|string',
@@ -115,6 +117,10 @@ class EventController extends Controller
 
         if (!request()->has('is_online_sales_enabled')) {
             $validated['is_online_sales_enabled'] = 0;
+        }
+
+        if (empty($validated['organizer_id'])) {
+            $validated['organizer_id'] = null;
         }
 
         $event = Event::create($validated);
@@ -207,7 +213,8 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        return view('admin.events.edit', compact('event'));
+        $organizers = \App\Models\User::where('role', 'organizer')->get();
+        return view('admin.events.edit', compact('event', 'organizers'));
     }
 
     /**

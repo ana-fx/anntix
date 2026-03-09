@@ -46,6 +46,13 @@
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Profile</a>
                 @endif
 
+                @if(Auth::user()->role === 'organizer')
+                    <a href="{{ route('organizer.dashboard') }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Dashboard</a>
+                    <a href="{{ route('organizer.profile') }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Profile</a>
+                @endif
+
                 @if(Auth::user()->role === 'reseller')
                     <a href="{{ route('reseller.dashboard') }}"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Dashboard</a>

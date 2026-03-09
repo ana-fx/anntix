@@ -8,13 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IsOrganizer
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!\Illuminate\Support\Facades\Auth::check() || \Illuminate\Support\Facades\Auth::user()->role !== 'organizer') {
+            abort(403, 'Access denied. Organizer only.');
+        }
+
         return $next($request);
     }
 }

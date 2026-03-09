@@ -9,6 +9,7 @@ class Withdrawal extends Model
     protected $fillable = [
         'event_id',
         'amount',
+        'status',
         'reference',
         'note',
     ];

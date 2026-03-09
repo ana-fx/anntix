@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('reseller')
                 ->name('reseller.')
                 ->group(base_path('routes/reseller.php'));
+
+            Route::middleware('web')
+                ->prefix('organizer')
+                ->name('organizer.')
+                ->group(base_path('routes/organizer.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -31,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\IsAdmin::class,
             'reseller' => \App\Http\Middleware\IsReseller::class,
             'scanner' => \App\Http\Middleware\IsScanner::class,
+            'organizer' => \App\Http\Middleware\IsOrganizer::class,
         ]);
 
         // Add middleware to check if user is active on all auth routes

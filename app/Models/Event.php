@@ -25,6 +25,7 @@ class Event extends Model
     protected $fillable = [
         'name',
         'slug',
+        'organizer_id',
         'category',
         'status',
         'banner_path',
@@ -105,6 +106,11 @@ class Event extends Model
         return $this->hasMany(Withdrawal::class);
     }
 
+    public function organizer()
+    {
+        return $this->belongsTo(User::class, 'organizer_id');
+    }
+
     public function calculateSaldo()
     {
         // Use a fresh query directly on the tickets table to avoid any cached relationship data
@@ -162,8 +168,10 @@ class Event extends Model
     public function getTotalWithdrawnAttribute()
     {
         // Use a fresh query directly on the withdrawals table
+        // We include both 'approved' and 'pending' to prevent double-withdrawing the same funds
         return (float) (\Illuminate\Support\Facades\DB::table('withdrawals')
             ->where('event_id', $this->id)
+            ->whereIn('status', ['approved', 'pending'])
             ->sum('amount') ?: 0);
     }
 

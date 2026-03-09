@@ -81,6 +81,7 @@ return [
     'signed_in_as' => 'Signed in as',
     'admin_panel' => 'Admin Panel',
     'reseller_panel' => 'Reseller Panel',
+    'organizer_panel' => 'Organizer Panel',
     'scan_tickets' => 'Scan Tickets',
     'account' => 'Account',
 

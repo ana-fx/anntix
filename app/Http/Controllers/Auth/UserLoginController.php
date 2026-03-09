@@ -39,6 +39,10 @@ class UserLoginController extends Controller
                 return redirect()->route('reseller.dashboard');
             }
 
+            if ($user->role === 'organizer') {
+                return redirect()->route('organizer.dashboard');
+            }
+
             if (in_array($user->role, ['admin', 'super_admin'])) {
                 return redirect()->intended(route('admin.dashboard'));
             }

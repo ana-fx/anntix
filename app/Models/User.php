@@ -144,4 +144,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class, 'reseller_id');
     }
+
+    public function organizerEvents()
+    {
+        return $this->hasMany(Event::class, 'organizer_id');
+    }
 }

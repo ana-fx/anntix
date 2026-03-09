@@ -16,54 +16,86 @@
 
                 <div class="col-span-1 md:col-span-2 border-t border-gray-100 my-6"></div>
 
-                <div x-data="{ showFees: false }">
+                <div x-data="{ showFees: true }">
                     <button type="button" @click="showFees = !showFees" class="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-primary transition-colors mb-4">
                         <svg class="w-4 h-4 transition-transform duration-200" :class="showFees ? 'rotate-90' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
-                        Advanced: Custom Organizer Fees (Optional)
+                        Fees & Commission
                     </button>
 
                     <div x-show="showFees" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
                         <div class="md:col-span-2">
-                            <p class="text-xs text-gray-500 mb-4 flex items-center gap-2">
+                            <p class="text-xs text-gray-500 mb-2 flex items-center gap-2">
                                 <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Leave clear/empty to use Event Default settings. Only fill this if you want to override fees for this specific ticket.
+                                Leave blank to use the platform default.
                             </p>
                         </div>
+
+                        <!-- Reseller Fee -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Type</label>
+                            <select name="reseller_fee_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
+                                <option value="">Use Default</option>
+                                <option value="fixed" {{ old('reseller_fee_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
+                                <option value="percent" {{ old('reseller_fee_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Value</label>
+                            <input type="number" name="reseller_fee_value" value="{{ old('reseller_fee_value') }}" min="0" step="0.01" placeholder="Leave empty for default" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                        </div>
+
+                        <div class="md:col-span-2 border-t border-gray-200"></div>
 
                         <!-- Online Fee -->
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Online) Type</label>
                             <select name="organizer_fee_online_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
-                                <option value="">Use Event Default</option>
+                                <option value="">Use Default</option>
                                 <option value="fixed" {{ old('organizer_fee_online_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
                                 <option value="percent" {{ old('organizer_fee_online_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
                             </select>
                             @error('organizer_fee_online_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
-
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Online) Value</label>
                             <input type="number" name="organizer_fee_online" value="{{ old('organizer_fee_online') }}" min="0" step="0.01" placeholder="Leave empty for default" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                             @error('organizer_fee_online') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <!-- Reseller Fee -->
+                        <div class="md:col-span-2 border-t border-gray-200"></div>
+
+                        <!-- Reseller Organizer Fee -->
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Reseller) Type</label>
                             <select name="organizer_fee_reseller_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
-                                <option value="">Use Event Default</option>
+                                <option value="">Use Default</option>
                                 <option value="fixed" {{ old('organizer_fee_reseller_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
                                 <option value="percent" {{ old('organizer_fee_reseller_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
                             </select>
                             @error('organizer_fee_reseller_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
-
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Reseller) Value</label>
                             <input type="number" name="organizer_fee_reseller" value="{{ old('organizer_fee_reseller') }}" min="0" step="0.01" placeholder="Leave empty for default" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                             @error('organizer_fee_reseller') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div class="md:col-span-2 border-t border-gray-200"></div>
+
+                        <!-- Handling Fee -->
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Handling Fee Type</label>
+                            <select name="handling_fee_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
+                                <option value="">Use Default</option>
+                                <option value="fixed" {{ old('handling_fee_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
+                                <option value="percent" {{ old('handling_fee_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Handling Fee Value</label>
+                            <input type="number" name="handling_fee_value" value="{{ old('handling_fee_value') }}" min="0" step="0.01" placeholder="Leave empty for default" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                         </div>
                     </div>
                 </div>

@@ -49,9 +49,9 @@ class PaymentController extends Controller
         \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
         \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
 
-        // Fees from Event Settings (or Global fallback)
+        // Fees from Ticket Settings (ticket-level > event-level > global fallback)
         $unitPrice = $transaction->ticket->price;
-        $handlingFeePerUnit = (int) $transaction->event->getHandlingFee($unitPrice);
+        $handlingFeePerUnit = (int) $transaction->ticket->getHandlingFee();
 
         $subtotal = $unitPrice * $transaction->quantity;
         $baseTotal = $subtotal + ($handlingFeePerUnit * $transaction->quantity);

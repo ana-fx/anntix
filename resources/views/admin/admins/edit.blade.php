@@ -70,6 +70,7 @@
                         @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
+
                     <div class="md:col-span-1">
                         <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                         <input type="text" name="phone" id="phone" value="{{ old('phone', $admin->phone) }}"

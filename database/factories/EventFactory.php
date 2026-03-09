@@ -22,6 +22,7 @@ class EventFactory extends Factory
         return [
             'name' => $name,
             'slug' => Str::slug($name),
+            'organizer_id' => null,
             'category' => $this->faker->randomElement(['Music', 'Sports', 'Conference', 'Workshop', 'Festival']),
             'status' => $this->faker->randomElement(['active', 'draft']),
             'banner_path' => 'events/banners/dummy.jpg',

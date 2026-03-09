@@ -24,12 +24,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('events.tickets-report', \App\Http\Controllers\Admin\TicketController::class)
         ->shallow()
         ->parameters(['tickets-report' => 'ticket']);
+    Route::post('tickets/{ticket}/toggle-active', [\App\Http\Controllers\Admin\TicketController::class, 'toggleActive'])->name('tickets.toggle-active');
     Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
-    Route::get('events/{event}/withdrawals/create', [\App\Http\Controllers\Admin\WithdrawalController::class, 'create'])->name('events.withdrawals.create');
-    Route::post('events/{event}/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'store'])->name('events.withdrawals.store');
-    Route::get('events/{event}/withdrawals/{withdrawal}/edit', [\App\Http\Controllers\Admin\WithdrawalController::class, 'edit'])->name('events.withdrawals.edit');
-    Route::put('events/{event}/withdrawals/{withdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'update'])->name('events.withdrawals.update');
-    Route::delete('events/{event}/withdrawals/{withdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'destroy'])->name('events.withdrawals.destroy');
+
+    // Global Withdrawals
+    Route::resource('withdrawals', \App\Http\Controllers\Admin\WithdrawalController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    Route::post('withdrawals/{withdrawal}/approve', [\App\Http\Controllers\Admin\WithdrawalController::class, 'approve'])->name('withdrawals.approve');
+    Route::post('withdrawals/{withdrawal}/reject', [\App\Http\Controllers\Admin\WithdrawalController::class, 'reject'])->name('withdrawals.reject');
+
+    // Event Specific Withdrawals (Backward compatibility/Deep links)
+    Route::get('events/{event}/withdrawals/create', [\App\Http\Controllers\Admin\WithdrawalController::class, 'create'])->name('events.withdrawals.create_for_event');
+    Route::post('events/{event}/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'store'])->name('events.withdrawals.store_for_event');
 
     // Report
     Route::get('reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
@@ -47,6 +52,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Admins
     Route::resource('admins', \App\Http\Controllers\Admin\AdminUserController::class)->except(['show']);
+
+    // Organizers
+    Route::resource('organizers', \App\Http\Controllers\Admin\OrganizerUserController::class)->except(['show']);
 
     // Resellers
     Route::resource('resellers', \App\Http\Controllers\Admin\ResellerController::class)->except(['show']);

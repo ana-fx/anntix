@@ -27,7 +27,7 @@ return [
     'cancel' => 'Batal',
     'close' => 'Tutup',
 
-    // Filters  
+    // Filters
     'filters' => 'Filter',
     'keyword' => 'Kata kunci...',
     'all_categories' => 'Semua Kategori',
@@ -82,6 +82,7 @@ return [
     'signed_in_as' => 'Masuk sebagai',
     'admin_panel' => 'Panel Admin',
     'reseller_panel' => 'Panel Reseller',
+    'organizer_panel' => 'Panel Penyelenggara',
     'scan_tickets' => 'Scan Tiket',
     'account' => 'Akun',
 

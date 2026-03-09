@@ -2,24 +2,24 @@
     <div class="max-w-2xl mx-auto space-y-8 pb-12">
         <!-- Back Link -->
         <div>
-            <a href="{{ route('admin.events.withdrawals.create', $event) }}" class="inline-flex items-center text-sm font-bold text-gray-400 hover:text-primary transition-colors gap-2">
+            <a href="{{ route('admin.withdrawals.index') }}" class="inline-flex items-center text-sm font-bold text-gray-400 hover:text-primary transition-colors gap-2">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Back to Withdrawal History
+                Back to All Withdrawals
             </a>
         </div>
 
         <!-- Main Card -->
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-            <form action="{{ route('admin.events.withdrawals.update', [$event, $withdrawal]) }}" method="POST">
+            <form action="{{ route('admin.withdrawals.update', $withdrawal) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="px-8 pt-8 pb-6">
                     <div class="flex items-center justify-between mb-6">
                         <div>
                             <h3 class="text-2xl font-black text-dark tracking-tight">Edit Withdrawal</h3>
-                            <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Ref: {{ $withdrawal->reference }}</p>
+                            <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Ref: {{ $withdrawal->event->name }} ({{ $withdrawal->reference }})</p>
                         </div>
                     </div>
 
@@ -36,7 +36,7 @@
                                 <span class="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Rp</span>
                                 <input type="number" name="amount" required min="1" max="{{ $availableSaldo }}" step="0.01"
                                        value="{{ $withdrawal->amount }}"
-                                       class="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-bold text-lg placeholder-gray-300 transition-all"
+                                       class="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-black text-lg placeholder-gray-300 transition-all"
                                        placeholder="0">
                             </div>
                             @error('amount')
@@ -56,11 +56,12 @@
                     </div>
                 </div>
                 <div class="px-8 pb-8">
-                    <button type="submit" class="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm hover:bg-dark transition-all shadow-xl shadow-primary/20">
-                        Update Withdrawal
+                    <button type="submit" class="w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-dark transition-all shadow-xl shadow-primary/20">
+                        Update Withdrawal Record
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </x-layouts.admin>
+

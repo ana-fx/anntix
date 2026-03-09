@@ -105,16 +105,25 @@
                 </a>
             </div>
         </div>
+        <!-- Withdrawals -->
+        <a href="{{ route('admin.withdrawals.index') }}"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.withdrawals.*') ? 'bg-white/10 shadow-inner border border-white/10 font-semibold text-white' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+            <svg class="w-5 h-5 {{ request()->routeIs('admin.withdrawals.*') ? 'opacity-100' : 'opacity-70' }}"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Withdrawals
+        </a>
 
 
 
         <!-- User Management (Dropdown) -->
         <div
-            x-data="{ open: {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.index') ? 'true' : 'false' }} }">
+            x-data="{ open: {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.organizers.*') || request()->routeIs('admin.resellers.index') ? 'true' : 'false' }} }">
             <button @click="open = !open"
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.organizers.*') || request()->routeIs('admin.resellers.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.resellers.index') ? 'opacity-100' : 'opacity-70' }}"
+                    <svg class="w-5 h-5 {{ request()->routeIs('admin.scanners.*') || request()->routeIs('admin.admins.*') || request()->routeIs('admin.organizers.*') || request()->routeIs('admin.resellers.index') ? 'opacity-100' : 'opacity-70' }}"
                         viewBox="0 0 20 20" fill="currentColor">
                         <path
                             d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
@@ -139,6 +148,14 @@
                     <span
                         class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.admins.*') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     System Admins
+                </a>
+
+                <!-- Organizers -->
+                <a href="{{ route('admin.organizers.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.organizers.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.organizers.*') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    Organizers
                 </a>
 
                 <!-- Scanners -->

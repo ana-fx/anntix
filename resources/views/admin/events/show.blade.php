@@ -189,21 +189,10 @@
                                                     </svg>
                                                 </a>
 
-                                                <form action="{{ route('admin.tickets-report.update', $ticket) }}"
+                                                <form action="{{ route('admin.tickets.toggle-active', $ticket) }}"
                                                     method="POST" class="inline-block">
                                                     @csrf
-                                                    @method('PUT')
-                                                    <!-- Preserve existing values -->
-                                                    <input type="hidden" name="name" value="{{ $ticket->name }}">
-                                                    <input type="hidden" name="price" value="{{ $ticket->price }}">
-                                                    <input type="hidden" name="quota" value="{{ $ticket->quota }}">
-                                                    <input type="hidden" name="max_purchase_per_user" value="{{ $ticket->max_purchase_per_user }}">
-                                                    <input type="hidden" name="start_date" value="{{ $ticket->start_date->format('Y-m-d H:i') }}">
-                                                    <input type="hidden" name="end_date" value="{{ $ticket->end_date->format('Y-m-d H:i') }}">
-                                                    <input type="hidden" name="description" value="{{ $ticket->description }}">
-                                                    
                                                     @if($ticket->is_active)
-                                                        <!-- To Disable: Do NOT include 'is_active' input so request->has('is_active') is false -->
                                                         <button type="submit"
                                                             class="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all"
                                                             title="Disable Ticket">
@@ -212,8 +201,6 @@
                                                             </svg>
                                                         </button>
                                                     @else
-                                                        <!-- To Enable: Include 'is_active' input so request->has('is_active') is true -->
-                                                        <input type="hidden" name="is_active" value="1">
                                                         <button type="submit"
                                                             class="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
                                                             title="Enable Ticket">
