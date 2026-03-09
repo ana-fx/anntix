@@ -40,7 +40,7 @@ class SyncOrganizerSeeder extends Seeder
                 $user = User::create([
                     'name' => $name,
                     'email' => $email,
-                    'password' => Hash::make('password123'),
+                    'password' => Hash::make($cleanName . '_12345'),
                     'role' => 'organizer',
                     'email_verified_at' => now(),
                 ]);
