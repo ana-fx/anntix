@@ -52,6 +52,7 @@ class User extends Authenticatable
         'address',
         'bio',
         'balance',
+        'created_by',
     ];
 
     /**
@@ -77,6 +78,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'created_by' => 'integer',
         ];
     }
 
@@ -148,5 +150,15 @@ class User extends Authenticatable
     public function organizerEvents()
     {
         return $this->hasMany(Event::class, 'organizer_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function createdUsers()
+    {
+        return $this->hasMany(User::class, 'created_by');
     }
 }

@@ -6,6 +6,8 @@ use App\Http\Controllers\Organizer\EventController;
 use App\Http\Controllers\Organizer\TicketController;
 use App\Http\Controllers\Organizer\ReportController;
 use App\Http\Controllers\Organizer\ProfileController;
+use App\Http\Controllers\Organizer\ResellerController;
+use App\Http\Controllers\Organizer\ResellerManagementController;
 
 Route::middleware(['auth', 'organizer'])->group(function () {
 
@@ -29,6 +31,11 @@ Route::middleware(['auth', 'organizer'])->group(function () {
         Route::get('transactions', [ReportController::class, 'transactions'])->name('transactions');
         Route::get('transactions/{transaction}', [ReportController::class, 'showTransaction'])->name('show');
     });
+
+    // Resellers
+    Route::resource('resellers', ResellerController::class);
+    Route::post('resellers/{reseller}/toggle-active', [ResellerController::class, 'toggleActive'])->name('resellers.toggle-active');
+    Route::get('reseller-management', [ResellerManagementController::class, 'index'])->name('reseller-management.index');
 
     // Profile
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');

@@ -20,12 +20,14 @@
                 @if(isset($global_settings['site_logo_white']))
                     <img src="{{ asset('storage/' . $global_settings['site_logo_white']) }}" class="h-8 w-auto">
                 @elseif(isset($global_settings['site_logo']))
-                    <img src="{{ asset('storage/' . $global_settings['site_logo']) }}" class="h-8 w-auto brightness-0 invert">
+                    <img src="{{ asset('storage/' . $global_settings['site_logo']) }}"
+                        class="h-8 w-auto brightness-0 invert">
                 @else
                     <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg">
                         <div class="w-2.5 h-2.5 bg-primary rounded-full"></div>
                     </div>
-                    <span class="text-lg font-bold tracking-wider uppercase">{{ $global_settings['site_name'] ?? 'ANTIX' }}</span>
+                    <span
+                        class="text-lg font-bold tracking-wider uppercase">{{ $global_settings['site_name'] ?? 'ANTIX' }}</span>
                 @endif
             </a>
         </div>
@@ -51,7 +53,8 @@
         </a>
 
         <!-- My Events (Dropdown) -->
-        <div x-data="{ open: {{ request()->routeIs('organizer.events.*') || request()->routeIs('organizer.scanners.*') || request()->routeIs('organizer.resellers.*') || request()->routeIs('organizer.tickets.*') ? 'true' : 'false' }} }">
+        <div
+            x-data="{ open: {{ request()->routeIs('organizer.events.*') || request()->routeIs('organizer.scanners.*') || request()->routeIs('organizer.resellers.*') || request()->routeIs('organizer.tickets.*') ? 'true' : 'false' }} }">
             <button @click="open = !open"
                 class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('organizer.events.*') || request()->routeIs('organizer.scanners.*') || request()->routeIs('organizer.resellers.*') || request()->routeIs('organizer.tickets.*') ? 'bg-white/10 text-white font-semibold shadow-inner border border-white/10' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
                 <div class="flex items-center gap-3">
@@ -76,12 +79,14 @@
                 x-transition:leave-end="transform opacity-0 scale-95" class="pl-4 space-y-1 mt-1">
                 <a href="{{ route('organizer.events.index') }}"
                     class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('organizer.events.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
-                    <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('organizer.events.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('organizer.events.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     Event
                 </a>
                 <a href="{{ route('organizer.tickets.index') }}"
                     class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('organizer.tickets.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
-                    <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('organizer.tickets.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('organizer.tickets.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     Ticket
                 </a>
             </div>
@@ -92,10 +97,51 @@
             <svg class="w-5 h-5 {{ request()->routeIs('organizer.withdrawals.*') ? 'opacity-100' : 'opacity-70' }}"
                 viewBox="0 0 20 20" fill="currentColor">
                 <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+                <path fill-rule="evenodd"
+                    d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                    clip-rule="evenodd" />
             </svg>
             Withdrawals
         </a>
+
+        <!-- Reseller (Dropdown) -->
+        <div
+            x-data="{ open: {{ request()->routeIs('organizer.resellers.*') || request()->routeIs('organizer.reseller-management.*') ? 'true' : 'false' }} }">
+            <button @click="open = !open"
+                class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-colors {{ request()->routeIs('organizer.resellers.*') || request()->routeIs('organizer.reseller-management.*') ? 'bg-white/10 text-white font-semibold shadow-inner border border-white/10' : 'text-teal-50 hover:bg-white/10 font-medium' }}">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 {{ request()->routeIs('organizer.resellers.*') || request()->routeIs('organizer.reseller-management.*') ? 'opacity-100' : 'opacity-70' }}"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Reseller
+                </div>
+                <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95" class="pl-4 space-y-1 mt-1">
+                <a href="{{ route('organizer.resellers.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('organizer.resellers.*') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('organizer.resellers.*') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    Reseller Account
+                </a>
+                <a href="{{ route('organizer.reseller-management.index') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('organizer.reseller-management.index') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('organizer.reseller-management.index') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    Reseller Management
+                </a>
+            </div>
+        </div>
 
         <!-- Reports (Dropdown) -->
         <div x-data="{ open: {{ request()->routeIs('organizer.reports.*') ? 'true' : 'false' }} }">

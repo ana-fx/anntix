@@ -226,6 +226,7 @@ class EventController extends Controller
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'status' => 'required|string|in:draft,active,ended',
+            'organizer_id' => 'nullable|exists:users,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'description' => 'required|string',
@@ -290,6 +291,10 @@ class EventController extends Controller
         $validated['organizer_fee_reseller'] = $validated['organizer_fee_reseller'] ?? 0;
         $validated['handling_fee_type'] = $validated['handling_fee_type'] ?? 'default';
         $validated['handling_fee_value'] = $validated['handling_fee_value'] ?? 0;
+
+        if (empty($validated['organizer_id'])) {
+            $validated['organizer_id'] = null;
+        }
 
         $event->update($validated);
 
