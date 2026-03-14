@@ -49,6 +49,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Scanners
     Route::resource('scanners', \App\Http\Controllers\Admin\ScannerController::class)->except(['show']);
     Route::post('scanners/{scanner}/toggle-active', [\App\Http\Controllers\Admin\ScannerController::class, 'toggleActive'])->name('scanners.toggle-active');
+    Route::get('scanner-management', [\App\Http\Controllers\Admin\ScannerManagementController::class, 'index'])->name('scanner-management.index');
+    Route::get('scanner-management/{scanner}', [\App\Http\Controllers\Admin\ScannerManagementController::class, 'show'])->name('scanner-management.show');
 
     // Admins
     Route::resource('admins', \App\Http\Controllers\Admin\AdminUserController::class)->except(['show']);

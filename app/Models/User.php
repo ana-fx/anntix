@@ -161,4 +161,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'created_by');
     }
+
+    public function scannerScans()
+    {
+        return $this->hasMany(TransactionScan::class, 'scanned_by');
+    }
 }
