@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\Scanner\ScanController::class, 'index'])->name('index');
         Route::post('/verify', [\App\Http\Controllers\Scanner\ScanController::class, 'verify'])->name('verify');
         Route::post('/redeem', [\App\Http\Controllers\Scanner\ScanController::class, 'redeem'])->name('redeem');
+        Route::get('/history', [\App\Http\Controllers\Scanner\ScanController::class, 'history'])->name('history');
     });
 });
 

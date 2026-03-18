@@ -229,29 +229,56 @@
                 <div class="h-px bg-gray-100 my-8"></div>
 
                 @auth
-                    <div class="flex items-center gap-4 mb-8">
+                    <div class="flex items-center gap-4 mb-4">
                         <div
-                            class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                            class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black text-sm">
                             {{ Auth::user()->initials() }}
                         </div>
                         <div>
-                            <p class="text-lg font-black text-dark">{{ Auth::user()->name }}</p>
-                            <p class="text-xs font-medium text-gray-400">{{ Auth::user()->email }}</p>
+                            <p class="text-sm font-black text-dark">{{ Auth::user()->name }}</p>
+                            <p class="text-[10px] font-medium text-gray-400">{{ Auth::user()->email }}</p>
                         </div>
                     </div>
-                @endauth
 
-                @guest
-                    <a href="{{ route('login') }}"
-                        class="block w-full py-5 bg-dark text-white text-center font-black rounded-[1.5rem] tracking-widest text-sm uppercase transition-all hover:bg-primary">
-                        {{ __('common.login') }}
-                    </a>
-                @else
+                    <!-- Role-based Dashboards -->
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'super_admin')
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="block w-full py-5 bg-primary text-white text-center font-black rounded-[2rem] tracking-[0.2em] text-[10px] uppercase transition-all shadow-xl shadow-primary/20 mb-3">
+                            {{ __('common.admin_panel') }}
+                        </a>
+                    @endif
+
+                    @if(Auth::user()->role === 'scanner')
+                        <a href="{{ route('scanner.index') }}"
+                            class="block w-full py-5 bg-primary text-white text-center font-black rounded-[2rem] tracking-[0.2em] text-[10px] uppercase transition-all shadow-xl shadow-primary/20 mb-3">
+                            {{ __('common.scan_tickets') }}
+                        </a>
+                    @endif
+
+                    @if(Auth::user()->role === 'organizer')
+                        <a href="{{ route('organizer.dashboard') }}"
+                            class="block w-full py-5 bg-primary text-white text-center font-black rounded-[2rem] tracking-[0.2em] text-[10px] uppercase transition-all shadow-xl shadow-primary/20 mb-3">
+                            {{ __('common.organizer_panel') }}
+                        </a>
+                    @endif
+
+                    @if(Auth::user()->role === 'reseller')
+                        <a href="{{ route('reseller.dashboard') }}"
+                            class="block w-full py-5 bg-primary text-white text-center font-black rounded-[2rem] tracking-[0.2em] text-[10px] uppercase transition-all shadow-xl shadow-primary/20 mb-3">
+                            {{ __('common.reseller_panel') }}
+                        </a>
+                    @endif
+
                     <a href="{{ route('contact.index') }}"
-                        class="block w-full py-5 bg-gray-50 text-dark text-center font-black rounded-[1.5rem] tracking-widest text-sm uppercase">
+                        class="block w-full py-5 bg-gray-50 text-dark text-center font-black rounded-[2rem] tracking-[0.2em] text-[10px] uppercase">
                         {{ __('common.contact') }}
                     </a>
-                @endguest
+                @else
+                    <a href="{{ route('login') }}"
+                        class="block w-full py-5 bg-dark text-white text-center font-black rounded-[2rem] tracking-[0.2em] text-[10px] uppercase transition-all hover:bg-primary shadow-xl">
+                        {{ __('common.login') }}
+                    </a>
+                @endauth
 
                 <!-- Language Switcher for Mobile -->
                 <div class="grid grid-cols-2 gap-3 mt-6">

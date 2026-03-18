@@ -11,55 +11,34 @@ class ScanController extends Controller
 {
     public function index()
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        // Get events assigned to this scanner
-        $events = $user->scannedEvents()
-            ->where('end_date', '>=', now())
-            ->get();
-
-        return view('scanner.index', compact('events'));
+        return view('scanner.index');
     }
 
     public function verify(Request $request)
     {
         $request->validate([
             'code' => 'required|string',
-            'event_id' => 'required|exists:events,id',
         ]);
 
         $code = $request->code;
 
         // Extract code from URL if it's a full URL
         if (filter_var($code, FILTER_VALIDATE_URL)) {
-            // Case 1: /payment/success/{code}
             if (str_contains($code, '/payment/success/')) {
                 $segments = explode('/', parse_url($code, PHP_URL_PATH));
                 $code = end($segments);
             }
-            // Case 2: /payment/{code} if ever used directly
             elseif (str_contains($code, '/payment/')) {
                 $segments = explode('/', parse_url($code, PHP_URL_PATH));
                 $code = end($segments);
             }
         }
 
-        $eventId = $request->event_id;
-
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Verify the scanner is assigned to this event
-        if (!$user->scannedEvents()->where('events.id', $eventId)->exists()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to scan for this event.'
-            ], 403);
-        }
-
         // Check withTrashed to find voided/deleted tickets
-        $transaction = Transaction::where('code', $code)->withTrashed()->first();
+        $transaction = Transaction::where('code', $code)->withTrashed()->with('ticket.event')->first();
 
         if (!$transaction) {
             return response()->json([
@@ -76,14 +55,15 @@ class ScanController extends Controller
             ], 400);
         }
 
-        // Check if transaction belongs to the event
-        if ($transaction->ticket->event_id != $eventId) {
+        $eventId = $transaction->ticket->event_id;
+
+        // Verify the scanner is assigned to THIS ticket's event
+        if (!$user->scannedEvents()->where('events.id', $eventId)->exists()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'This ticket does not belong to the selected event.'
-            ], 400);
+                'message' => 'You are not authorized to scan for this event: ' . $transaction->ticket->event->name
+            ], 403);
         }
-
 
 
         if ($transaction->status !== 'paid') {
@@ -125,6 +105,7 @@ class ScanController extends Controller
                 'city' => $transaction->city,
                 'nik' => $transaction->nik,
                 'gender' => $transaction->gender,
+                'event_name' => $transaction->ticket->event->name,
                 'ticket_type' => $transaction->ticket->name,
                 'quantity' => $transaction->quantity,
                 'redeemed_at' => $latestScan ? $latestScan->created_at->format('d M Y, H:i:s') : null,
@@ -139,29 +120,20 @@ class ScanController extends Controller
     {
         $request->validate([
             'transaction_id' => 'required|exists:transactions,id',
-            'event_id' => 'required|exists:events,id',
         ]);
 
         $transaction = Transaction::findOrFail($request->transaction_id);
-        $eventId = $request->event_id;
+        $eventId = $transaction->ticket->event_id;
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Verify scanner authorization
+        // Verify scanner authorization for this event
         if (!$user->scannedEvents()->where('events.id', $eventId)->exists()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Unauthorized.'
+                'message' => 'Unauthorized for this event.'
             ], 403);
-        }
-
-        // Check if transaction belongs to the event
-        if ($transaction->ticket->event_id != $eventId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid event.'
-            ], 400);
         }
 
         // Check max scans
@@ -205,5 +177,22 @@ class ScanController extends Controller
                 'max_scans' => $maxScans,
             ]
         ]);
+    }
+
+    public function history()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $todayScansCount = $user->scannerScans()
+            ->whereDate('created_at', now()->toDateString())
+            ->count();
+
+        $scans = $user->scannerScans()
+            ->with(['transaction.ticket.event'])
+            ->latest()
+            ->paginate(20);
+
+        return view('scanner.history', compact('scans', 'todayScansCount'));
     }
 }

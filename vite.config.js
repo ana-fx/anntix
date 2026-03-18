@@ -13,10 +13,7 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
-        host: '127.0.0.1',
-        hmr: {
-            host: 'localhost',
-        },
+        host: true,
         watch: {
             usePolling: true,
         },

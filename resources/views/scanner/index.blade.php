@@ -17,10 +17,10 @@
                 </button>
 
                 <div class="hidden sm:block">
-                    <h1 class="text-lg font-extrabold text-slate-900 tracking-tight leading-tight">Entry Scanner</h1>
+                    <h1 class="text-sm font-bold text-slate-900 uppercase tracking-widest leading-tight">Entry Scanner</h1>
                     <div class="flex items-center gap-1.5 mt-0.5">
-                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">System
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">System
                             Online</span>
                     </div>
                 </div>
@@ -49,68 +49,11 @@
             </div>
         </header>
 
-        <!-- Form Control -->
-        <div class="p-6 space-y-4">
-            <div class="space-y-1.5">
-                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Current
-                    Event</label>
-                <div class="relative" x-data="{ open: false }">
-                    <button type="button" @click="open = !open" @click.away="open = false"
-                        class="w-full flex items-center justify-between bg-white border border-slate-200 rounded-2xl py-4 px-6 text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all shadow-sm">
-                        <span
-                            x-text="selectedEventId ? document.querySelector('[data-event-id=\''+selectedEventId+'\']')?.innerText : 'Select an Event...'"
-                            :class="!selectedEventId ? 'text-slate-400' : 'text-slate-900'"></span>
-                        <svg class="w-5 h-5 text-slate-400 transition-transform duration-200"
-                            :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
-                        x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
-                        class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-3xl border border-slate-100 overflow-hidden">
-                        <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select Event
-                                to Scan</span>
-                        </div>
-                        <div class="py-2 max-h-60 overflow-y-auto">
-                            <button type="button" @click="selectedEventId = ''; stopScanner(); open = false"
-                                class="w-full px-6 py-3.5 text-left hover:bg-slate-50 text-sm font-bold text-slate-400">None
-                                / Stop Scanner</button>
-                            @foreach($events as $event)
-                                <button type="button" data-event-id="{{ $event->id }}"
-                                    @click="selectedEventId = '{{ $event->id }}'; stopScanner(); open = false"
-                                    class="w-full px-6 py-3.5 text-left hover:bg-primary/5 text-sm font-bold text-slate-900 border-l-4 border-transparent hover:border-primary transition-all">
-                                    {{ $event->name }}
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Scanning Hub -->
-        <main class="flex-1 px-6 flex flex-col gap-6 min-h-0">
-
-            <!-- Idle State -->
-            <div x-show="!selectedEventId"
-                class="flex-1 flex flex-col items-center justify-center text-center p-8 bg-white/50 border-2 border-dashed border-slate-200 rounded-[2.5rem]">
-                <div
-                    class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center border border-slate-100 shadow-sm mb-6">
-                    <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 17h.01M8 11h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-8a2 2 0 012-2z" />
-                    </svg>
-                </div>
-                <h2 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-1">Authorization Required</h2>
-                <p class="text-xs text-slate-400 font-medium max-w-[180px]">Choose an active event from the list above
-                    to start scanning.</p>
-            </div>
+        <main class="flex-1 px-6 flex flex-col gap-6 min-h-0 mt-6 pb-24">
 
             <!-- Active Scanning State -->
-            <div x-show="selectedEventId" class="flex-1 flex flex-col gap-6 min-h-0" x-transition>
+            <div class="flex-1 flex flex-col gap-6 min-h-0" x-transition>
 
                 <!-- Viewport Container -->
                 <div
@@ -142,7 +85,7 @@
                             <input type="text" x-model="manualCode" placeholder="Reference ID"
                                 class="w-full border-b-4 border-slate-100 py-4 text-center text-2xl font-black text-slate-900 focus:outline-none focus:border-primary transition-all uppercase placeholder:text-slate-100">
                             <div class="grid grid-cols-2 gap-4">
-                                <button type="button" @click="isManual = false; if(selectedEventId) initScanner()"
+                                <button type="button" @click="isManual = false; initScanner()"
                                     class="py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Cancel</button>
                                 <button type="button" @click="verifyCode(manualCode)"
                                     class="py-4 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20">Check</button>
@@ -341,7 +284,6 @@
         <script>
             function scannerApp() {
                 return {
-                    selectedEventId: '',
                     manualCode: '',
                     isScanning: false,
                     isManual: false,
@@ -350,6 +292,7 @@
 
                     async initScanner() {
                         const reader = document.getElementById('reader');
+                        if (!reader) return;
                         this.html5QrCode = new Html5Qrcode("reader");
                         const config = {
                             fps: 20,
@@ -367,7 +310,8 @@
                             this.isScanning = true;
                             this.isManual = false;
                         } catch (err) {
-                            alert("Camera Access Denied");
+                            console.error(err);
+                            // alert("Camera Access Denied or Reader Element Missing");
                         }
                     },
 
@@ -381,7 +325,6 @@
                     toggleScanner() {
                         if (this.isScanning) this.stopScanner();
                         else {
-                            if (!this.selectedEventId) return alert('Select an event');
                             this.initScanner();
                         }
                     },
@@ -404,7 +347,7 @@
                             const response = await fetch("{{ route('scanner.verify') }}", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                                body: JSON.stringify({ code: code, event_id: this.selectedEventId })
+                                body: JSON.stringify({ code: code })
                             });
                             this.scanResult = await response.json();
                             if (navigator.vibrate) navigator.vibrate(this.scanResult.status === 'success' ? 100 : [100, 100]);
@@ -421,8 +364,8 @@
                                 method: "POST",
                                 headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                                 body: JSON.stringify({
-                                    transaction_id: this.scanResult.data.transaction_id,
-                                    event_id: this.selectedEventId
+                                    transaction_id: this.scanResult.data.transaction_id
+                                    // event_id is no longer needed
                                 })
                             });
                             const result = await response.json();
@@ -447,7 +390,7 @@
                         this.scanResult = null;
                         this.manualCode = '';
                         this.isManual = false;
-                        if (this.selectedEventId) this.initScanner();
+                        this.initScanner();
                     }
                 }
             }

@@ -115,6 +115,29 @@ class ReportController extends Controller
         return view('admin.reports.transactions', compact('transactions', 'handlingFeeValue'));
     }
 
+    public function voidedTransactions(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = Transaction::onlyTrashed()
+            ->with(['event:id,name', 'ticket:id,name,price', 'logs' => function ($q) {
+                $q->where('action', 'void_transaction')->latest();
+            }])
+            ->latest('deleted_at');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $transactions = $query->paginate(15)->withQueryString();
+
+        return view('admin.reports.voided-transactions', compact('transactions'));
+    }
+
     public function showTransaction(Transaction $transaction)
     {
         $transaction->load(['event', 'ticket', 'logs.user', 'scans.scanner']);

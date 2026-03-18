@@ -103,6 +103,13 @@
                         class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.reports.scanner') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
                     Scanner
                 </a>
+
+                <a href="{{ route('admin.reports.voided-transactions') }}"
+                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors {{ request()->routeIs('admin.reports.voided-transactions') ? 'bg-white/10 text-white font-semibold' : 'text-teal-100 hover:text-white hover:bg-white/5' }}">
+                    <span
+                        class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.reports.voided-transactions') ? 'bg-white' : 'bg-teal-300/50' }}"></span>
+                    Voided Transactions
+                </a>
             </div>
         </div>
         <!-- Withdrawals -->

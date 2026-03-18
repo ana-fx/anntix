@@ -16,10 +16,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Force HTTPS for URL generation when behind proxy (like ngrok)
-        if (request()->header('X-Forwarded-Proto') === 'https' || request()->isSecure()) {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
-        }
+        // HTTPS handled at proxy level or not needed for offline local IP dev
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
                 $settings = \App\Models\Setting::all()->pluck('value', 'key')->toArray();
