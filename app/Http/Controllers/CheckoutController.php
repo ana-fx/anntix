@@ -12,6 +12,11 @@ class CheckoutController extends Controller
 {
     public function create(Event $event)
     {
+        if (\App\Models\Setting::getValue('local_server_mode', '0') === '1') {
+            return redirect()->route('events.show', $event)
+                ->with('error', 'Online ticket sales are temporarily paused due to Local Server synchronization.');
+        }
+        
         if (!$event->is_online_sales_enabled) {
             return redirect()->route('events.show', $event)
                 ->with('error', 'Online ticket sales are currently disabled for this event.');
@@ -37,7 +42,7 @@ class CheckoutController extends Controller
         ]);
 
         // Set the event relation on each ticket to avoid N+1 queries when computing fees
-        $event->tickets->each(fn($t) => $t->setRelation('event', $event));
+        $event->tickets->each(fn(\App\Models\Ticket $t) => $t->setRelation('event', $event));
 
         if ($event->tickets->isEmpty()) {
             return redirect()->route('events.show', $event)
@@ -49,6 +54,11 @@ class CheckoutController extends Controller
 
     public function store(Request $request, Event $event)
     {
+        if (\App\Models\Setting::getValue('local_server_mode', '0') === '1') {
+            return redirect()->route('events.show', $event)
+                ->with('error', 'Online ticket sales are temporarily paused due to Local Server synchronization.');
+        }
+
         if (!$event->is_online_sales_enabled) {
             return redirect()->route('events.show', $event)
                 ->with('error', 'Online ticket sales are currently disabled for this event.');
@@ -86,11 +96,14 @@ class CheckoutController extends Controller
             ])->withInput();
         }
 
-        // Calculate per-unit handling fee (ticket-level > event-level > global)
-        $unitPrice = $ticket->price;
-        $unitHandlingFee = (int) $ticket->getHandlingFee();
+        // Calculate fees and breakdown
+        $unitPrice = (float) $ticket->price;
+        $feeBreakdown = $ticket->getFeeBreakdown();
+        $unitHandlingFee = (float) $feeBreakdown['handling'];
+        $unitServiceFee = (float) $feeBreakdown['service'];
+        $unitOrganizerFee = (float) $ticket->getOrganizerFee('online');
 
-        $totalPrice = ($unitPrice + $unitHandlingFee) * $validated['quantity'];
+        $totalPrice = ($unitPrice + $unitHandlingFee + $unitServiceFee) * $validated['quantity'];
 
         $transaction = Transaction::create([
             'code' => 'ANNTIX-' . strtoupper(Str::random(10)),
@@ -103,6 +116,10 @@ class CheckoutController extends Controller
             'nik' => $validated['nik'],
             'gender' => $validated['gender'],
             'quantity' => $validated['quantity'],
+            'unit_price' => $unitPrice,
+            'handling_fee' => $unitHandlingFee,
+            'service_fee' => $unitServiceFee,
+            'organizer_fee' => $unitOrganizerFee,
             'total_price' => $totalPrice,
             'status' => 'pending',
         ]);

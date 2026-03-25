@@ -141,13 +141,23 @@ class ReportController extends Controller
     public function showTransaction(Transaction $transaction)
     {
         $transaction->load(['event', 'ticket', 'logs.user', 'scans.scanner']);
-        $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
 
-        $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
-        $handlingTotal = $transaction->quantity * $handlingFeeValue;
-        $serviceFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal);
-        if ($serviceFee < 0)
-            $serviceFee = 0;
+        if ($transaction->unit_price !== null) {
+            // NEW LOGIC: Use stored values
+            $ticketSales = $transaction->quantity * (float) $transaction->unit_price;
+            $handlingTotal = $transaction->quantity * (float) $transaction->handling_fee;
+            // Combined service fee and gateway fee for display consistency if needed,
+            // or we can pass them separately. For now, matching the old view variables:
+            $serviceFee = ($transaction->quantity * (float) $transaction->service_fee) + (float) $transaction->gateway_fee;
+        } else {
+            // OLD LOGIC: Dynamic fallback
+            $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
+            $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
+            $handlingTotal = $transaction->quantity * $handlingFeeValue;
+            $serviceFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal);
+            if ($serviceFee < 0)
+                $serviceFee = 0;
+        }
 
         return view('admin.reports.transaction-show', compact('transaction', 'serviceFee', 'handlingTotal'));
     }

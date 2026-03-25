@@ -16,6 +16,13 @@ class ScanController extends Controller
 
     public function verify(Request $request)
     {
+        if (\App\Models\Setting::getValue('local_server_mode', '0') === '1') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Scanner is disabled on this server. Please use the Local Server for scanning.'
+            ], 403);
+        }
+
         $request->validate([
             'code' => 'required|string',
         ]);
@@ -118,6 +125,13 @@ class ScanController extends Controller
 
     public function redeem(Request $request)
     {
+        if (\App\Models\Setting::getValue('local_server_mode', '0') === '1') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Scanner is disabled on this server. Please use the Local Server for scanning.'
+            ], 403);
+        }
+
         $request->validate([
             'transaction_id' => 'required|exists:transactions,id',
         ]);

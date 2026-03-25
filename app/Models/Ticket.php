@@ -102,6 +102,41 @@ class Ticket extends Model
     }
 
     /**
+     * Get the effective organizer fee for this ticket.
+     */
+    public function getOrganizerFee($type = 'online'): float
+    {
+        $event = $this->event;
+        $feeType = $type === 'online'
+            ? ($this->organizer_fee_online_type ?? $event->organizer_fee_online_type)
+            : ($this->organizer_fee_reseller_type ?? $event->organizer_fee_reseller_type);
+
+        $feeValue = $type === 'online'
+            ? ($this->organizer_fee_online ?? $event->organizer_fee_online)
+            : ($this->organizer_fee_reseller ?? $event->organizer_fee_reseller);
+
+        if ($feeType === 'percent') {
+            return (float) ($this->price * ($feeValue / 100));
+        }
+        return (float) ($feeValue ?? 0);
+    }
+
+    /**
+     * Get the effective reseller fee (commission added to buyer) for this ticket.
+     */
+    public function getResellerFee(): float
+    {
+        $event = $this->event;
+        $feeType = $this->reseller_fee_type ?? $event->reseller_fee_type;
+        $feeValue = $this->reseller_fee_value ?? $event->reseller_fee_value;
+
+        if ($feeType === 'percent') {
+            return (float) ($this->price * ($feeValue / 100));
+        }
+        return (float) ($feeValue ?? 0);
+    }
+
+    /**
      * Scope a query to only include tickets that are active and currently valid based on date.
      */
     public function scopeAvailable($query)

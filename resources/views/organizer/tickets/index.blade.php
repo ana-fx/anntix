@@ -1,73 +1,47 @@
 <x-layouts.organizer>
     <x-slot name="title">Ticket Report - {{ $event->name }}</x-slot>
-    <div>
-        <div class="flex flex-col xl:flex-row xl:items-center justify-between mb-8 gap-6">
-            <div class="flex items-center gap-4">
-                <a href="{{ route('organizer.events.index') }}"
-                    class="inline-flex items-center text-sm font-bold text-gray-400 hover:text-primary transition-colors gap-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Events
-                </a>
-            </div>
 
-            <!-- Aggregate Saldo Widget -->
-            <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-                <div class="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 flex flex-wrap md:flex-nowrap items-center divide-x divide-gray-50">
-                    <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Gross Revenue</div>
-                        <div class="font-black text-dark text-lg leading-tight">
-                            Rp {{ number_format($totalTicketRevenue, 0, ',', '.') }}
+    <div class="pb-10">
+        <!-- Header Section -->
+        <div class="mb-10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('organizer.events.index') }}"
+                        class="group inline-flex items-center text-xs font-bold text-gray-400 hover:text-primary transition-all gap-2">
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center group-hover:border-primary/20 group-hover:bg-primary/5">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
                         </div>
-                    </div>
-                    <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-red-400 font-bold mb-0.5">Admin Fee / Tax</div>
-                        <div class="font-black text-red-500 text-lg leading-tight">
-                            - Rp {{ number_format($totalOrgTax, 0, ',', '.') }}
-                        </div>
-                    </div>
-                    <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-emerald-400 font-bold mb-0.5">Organizer Saldo</div>
-                        <div class="font-black text-emerald-600 text-lg leading-tight">
-                            Rp {{ number_format($totalSaldo, 0, ',', '.') }}
-                        </div>
-                    </div>
-                    <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Withdrawn</div>
-                        <div class="font-black text-gray-500 text-lg leading-tight">
-                            Rp {{ number_format($totalWithdrawn, 0, ',', '.') }}
-                        </div>
-                    </div>
-                    <div class="px-5 py-2">
-                        <div class="text-[9px] uppercase tracking-widest text-primary font-bold mb-0.5">Available</div>
-                        <div class="font-black text-primary text-xl leading-tight">
-                            Rp {{ number_format($availableSaldo, 0, ',', '.') }}
+                    </a>
+                    <div>
+                        <h1 class="text-3xl font-black text-dark tracking-tight">{{ $event->name }}</h1>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-md">Ticket Report</span>
+                            <span class="text-gray-300 text-[10px] uppercase font-bold tracking-widest">•</span>
+                            <span class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Event Analytics</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-2 w-full md:w-auto">
+                <div class="flex items-center gap-3">
                     <a href="{{ route('organizer.events.withdrawals.index', $event) }}"
-                        class="group flex items-center justify-center w-full px-5 py-3 bg-primary text-white hover:bg-primary-600 rounded-2xl font-bold text-xs transition-all shadow-sm gap-2">
+                        class="px-6 py-3 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-600 transition-all shadow-xl shadow-primary/20 flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        Withdraw Funds
+                        Withdraw
                     </a>
-
                     <button onclick="exportToExcel()"
-                        class="group flex items-center justify-center w-full px-5 py-3 bg-white text-gray-400 rounded-2xl font-bold text-xs hover:bg-gray-50 transition-all border border-gray-100 shadow-sm gap-2">
+                        class="px-6 py-3 bg-white text-gray-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-50 transition-all border border-gray-200 shadow-sm flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
-                        Export Excel
+                        Export
                     </button>
                 </div>
             </div>
+        </div>
         </div>
 
         @if (session('success'))
@@ -644,6 +618,91 @@
                 @endforeach
             </tbody>
         </table>
+        <!-- Financial Performance Dashboard (Professional Redesign) -->
+        <div class="mt-16 max-w-6xl mx-auto w-full px-4 sm:px-0">
+            <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
+                <!-- Dashboard Header -->
+                <div class="px-10 py-8 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/30">
+                    <div>
+                        <h3 class="text-2xl font-black text-dark tracking-tight">Financial Performance</h3>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-1">Real-time revenue & settlement analytics</p>
+                    </div>
+                    <div class="flex items-center gap-3 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Live Updates</span>
+                    </div>
+                </div>
+                               <div class="p-8 sm:p-14">
+                    <!-- Highlight: Settled Balance (Wide) -->
+                    <div class="mb-14 bg-primary/5 rounded-[3rem] p-10 sm:p-12 border border-primary/10 relative overflow-hidden group">
+                        <div class="absolute -right-12 -top-12 w-96 h-96 bg-primary/5 rounded-full blur-3xl transition-all duration-1000 group-hover:scale-110"></div>
+                        <div class="relative flex flex-col xl:flex-row xl:items-center justify-between gap-10">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="text-[12px] uppercase tracking-[0.4em] text-primary font-black">Settled Balance</div>
+                                </div>
+                                <div class="flex items-baseline gap-3">
+                                    <span class="text-2xl font-black text-primary/30">Rp</span>
+                                    <span class="text-4xl sm:text-6xl lg:text-7xl font-black text-primary tracking-tightest leading-none tabular-nums">{{ number_format($availableSaldo, 0, ',', '.') }}</span>
+                                </div>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-8 flex items-center gap-2">
+                                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Total funds available for immediate withdrawal
+                                </p>
+                            </div>
+                            
+                            <div class="hidden xl:block h-24 w-px bg-primary/10 mx-4"></div>
+                            
+                            <div class="flex flex-col sm:flex-row xl:flex-col gap-6 xl:gap-8 flex-1 xl:max-w-xs">
+                                <div class="flex-1 bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-primary/5">
+                                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Withdrawn</div>
+                                    <div class="text-xl font-black text-gray-500 tracking-tight">Rp{{ number_format($totalWithdrawn, 0, ',', '.') }}</div>
+                                </div>
+                                <div class="flex-1 bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-primary/5">
+                                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Revenue</div>
+                                    <div class="text-xl font-black text-dark tracking-tight">Rp{{ number_format($totalTicketRevenue, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 sm:gap-16">
+                        <div class="group px-8 border-l-4 border-gray-100 hover:border-primary/30 transition-all">
+                            <div class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-black mb-4">Gross Revenue</div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm font-bold text-gray-300">Rp</span>
+                                <span class="text-3xl font-black text-dark leading-none tracking-tight">{{ number_format($totalTicketRevenue, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="group px-8 border-l-4 border-red-100 hover:border-red-300 transition-all">
+                            <div class="text-[10px] uppercase tracking-[0.25em] text-red-400 font-black mb-4">Total Fee / Tax</div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm font-bold text-red-200">- Rp</span>
+                                <span class="text-3xl font-black text-red-500 leading-none tracking-tight">{{ number_format($totalOrgTax, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="group px-8 border-l-4 border-emerald-100 hover:border-emerald-300 transition-all">
+                            <div class="text-[10px] uppercase tracking-[0.25em] text-emerald-400 font-black mb-4">Organizer Saldo</div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-sm font-bold text-emerald-200">Rp</span>
+                                <span class="text-3xl font-black text-emerald-600 leading-none tracking-tight">{{ number_format($totalSaldo, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+>
+            </div>
+        </div>
     </div>
 
     @push('scripts')

@@ -13,6 +13,11 @@ class TransactionController extends Controller
 {
     public function create(Event $event)
     {
+        if (\App\Models\Setting::getValue('local_server_mode', '0') === '1') {
+            return redirect()->route('reseller.dashboard')
+                ->with('error', 'Ticket sales are temporarily paused due to Local Server synchronization.');
+        }
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
@@ -50,6 +55,11 @@ class TransactionController extends Controller
 
     public function store(Request $request, Event $event)
     {
+        if (\App\Models\Setting::getValue('local_server_mode', '0') === '1') {
+            return redirect()->route('reseller.dashboard')
+                ->with('error', 'Ticket sales are temporarily paused due to Local Server synchronization.');
+        }
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
@@ -90,18 +100,12 @@ class TransactionController extends Controller
             ])->withInput();
         }
 
-        // Calculate Reseller Fee (Commission charged to buyer per ticket)
-        $resellerFee = 0;
+        // Calculate fees and breakdown
+        $unitPrice = (float) $ticket->price;
+        $unitResellerFee = (float) $ticket->getResellerFee();
+        $unitOrganizerFee = (float) $ticket->getOrganizerFee('reseller');
 
-        // Ensure we handle both fixed and percent types
-        if ($event->reseller_fee_type === 'percent') {
-            $resellerFee = $ticket->price * ($event->reseller_fee_value / 100);
-        } else {
-            // Default to fixed
-            $resellerFee = $event->reseller_fee_value;
-        }
-
-        $totalPrice = ($ticket->price + $resellerFee) * $validated['quantity'];
+        $totalPrice = ($unitPrice + $unitResellerFee) * $validated['quantity'];
 
         // Create transaction linked to reseller
         $transaction = Transaction::create([
@@ -115,6 +119,9 @@ class TransactionController extends Controller
             'nik' => $validated['nik'],
             'gender' => $validated['gender'],
             'quantity' => $validated['quantity'],
+            'unit_price' => $unitPrice,
+            'reseller_fee' => $unitResellerFee,
+            'organizer_fee' => $unitOrganizerFee,
             'total_price' => $totalPrice,
             'status' => 'pending',
             'reseller_id' => Auth::id(), // Track reseller

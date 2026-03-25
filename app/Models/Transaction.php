@@ -47,6 +47,12 @@ class Transaction extends Model
         'gender',
         'quantity',
         'total_price',
+        'unit_price',
+        'handling_fee',
+        'service_fee',
+        'reseller_fee',
+        'organizer_fee',
+        'gateway_fee',
         'status',
         'snap_token',
         'payment_type',
@@ -100,7 +106,17 @@ class Transaction extends Model
 
     public function getCommissionAttribute()
     {
-        if (!$this->reseller_id || !$this->event || !$this->ticket) {
+        if (!$this->reseller_id) {
+            return 0;
+        }
+
+        // 1. Use stored reseller_fee if available
+        if ($this->reseller_fee > 0) {
+            return $this->reseller_fee * $this->quantity;
+        }
+
+        // 2. Fallback to old logic for historical data (recalculation)
+        if (!$this->event || !$this->ticket) {
             return 0;
         }
 

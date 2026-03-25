@@ -121,45 +121,43 @@ class Event extends Model
         $totalSaldo = 0;
 
         foreach ($tickets as $t) {
-            // Get fresh transaction counts for this specific ticket
-            $onlineQty = \Illuminate\Support\Facades\DB::table('transactions')
+            // Fetch all paid transactions for this specific ticket
+            $paidTransactions = \Illuminate\Support\Facades\DB::table('transactions')
                 ->where('ticket_id', $t->id)
                 ->where('status', 'paid')
-                ->whereNull('reseller_id')
                 ->whereNull('deleted_at')
-                ->sum('quantity');
+                ->get();
 
-            $resellerQty = \Illuminate\Support\Facades\DB::table('transactions')
-                ->where('ticket_id', $t->id)
-                ->where('status', 'paid')
-                ->whereNotNull('reseller_id')
-                ->whereNull('deleted_at')
-                ->sum('quantity');
+            foreach ($paidTransactions as $trans) {
+                $qty = $trans->quantity;
+                $isReseller = !empty($trans->reseller_id);
 
-            // 1. Revenue
-            $revenue = ($onlineQty + $resellerQty) * $t->price;
+                // 1. Revenue
+                $uPrice = $trans->unit_price !== null ? (float) $trans->unit_price : (float) $t->price;
+                $revenue = $qty * $uPrice;
 
-            // 2. Platform Fees
-            // Online Fee: Check Ticket Level -> Fallback to Event Level
-            $onlineFeeType = $t->organizer_fee_online_type ?? $this->organizer_fee_online_type;
-            $onlineFeeValue = $t->organizer_fee_online ?? $this->organizer_fee_online;
+                // 2. Platform Fees (Potongan Platform dari Organizer)
+                if ($trans->unit_price !== null) {
+                    // NEW LOGIC: Use stored organizer_fee
+                    $totalPlatformFee = $qty * (float) $trans->organizer_fee;
+                } else {
+                    // OLD LOGIC: Dynamic fallback
+                    if (!$isReseller) {
+                        $onlineFeeType = $t->organizer_fee_online_type ?? $this->organizer_fee_online_type;
+                        $onlineFeeValue = $t->organizer_fee_online ?? $this->organizer_fee_online;
+                        $onlinePlatformFee = ($onlineFeeType === 'percent') ? ($uPrice * ($onlineFeeValue / 100)) : $onlineFeeValue;
+                        $totalPlatformFee = $qty * ($onlinePlatformFee ?? 0);
+                    } else {
+                        $resellerFeeType = $t->organizer_fee_reseller_type ?? $this->organizer_fee_reseller_type;
+                        $resellerFeeValue = $t->organizer_fee_reseller ?? $this->organizer_fee_reseller;
+                        $resellerPlatformFee = ($resellerFeeType === 'percent') ? ($uPrice * ($resellerFeeValue / 100)) : $resellerFeeValue;
+                        $totalPlatformFee = $qty * ($resellerPlatformFee ?? 0);
+                    }
+                }
 
-            $onlinePlatformFee = $onlineFeeType === 'percent'
-                ? $t->price * ($onlineFeeValue / 100)
-                : $onlineFeeValue;
-
-            // Reseller Fee: Check Ticket Level -> Fallback to Event Level
-            $resellerFeeType = $t->organizer_fee_reseller_type ?? $this->organizer_fee_reseller_type;
-            $resellerFeeValue = $t->organizer_fee_reseller ?? $this->organizer_fee_reseller;
-
-            $resellerPlatformFee = $resellerFeeType === 'percent'
-                ? $t->price * ($resellerFeeValue / 100)
-                : $resellerFeeValue;
-
-            $totalPlatformFee = ($onlineQty * $onlinePlatformFee) + ($resellerQty * $resellerPlatformFee);
-
-            // 3. Final calculation for this ticket
-            $totalSaldo += ($revenue - $totalPlatformFee);
+                // 3. Final calculation for this transaction
+                $totalSaldo += ($revenue - $totalPlatformFee);
+            }
         }
 
         return (float) $totalSaldo;

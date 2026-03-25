@@ -33,6 +33,7 @@ class SettingController extends Controller
             'fee_bank_fixed' => 'nullable|numeric|min:0',
             'handling_fee' => 'nullable|numeric|min:0',
             'show_qr_for_reseller' => 'nullable|in:0,1',
+            'local_server_mode' => 'nullable|in:0,1',
         ]);
 
         foreach ($data as $key => $value) {

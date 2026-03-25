@@ -79,53 +79,46 @@ class PaymentController extends Controller
         }
 
         // --- SPLIT LOGIC ---
+        $gatewayFee = 0;
         if ($request->payment_method === 'qris') {
-            // MANUAL FEE CALCULATION FOR QRIS
-            // Adds fee manually to total to bypass API limitation for other_qris
+            // QRIS FEE CALCULATION
+            $qrisFeePercent = (float) \App\Models\Setting::getValue('fee_qris_percent', 0.7);
+            $gatewayFee = floor($baseTotal * ($qrisFeePercent / 100));
 
-            $qrisFeePercent = 0.7; // 0.7%
-            $manualFeeAmount = floor($baseTotal * ($qrisFeePercent / 100));
-
-            if ($manualFeeAmount > 0) {
+            if ($gatewayFee > 0) {
                 $itemDetails[] = [
                     'id' => 'QRIS-FEE',
-                    'price' => $manualFeeAmount,
+                    'price' => (int) $gatewayFee,
                     'quantity' => 1,
                     'name' => 'QRIS Processing Fee',
                 ];
-                $finalTotal += $manualFeeAmount;
+                $finalTotal += $gatewayFee;
             }
 
-            // Enable QRIS methods (including other_qris for mobile visibility)
             $enabledPayments = ['qris', 'gopay', 'other_qris'];
-
-            // DISABLE automatic fee config for QRIS
-            $customerImposedFeeConfig = [
-                'enable' => false,
-                'payment_fee_configs' => []
-            ];
-
+            $customerImposedFeeConfig = ['enable' => false];
         } else {
-            // BANK TRANSFER (Automatic Fee)
-            // Let Midtrans add the fee in popup
+            // BANK TRANSFER FEE CALCULATION
+            $gatewayFee = (int) \App\Models\Setting::getValue('fee_bank_fixed', 4440);
+
+            if ($gatewayFee > 0) {
+                $itemDetails[] = [
+                    'id' => 'BT-FEE',
+                    'price' => $gatewayFee,
+                    'quantity' => 1,
+                    'name' => 'Bank Transfer Fee',
+                ];
+                $finalTotal += $gatewayFee;
+            }
 
             $enabledPayments = ['bni_va', 'bri_va', 'echannel', 'permata_va', 'cimb_va'];
-
-            // ENABLE automatic fee config
-            $customerImposedFeeConfig = [
-                'enable' => true,
-                'payment_fee_configs' => [
-                    ['payment_type' => 'bni_va', 'customer_percentage' => 100],
-                    ['payment_type' => 'bri_va', 'customer_percentage' => 100],
-                    ['payment_type' => 'echannel', 'customer_percentage' => 100],
-                    ['payment_type' => 'permata_va', 'customer_percentage' => 100],
-                    ['payment_type' => 'cimb_va', 'customer_percentage' => 100],
-                ]
-            ];
+            // Disable automatic fee config because we add it to gross_amount manually for consistency
+            $customerImposedFeeConfig = ['enable' => false];
         }
 
-        // Update Transaction
+        // Update Transaction with Locked Fees
         $transaction->update([
+            'gateway_fee' => $gatewayFee,
             'total_price' => $finalTotal,
         ]);
 
