@@ -269,7 +269,6 @@ class ReportController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
             return back()->with('error', 'Failed to confirm payment: ' . $e->getMessage());
-            return back()->with('error', 'Failed to confirm payment: ' . $e->getMessage());
         }
     }
 

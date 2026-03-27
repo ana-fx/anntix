@@ -49,12 +49,14 @@ class PaymentController extends Controller
         \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
         \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
 
-        // Fees from Ticket Settings (ticket-level > event-level > global fallback)
-        $unitPrice = $transaction->ticket->price;
-        $handlingFeePerUnit = (int) $transaction->ticket->getHandlingFee();
+        // Fees dari nilai yang sudah dikunci saat checkout (stored values)
+        $unitPrice = $transaction->unit_price ?? $transaction->ticket->price;
+        $handlingFeePerUnit = (int) $transaction->handling_fee;
+        $serviceFeePerUnit = (int) $transaction->service_fee;
+        $feePerUnit = $handlingFeePerUnit + $serviceFeePerUnit; // salah satunya selalu 0
 
         $subtotal = $unitPrice * $transaction->quantity;
-        $baseTotal = $subtotal + ($handlingFeePerUnit * $transaction->quantity);
+        $baseTotal = $subtotal + ($feePerUnit * $transaction->quantity);
 
         $finalTotal = $baseTotal;
         $enabledPayments = [];
@@ -63,16 +65,16 @@ class PaymentController extends Controller
         $itemDetails = [
             [
                 'id' => $transaction->ticket_id,
-                'price' => (int) $transaction->ticket->price,
+                'price' => (int) $unitPrice,
                 'quantity' => $transaction->quantity,
                 'name' => substr($transaction->ticket->name, 0, 50),
             ]
         ];
 
-        if ($handlingFeePerUnit > 0) {
+        if ($feePerUnit > 0) {
             $itemDetails[] = [
                 'id' => 'HANDLING-FEE',
-                'price' => $handlingFeePerUnit,
+                'price' => $feePerUnit,
                 'quantity' => $transaction->quantity,
                 'name' => 'Handling Fee',
             ];
@@ -153,7 +155,7 @@ class PaymentController extends Controller
 
             return response()->json([
                 'snap_token' => $snapToken,
-                'handling_fee' => $handlingFeePerUnit,
+                'handling_fee' => $feePerUnit,
                 'base_total' => $finalTotal,
                 'message' => 'Token generated'
             ]);

@@ -144,13 +144,21 @@ class ReportController extends Controller
         }
 
         $transaction->load(['event', 'ticket', 'logs.user', 'scans.scanner']);
-        $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
 
-        $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
-        $handlingTotal = $transaction->quantity * $handlingFeeValue;
-        $serviceFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal);
-        if ($serviceFee < 0)
-            $serviceFee = 0;
+        if ($transaction->unit_price !== null) {
+            // NEW LOGIC: pakai stored values yang dikunci saat checkout
+            $ticketSales = $transaction->quantity * (float) $transaction->unit_price;
+            $handlingTotal = $transaction->quantity * (float) $transaction->handling_fee;
+            $serviceFee = ($transaction->quantity * (float) $transaction->service_fee) + (float) $transaction->gateway_fee;
+        } else {
+            // OLD LOGIC: fallback dinamis untuk transaksi lama
+            $handlingFeeValue = (int) \App\Models\Setting::getValue('handling_fee', 0);
+            $ticketSales = $transaction->quantity * ($transaction->ticket->price ?? 0);
+            $handlingTotal = $transaction->quantity * $handlingFeeValue;
+            $serviceFee = (float) $transaction->total_price - ($ticketSales + $handlingTotal);
+            if ($serviceFee < 0)
+                $serviceFee = 0;
+        }
 
         return view('organizer.reports.transaction-show', compact('transaction', 'serviceFee', 'handlingTotal'));
     }

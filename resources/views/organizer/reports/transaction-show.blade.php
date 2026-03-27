@@ -373,7 +373,7 @@
                                 class="text-[10px] font-black text-teal-100/30 uppercase tracking-[0.2em] group-hover:text-teal-400 transition-colors">Handling
                                 Fee</span>
                             <span class="text-base font-bold text-teal-50">Rp
-                                {{ number_format($transaction->quantity * \App\Models\Setting::getValue('handling_fee', 0), 0, ',', '.') }}</span>
+                                {{ number_format($handlingTotal, 0, ',', '.') }}</span>
                         </div>
                         @endif
                         <div class="flex justify-between items-center group/item">

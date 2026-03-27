@@ -3,24 +3,18 @@
         // Base values
         $subtotal = $transaction->ticket->price * $transaction->quantity;
 
-        // Fee Logic
+        // Fee Logic — pakai nilai yang sudah dikunci saat checkout (stored values)
         $isReseller = $transaction->reseller_id ? true : false;
-        $handlingFee = 0;
 
         if ($isReseller) {
-            // Reseller Commission / Fee
-            if ($transaction->event->reseller_fee_type === 'fixed') {
-                $handlingFee = $transaction->event->reseller_fee_value;
-            } else {
-                $handlingFee = ($transaction->ticket->price * ($transaction->event->reseller_fee_value / 100));
-            }
+            $handlingFee = (float) $transaction->reseller_fee;
+            $serviceFee = 0;
         } else {
-
-            // Standard User Fee (Centralized Logic)
-            $handlingFee = $transaction->event->getHandlingFee($transaction->ticket->price);
+            $handlingFee = (float) $transaction->handling_fee;
+            $serviceFee = (float) $transaction->service_fee;
         }
 
-        $baseTotal = $subtotal + ($handlingFee * $transaction->quantity);
+        $baseTotal = $subtotal + ($handlingFee * $transaction->quantity) + ($serviceFee * $transaction->quantity);
 
         // Fee Constants
         $qrisPercent = (float) \App\Models\Setting::getValue('fee_qris_percent', 0);
@@ -28,7 +22,6 @@
 
         // Potential Fees
         $qrisFee = floor($baseTotal * ($qrisPercent / 100)); // 0.7% of base total
-        $serviceFee = 0;
     @endphp
     <div class="bg-white min-h-screen pt-28 pb-20 px-4 sm:px-6">
         <div class="max-w-7xl mx-auto">
@@ -483,10 +476,6 @@
                             onPending: function (result) { alert("{{ __('common.waiting_for_payment') }}"); },
                             onClose: function () {
                                 alert("{{ __('common.payment_failed') }}");
-                                payButton.disabled = false;
-                                payButton.innerHTML = originalHTML;
-                            },
-                            onClose: function () {
                                 payButton.disabled = false;
                                 payButton.innerHTML = originalHTML;
                             }
