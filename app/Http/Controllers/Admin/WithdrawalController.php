@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\PlatformWithdrawal;
 use App\Models\Withdrawal;
 use Illuminate\Http\Request;
 
@@ -11,8 +12,39 @@ class WithdrawalController extends Controller
 {
     public function index()
     {
-        $withdrawals = Withdrawal::with('event')->latest()->paginate(20);
-        return view('admin.withdrawals.index', compact('withdrawals'));
+        $events = Event::with('organizer')->orderBy('name')->get();
+
+        $totals = [
+            'gross_revenue'         => 0,
+            'handling_fees'         => 0,
+            'organizer_fees'        => 0,
+            'total_platform_income' => 0,
+            'net_revenue'           => 0,
+            'withdrawn_approved'    => 0,
+            'withdrawn_pending'     => 0,
+            'available_saldo'       => 0,
+        ];
+
+        foreach ($events as $event) {
+            $f = $event->calculateFinancialBreakdown();
+            $event->financial = $f;
+            foreach ($totals as $key => $_) {
+                $totals[$key] += $f[$key];
+            }
+        }
+
+        $pendingCount = Withdrawal::where('status', 'pending')->count();
+
+        return view('admin.withdrawals.index', compact('events', 'totals', 'pendingCount'));
+    }
+
+    public function eventShow(Event $event)
+    {
+        $financial = $event->calculateFinancialBreakdown();
+        $withdrawals = $event->withdrawals()->latest()->get();
+        $platformWithdrawals = $event->platformWithdrawals()->latest()->get();
+
+        return view('admin.withdrawals.show', compact('event', 'financial', 'withdrawals', 'platformWithdrawals'));
     }
 
     public function create(Event $event = null)
@@ -49,10 +81,34 @@ class WithdrawalController extends Controller
         ]);
 
         if ($request->has('from_event')) {
-            return redirect()->route('admin.events.withdrawals.create_for_event', $event)->with('success', 'Withdrawal recorded and approved successfully.');
+            return redirect()->route('admin.events.withdrawals.show', $event)->with('success', 'Withdrawal recorded and approved successfully.');
         }
 
         return redirect()->route('admin.withdrawals.index')->with('success', 'Withdrawal recorded and approved successfully.');
+    }
+
+    public function storePlatformWithdrawal(Request $request, Event $event)
+    {
+        $financial = $event->calculateFinancialBreakdown();
+
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:1|max:' . $financial['platform_available'],
+            'note'   => 'nullable|string|max:500',
+        ]);
+
+        $event->platformWithdrawals()->create($validated);
+
+        return redirect()->route('admin.events.withdrawals.show', $event)
+            ->with('success', 'Platform revenue recorded successfully.');
+    }
+
+    public function destroyPlatformWithdrawal(PlatformWithdrawal $platformWithdrawal)
+    {
+        $event = $platformWithdrawal->event;
+        $platformWithdrawal->delete();
+
+        return redirect()->route('admin.events.withdrawals.show', $event)
+            ->with('success', 'Platform withdrawal record deleted.');
     }
 
     public function approve(Withdrawal $withdrawal)

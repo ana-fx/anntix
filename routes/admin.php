@@ -32,9 +32,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('withdrawals/{withdrawal}/approve', [\App\Http\Controllers\Admin\WithdrawalController::class, 'approve'])->name('withdrawals.approve');
     Route::post('withdrawals/{withdrawal}/reject', [\App\Http\Controllers\Admin\WithdrawalController::class, 'reject'])->name('withdrawals.reject');
 
-    // Event Specific Withdrawals (Backward compatibility/Deep links)
+    // Event Specific Withdrawals
+    Route::get('events/{event}/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'eventShow'])->name('events.withdrawals.show');
     Route::get('events/{event}/withdrawals/create', [\App\Http\Controllers\Admin\WithdrawalController::class, 'create'])->name('events.withdrawals.create_for_event');
     Route::post('events/{event}/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'store'])->name('events.withdrawals.store_for_event');
+
+    // Platform Revenue Withdrawals (admin self-record)
+    Route::post('events/{event}/platform-withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'storePlatformWithdrawal'])->name('events.platform-withdrawals.store');
+    Route::delete('platform-withdrawals/{platformWithdrawal}', [\App\Http\Controllers\Admin\WithdrawalController::class, 'destroyPlatformWithdrawal'])->name('platform-withdrawals.destroy');
 
     // Report
     Route::get('reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');

@@ -14,36 +14,47 @@ class WithdrawalController extends Controller
         $organizerId = Auth::id();
         $events = Event::where('organizer_id', $organizerId)->get();
 
-        $totalAvailableSaldo = 0;
+        $totals = [
+            'gross_revenue'     => 0,
+            'organizer_fees'    => 0,
+            'net_revenue'       => 0,
+            'withdrawn_approved'=> 0,
+            'withdrawn_pending' => 0,
+            'available_saldo'   => 0,
+        ];
+
         foreach ($events as $event) {
-            $totalAvailableSaldo += $event->available_saldo;
+            $breakdown = $event->calculateFinancialBreakdown();
+            $event->financial = $breakdown;
+            foreach ($totals as $key => $_) {
+                $totals[$key] += $breakdown[$key];
+            }
         }
 
-        $withdrawals = \App\Models\Withdrawal::whereIn('event_id', $events->pluck('id'))
-            ->with('event')
-            ->latest()
-            ->paginate(50);
+        // Attach withdrawals grouped by event (only events that have at least one withdrawal)
+        foreach ($events as $event) {
+            $event->withdrawalHistory = $event->withdrawals()->latest()->get();
+        }
 
-        return view('organizer.withdrawals.global', compact('events', 'totalAvailableSaldo', 'withdrawals'));
+        return view('organizer.withdrawals.global', compact('events', 'totals'));
     }
 
     public function index(Event $event)
     {
         $this->authorizeEvent($event);
 
-        $availableSaldo = $event->available_saldo;
-
-        // Load withdrawals including pending ones to show the history properly
+        $financial = $event->calculateFinancialBreakdown();
         $withdrawals = $event->withdrawals()->latest()->get();
 
-        return view('organizer.withdrawals.index', compact('event', 'availableSaldo', 'withdrawals'));
+        return view('organizer.withdrawals.index', compact('event', 'financial', 'withdrawals'));
     }
 
     public function store(Request $request, Event $event)
     {
         $this->authorizeEvent($event);
 
-        $availableSaldo = $event->available_saldo;
+        $financial = $event->calculateFinancialBreakdown();
+        $availableSaldo = $financial['available_saldo'];
 
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1|max:' . $availableSaldo,

@@ -217,14 +217,11 @@
                                 </div>
                                 <div class="flex items-center justify-end gap-2">
                                     @if($transaction->reseller_id)
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Fee:
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Reseller Fee:
                                             {{ number_format($extraFee, 0, ',', '.') }}</span>
                                     @else
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Svc:
-                                            {{ number_format($extraFee, 0, ',', '.') }}</span>
-                                        <span class="w-1 h-1 rounded-full bg-gray-200"></span>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Hdl:
-                                            {{ number_format($handlingTotal, 0, ',', '.') }}</span>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Handling Fee + Service Fee:
+                                            {{ number_format($extraFee + $handlingTotal, 0, ',', '.') }}</span>
                                     @endif
                                 </div>
                             </td>

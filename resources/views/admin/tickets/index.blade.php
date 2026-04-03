@@ -292,8 +292,8 @@
                                 <th class="px-4 py-3 text-right">Ticket Revenue</th>
                                 <th class="px-4 py-3 text-right">Saldo</th>
                                 <th class="px-4 py-3 text-right">Org Tax</th>
-                                <th class="px-4 py-3 text-right">Handling Fee</th>
                                 <th class="px-4 py-3 text-right">Service Fee</th>
+                                <th class="px-4 py-3 text-right">Handling Fee</th>
                                 <th class="px-4 py-3 text-right">Midtrans Fee</th>
                                 <th class="px-4 py-3 text-right">Platform Rev</th>
                             </tr>
@@ -414,11 +414,11 @@
                                     <td class="px-4 py-3 text-right text-xs text-gray-500 font-bold">
                                         Rp {{ number_format($orgTaxTotal, 0, ',', '.') }}
                                     </td>
-                                    <td class="px-4 py-3 text-right text-xs text-primary font-black">
-                                        Rp {{ number_format($handlingOnly, 0, ',', '.') }}
-                                    </td>
                                     <td class="px-4 py-3 text-right text-xs text-gray-400 font-bold">
                                         Rp {{ number_format($serviceOnly, 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right text-xs text-primary font-black">
+                                        Rp {{ number_format($handlingOnly, 0, ',', '.') }}
                                     </td>
                                     <td class="px-4 py-3 text-right text-xs text-amber-600 font-bold">
                                         Rp {{ number_format($midtransOnly, 0, ',', '.') }}
@@ -448,11 +448,11 @@
                                 <td class="px-4 py-4 text-right text-gray-500">Rp
                                     {{ number_format($oGrandOrgTax, 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-4 text-right text-primary font-black">Rp
-                                    {{ number_format($oGrandHandling, 0, ',', '.') }}
-                                </td>
                                 <td class="px-4 py-4 text-right text-gray-400 font-bold">Rp
                                     {{ number_format($oGrandService, 0, ',', '.') }}
+                                </td>
+                                <td class="px-4 py-4 text-right text-primary font-black">Rp
+                                    {{ number_format($oGrandHandling, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-4 text-right text-amber-600 font-bold">Rp
                                     {{ number_format($oGrandMidtrans, 0, ',', '.') }}
@@ -696,9 +696,9 @@
                     <th>Ticket Revenue</th>
                     <th>Saldo</th>
                     <th>Org Tax</th>
+                    <th>Service Fee</th>
                     <th>Handling Fee</th>
                     <th>Platform Rev</th>
-                    <th>Service Fee</th>
                 </tr>
             </thead>
             <tbody>
@@ -741,9 +741,9 @@
                         <td>{{ $ticketRevenue }}</td>
                         <td>{{ $netRevenue }}</td>
                         <td>{{ $totalOrgTax }}</td>
+                        <td>{{ $serviceOnly }}</td>
                         <td>{{ $handlingOnly }}</td>
                         <td>{{ $platformRev }}</td>
-                        <td>{{ $serviceOnly }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -761,9 +761,9 @@
                     <th>Ticket Revenue</th>
                     <th>Saldo</th>
                     <th>Org Tax</th>
+                    <th>Service Fee</th>
                     <th>Handling Fee</th>
                     <th>Platform Rev</th>
-                    <th>Service Fee</th>
                 </tr>
             </thead>
             <tbody>
@@ -805,9 +805,9 @@
                         <td>{{ $ticketRevenue }}</td>
                         <td>{{ $netRevenue }}</td>
                         <td>{{ $orgTaxTotal }}</td>
+                        <td>{{ $serviceOnly }}</td>
                         <td>{{ $handlingOnly }}</td>
                         <td>{{ $platformRev }}</td>
-                        <td>{{ $serviceOnly }}</td>
                     </tr>
                 @endforeach
             </tbody>
