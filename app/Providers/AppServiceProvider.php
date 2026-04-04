@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FailedJobAlert;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +28,17 @@ class AppServiceProvider extends ServiceProvider
             }
         } catch (\Exception $e) {
             // Table might not exist during migration
+        }
+
+        // Send email alert when a queue job fails (VPS only — skip in local env)
+        if (app()->environment('production')) {
+            Queue::failing(function (JobFailed $event) {
+                try {
+                    Mail::to(config('mail.alert_to'))->send(new FailedJobAlert($event));
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send job failure alert: ' . $e->getMessage());
+                }
+            });
         }
     }
 }
