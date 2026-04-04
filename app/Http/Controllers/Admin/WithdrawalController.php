@@ -50,14 +50,27 @@ class WithdrawalController extends Controller
     public function create(Event $event = null)
     {
         $events = [];
+        $eventFinancials = [];
         if (!$event) {
             $events = Event::orderBy('name')->get();
+            foreach ($events as $e) {
+                $f = $e->calculateFinancialBreakdown();
+                $eventFinancials[$e->id] = [
+                    'org_available'      => $f['available_saldo'],
+                    'org_net'            => $f['net_revenue'],
+                    'org_withdrawn'      => $f['withdrawn_approved'],
+                    'org_pending'        => $f['withdrawn_pending'],
+                    'platform_income'    => $f['total_platform_income'],
+                    'platform_recorded'  => $f['platform_withdrawn'],
+                    'platform_available' => $f['platform_available'],
+                ];
+            }
         }
 
         $availableSaldo = $event ? $event->available_saldo : 0;
         $withdrawals = $event ? $event->withdrawals()->latest()->get() : collect();
 
-        return view('admin.withdrawals.create', compact('event', 'events', 'availableSaldo', 'withdrawals'));
+        return view('admin.withdrawals.create', compact('event', 'events', 'availableSaldo', 'withdrawals', 'eventFinancials'));
     }
 
     public function store(Request $request, Event $event = null)

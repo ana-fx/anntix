@@ -35,11 +35,21 @@
                         <!-- Reseller Fee -->
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Type</label>
-                            <select name="reseller_fee_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
-                                <option value="">Use Default</option>
-                                <option value="fixed" {{ old('reseller_fee_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
-                                <option value="percent" {{ old('reseller_fee_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
-                            </select>
+                            @php $v = old('reseller_fee_type'); $l = $v === 'fixed' ? 'Fixed' : ($v === 'percent' ? 'Percent (%)' : 'Use Default'); @endphp
+                            <div x-data="{ open: false, value: '{{ $v }}', label: '{{ $l }}' }" class="relative">
+                                <input type="hidden" name="reseller_fee_type" :value="value">
+                                <button type="button" @click="open = !open" @click.away="open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white font-bold text-sm">
+                                    <span x-text="label" :class="value === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" style="display:none;"
+                                    class="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                                    <button type="button" @click="value = ''; label = 'Use Default'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Use Default</button>
+                                    <button type="button" @click="value = 'fixed'; label = 'Fixed'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Fixed</button>
+                                    <button type="button" @click="value = 'percent'; label = 'Percent (%)'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Percent (%)</button>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Reseller Fee Value</label>
@@ -51,11 +61,21 @@
                         <!-- Online Fee -->
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Online) Type</label>
-                            <select name="organizer_fee_online_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
-                                <option value="">Use Default</option>
-                                <option value="fixed" {{ old('organizer_fee_online_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
-                                <option value="percent" {{ old('organizer_fee_online_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
-                            </select>
+                            @php $v = old('organizer_fee_online_type'); $l = $v === 'fixed' ? 'Fixed' : ($v === 'percent' ? 'Percent (%)' : 'Use Default'); @endphp
+                            <div x-data="{ open: false, value: '{{ $v }}', label: '{{ $l }}' }" class="relative">
+                                <input type="hidden" name="organizer_fee_online_type" :value="value">
+                                <button type="button" @click="open = !open" @click.away="open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white font-bold text-sm">
+                                    <span x-text="label" :class="value === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" style="display:none;"
+                                    class="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                                    <button type="button" @click="value = ''; label = 'Use Default'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Use Default</button>
+                                    <button type="button" @click="value = 'fixed'; label = 'Fixed'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Fixed</button>
+                                    <button type="button" @click="value = 'percent'; label = 'Percent (%)'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Percent (%)</button>
+                                </div>
+                            </div>
                             @error('organizer_fee_online_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -69,11 +89,21 @@
                         <!-- Reseller Organizer Fee -->
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Organizer Fee (Reseller) Type</label>
-                            <select name="organizer_fee_reseller_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
-                                <option value="">Use Default</option>
-                                <option value="fixed" {{ old('organizer_fee_reseller_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
-                                <option value="percent" {{ old('organizer_fee_reseller_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
-                            </select>
+                            @php $v = old('organizer_fee_reseller_type'); $l = $v === 'fixed' ? 'Fixed' : ($v === 'percent' ? 'Percent (%)' : 'Use Default'); @endphp
+                            <div x-data="{ open: false, value: '{{ $v }}', label: '{{ $l }}' }" class="relative">
+                                <input type="hidden" name="organizer_fee_reseller_type" :value="value">
+                                <button type="button" @click="open = !open" @click.away="open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white font-bold text-sm">
+                                    <span x-text="label" :class="value === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" style="display:none;"
+                                    class="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                                    <button type="button" @click="value = ''; label = 'Use Default'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Use Default</button>
+                                    <button type="button" @click="value = 'fixed'; label = 'Fixed'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Fixed</button>
+                                    <button type="button" @click="value = 'percent'; label = 'Percent (%)'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Percent (%)</button>
+                                </div>
+                            </div>
                             @error('organizer_fee_reseller_type') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -87,11 +117,21 @@
                         <!-- Handling Fee -->
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Handling Fee Type</label>
-                            <select name="handling_fee_type" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white cursor-pointer">
-                                <option value="">Use Default</option>
-                                <option value="fixed" {{ old('handling_fee_type') == 'fixed' ? 'selected' : '' }}>Fixed</option>
-                                <option value="percent" {{ old('handling_fee_type') == 'percent' ? 'selected' : '' }}>Percent (%)</option>
-                            </select>
+                            @php $v = old('handling_fee_type'); $l = $v === 'fixed' ? 'Fixed' : ($v === 'percent' ? 'Percent (%)' : 'Use Default'); @endphp
+                            <div x-data="{ open: false, value: '{{ $v }}', label: '{{ $l }}' }" class="relative">
+                                <input type="hidden" name="handling_fee_type" :value="value">
+                                <button type="button" @click="open = !open" @click.away="open = false"
+                                    class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white font-bold text-sm">
+                                    <span x-text="label" :class="value === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" style="display:none;"
+                                    class="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                                    <button type="button" @click="value = ''; label = 'Use Default'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Use Default</button>
+                                    <button type="button" @click="value = 'fixed'; label = 'Fixed'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Fixed</button>
+                                    <button type="button" @click="value = 'percent'; label = 'Percent (%)'; open = false" class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">Percent (%)</button>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-2">Handling Fee Value</label>

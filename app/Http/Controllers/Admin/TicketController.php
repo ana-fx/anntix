@@ -121,7 +121,7 @@ class TicketController extends Controller
             }
         }
 
-        $totalPlatformRevenue = $totalOrgTax + $totalHandling + $totalServiceFee + $totalMidtrans;
+        $totalPlatformRevenue = $totalOrgTax + $totalHandling + $totalServiceFee;
 
         return view('admin.tickets.index', compact(
             'event',

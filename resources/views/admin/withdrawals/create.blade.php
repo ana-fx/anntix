@@ -20,47 +20,186 @@
         </div>
 
         @if(!$event)
+            @php
+                $platformRoutes = [];
+                foreach($events as $e) {
+                    $platformRoutes[$e->id] = route('admin.events.platform-withdrawals.store', $e);
+                }
+            @endphp
+
             <!-- Global Manual Payout Form -->
-            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8"
+                x-data="{
+                    type: 'organizer',
+                    eventId: '',
+                    platformRoutes: {{ json_encode($platformRoutes) }},
+                    organizerRoute: '{{ route('admin.withdrawals.store') }}',
+                    financials: {{ json_encode($eventFinancials) }},
+                    get formAction() {
+                        if (this.type === 'platform' && this.eventId) {
+                            return this.platformRoutes[this.eventId] ?? '#';
+                        }
+                        return this.organizerRoute;
+                    },
+                    get selected() {
+                        return this.eventId ? (this.financials[this.eventId] ?? null) : null;
+                    }
+                }">
                 <div class="mb-8">
                     <h1 class="text-3xl font-black text-dark tracking-tight">Record Manual Payout</h1>
-                    <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-2">Deduct funds from an event's available balance</p>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-2">Select payout type and event</p>
                 </div>
 
-                <form action="{{ route('admin.withdrawals.store') }}" method="POST" class="space-y-6">
+                {{-- Payout Type Toggle --}}
+                <div class="flex gap-1 bg-gray-100 rounded-2xl p-1.5 w-fit mb-8">
+                    {{-- Organizer tab --}}
+                    <button type="button" @click="type = 'organizer'" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all">
+                        <span x-show="type === 'organizer'" class="flex items-center gap-2 bg-primary text-white rounded-xl px-5 py-2.5 -mx-5 -my-2.5 shadow-sm">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Organizer Payout
+                        </span>
+                        <span x-show="type !== 'organizer'" class="flex items-center gap-2 text-gray-500 hover:text-dark px-5 py-2.5 -mx-5 -my-2.5">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Organizer Payout
+                        </span>
+                    </button>
+
+                    {{-- Platform tab --}}
+                    <button type="button" @click="type = 'platform'" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all">
+                        <span x-show="type === 'platform'" class="flex items-center gap-2 bg-primary text-white rounded-xl px-5 py-2.5 -mx-5 -my-2.5 shadow-sm">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Platform Revenue
+                        </span>
+                        <span x-show="type !== 'platform'" class="flex items-center gap-2 text-gray-500 hover:text-dark px-5 py-2.5 -mx-5 -my-2.5">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Platform Revenue
+                        </span>
+                    </button>
+                </div>
+
+                {{-- Context description --}}
+                <div x-show="type === 'organizer'" x-cloak class="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-2xl">
+                    <p class="text-xs font-bold text-primary">Deduct from organizer's net balance — marks funds as transferred to the event organizer.</p>
+                </div>
+                <div x-show="type === 'platform'" x-cloak class="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-2xl">
+                    <p class="text-xs font-bold text-primary">Record platform income taken — bookkeeping only, does not affect organizer balance.</p>
+                </div>
+
+                <form :action="formAction" method="POST" class="space-y-6">
                     @csrf
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Select Event</label>
-                            <select name="event_id" required
-                                    class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-bold text-sm transition-all appearance-none cursor-pointer">
-                                <option value="" disabled selected>Choose an event...</option>
-                                @foreach($events as $e)
-                                    <option value="{{ $e->id }}">{{ $e->name }} (Available: Rp {{ number_format($e->available_saldo, 0, ',', '.') }})</option>
-                                @endforeach
-                            </select>
+                    <div x-show="type === 'organizer'" x-cloak>
+                        <input type="hidden" name="event_id" :value="eventId">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Select Event</label>
+                        <div class="relative" x-data="{ open: false, label: 'Choose an event...' }">
+                            <button type="button" @click="open = !open" @click.away="open = false"
+                                class="w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-gray-50 text-sm font-bold border border-gray-100 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all">
+                                <span x-text="label" :class="eventId === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                                class="absolute z-50 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden" style="display:none;">
+                                <div class="px-6 py-4 bg-gray-50/50 border-b border-gray-100">
+                                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Select Event</span>
+                                </div>
+                                <div class="py-2 max-h-60 overflow-y-auto">
+                                    @foreach($events as $e)
+                                        <button type="button"
+                                            @click="eventId = '{{ $e->id }}'; label = '{{ addslashes($e->name) }}'; open = false"
+                                            class="w-full px-6 py-3 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">
+                                            {{ $e->name }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Payout Amount (Rp)</label>
-                            <div class="relative">
-                                <span class="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Rp</span>
-                                <input type="number" name="amount" required min="1" step="0.01"
-                                       class="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-bold text-lg placeholder-gray-300 transition-all"
-                                       placeholder="0">
+                    </div>
+
+                    {{-- Balance Info --}}
+                    <div x-show="selected" x-cloak>
+
+                        {{-- Organizer balance --}}
+                        <div x-show="type === 'organizer'" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="bg-gray-50 rounded-2xl p-4">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Net Revenue</div>
+                                <div class="text-base font-black text-dark" x-text="selected ? 'Rp ' + Number(selected.org_net).toLocaleString('id-ID') : '-'"></div>
+                            </div>
+                            <div class="bg-emerald-50 rounded-2xl p-4">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-emerald-500 mb-1">Already Withdrawn</div>
+                                <div class="text-base font-black text-emerald-600" x-text="selected ? 'Rp ' + Number(selected.org_withdrawn).toLocaleString('id-ID') : '-'"></div>
+                            </div>
+                            <div class="bg-amber-50 rounded-2xl p-4">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-amber-500 mb-1">Pending</div>
+                                <div class="text-base font-black text-amber-500" x-text="selected ? 'Rp ' + Number(selected.org_pending).toLocaleString('id-ID') : '-'"></div>
+                            </div>
+                            <div class="bg-primary/5 border border-primary/20 rounded-2xl p-4">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-primary/60 mb-1">Available Saldo</div>
+                                <div class="text-base font-black text-primary" x-text="selected ? 'Rp ' + Number(selected.org_available).toLocaleString('id-ID') : '-'"></div>
+                            </div>
+                        </div>
+
+                        {{-- Platform balance --}}
+                        <div x-show="type === 'platform'" class="grid grid-cols-3 gap-3">
+                            <div class="bg-gray-50 rounded-2xl p-4">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Platform Income</div>
+                                <div class="text-base font-black text-dark" x-text="selected ? 'Rp ' + Number(selected.platform_income).toLocaleString('id-ID') : '-'"></div>
+                            </div>
+                            <div class="bg-emerald-50 rounded-2xl p-4">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-emerald-500 mb-1">Already Recorded</div>
+                                <div class="text-base font-black text-emerald-600" x-text="selected ? 'Rp ' + Number(selected.platform_recorded).toLocaleString('id-ID') : '-'"></div>
+                            </div>
+                            <div class="bg-primary/5 border border-primary/20 rounded-2xl p-4">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-primary/60 mb-1">Available to Record</div>
+                                <div class="text-base font-black text-primary" x-text="selected ? 'Rp ' + Number(selected.platform_available).toLocaleString('id-ID') : '-'"></div>
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Internal Note (Optional)</label>
-                        <textarea name="note" rows="3"
-                                  class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-bold placeholder-gray-300 transition-all resize-none"
-                                  placeholder="Reason for payout, reference number, etc..."></textarea>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Amount (Rp)</label>
+                        <div class="relative">
+                            <span class="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Rp</span>
+                            <input type="number" name="amount" required min="1" step="1"
+                                   class="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-bold text-lg placeholder-gray-300 transition-all"
+                                   placeholder="0">
+                        </div>
+                        <p x-show="selected && type === 'organizer'" x-cloak class="text-[10px] text-gray-400 font-bold mt-2 ml-1">
+                            Max: Rp <span x-text="selected ? Number(selected.org_available).toLocaleString('id-ID') : '0'"></span>
+                        </p>
+                        <p x-show="selected && type === 'platform'" x-cloak class="text-[10px] text-gray-400 font-bold mt-2 ml-1">
+                            Max: Rp <span x-text="selected ? Number(selected.platform_available).toLocaleString('id-ID') : '0'"></span>
+                        </p>
                     </div>
 
-                    <div class="pt-4">
-                        <button type="submit" class="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black text-sm hover:bg-dark transition-all shadow-xl shadow-primary/20 uppercase tracking-widest">
-                            Confirm Manual Payout
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Note (Optional)</label>
+                        <textarea name="note" rows="3"
+                                  class="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 text-dark font-bold placeholder-gray-300 transition-all resize-none"
+                                  placeholder="Reference number, details, etc..."></textarea>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" x-show="type === 'organizer'"
+                            class="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black text-sm transition-all shadow-xl shadow-primary/20 uppercase tracking-widest hover:opacity-90">
+                            Confirm Organizer Payout
+                        </button>
+                        <button type="submit" x-show="type === 'platform'"
+                            class="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black text-sm transition-all shadow-xl shadow-primary/20 uppercase tracking-widest hover:opacity-90">
+                            Record Platform Revenue
                         </button>
                     </div>
                 </form>

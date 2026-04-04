@@ -298,14 +298,35 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2">Assign Organizer User</label>
-                        <select name="organizer_id" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white">
-                            <option value="">-- No Organizer Assigned --</option>
-                            @foreach($organizers as $organizer)
-                                <option value="{{ $organizer->id }}" {{ old('organizer_id') == $organizer->id ? 'selected' : '' }}>
-                                    {{ $organizer->name }} ({{ $organizer->email }})
-                                </option>
-                            @endforeach
-                        </select>
+                        @php
+                            $oldOrg = old('organizer_id');
+                            $oldOrgLabel = $oldOrg ? ($organizers->firstWhere('id', $oldOrg)?->name ?? 'No Organizer Assigned') : 'No Organizer Assigned';
+                        @endphp
+                        <div x-data="{ open: false, value: '{{ $oldOrg }}', label: '{{ addslashes($oldOrgLabel) }}' }" class="relative">
+                            <input type="hidden" name="organizer_id" :value="value">
+                            <button type="button" @click="open = !open" @click.away="open = false"
+                                class="w-full flex items-center justify-between px-4 py-2.5 rounded-lg border border-gray-200 hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white font-bold text-sm">
+                                <span x-text="label" :class="value === '' ? 'text-gray-400 font-medium' : 'text-dark'"></span>
+                                <svg class="w-4 h-4 text-gray-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" style="display:none;"
+                                class="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Select Organizer</span>
+                                </div>
+                                <div class="py-1 max-h-56 overflow-y-auto">
+                                    <button type="button" @click="value = ''; label = 'No Organizer Assigned'; open = false"
+                                        class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-medium text-gray-400 border-l-2 border-transparent hover:border-primary">No Organizer Assigned</button>
+                                    @foreach($organizers as $organizer)
+                                        <button type="button" @click="value = '{{ $organizer->id }}'; label = '{{ addslashes($organizer->name) }}'; open = false"
+                                            class="w-full px-4 py-2.5 text-left hover:bg-primary/5 transition-colors text-sm font-bold text-dark border-l-2 border-transparent hover:border-primary">
+                                            {{ $organizer->name }}
+                                            <span class="text-[11px] text-gray-400 font-medium ml-1">({{ $organizer->email }})</span>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
                         @error('organizer_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>

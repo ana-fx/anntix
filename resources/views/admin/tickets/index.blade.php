@@ -294,7 +294,6 @@
                                 <th class="px-4 py-3 text-right">Org Tax</th>
                                 <th class="px-4 py-3 text-right">Service Fee</th>
                                 <th class="px-4 py-3 text-right">Handling Fee</th>
-                                <th class="px-4 py-3 text-right">Midtrans Fee</th>
                                 <th class="px-4 py-3 text-right">Platform Rev</th>
                             </tr>
                         </thead>
@@ -306,7 +305,6 @@
                                     $oGrandNetRevenue = 0;
                                     $oGrandService = 0;
                                     $oGrandHandling = 0;
-                                    $oGrandMidtrans = 0;
                                     $oGrandAvailable = 0;
                                     $oGrandQuota = 0;
 
@@ -327,16 +325,12 @@
                                         $handlingOnly = $qty * $breakdown['handling'];
                                         $serviceOnly = $qty * $breakdown['service'];
 
-                                        // Midtrans Fee = Total Bayar - (Revenue + Admin/Platform Fees)
-                                        $midtransOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly + $serviceOnly)) : 0;
-
                                         $oGrandQty += $qty;
                                         $oGrandTicketRevenue += $ticketRevenue;
                                         $oGrandOrgTax += $orgTaxTotal;
                                         $oGrandNetRevenue += ($ticketRevenue - $orgTaxTotal);
                                         $oGrandService += $serviceOnly;
                                         $oGrandHandling += $handlingOnly;
-                                        $oGrandMidtrans += $midtransOnly;
 
                                         $soldAll = $t->transactions_sum_quantity_paid ?? 0;
                                         $oGrandAvailable += max(0, $t->quota - $soldAll);
@@ -366,9 +360,6 @@
                                     $breakdown = $ticket->getFeeBreakdown();
                                     $handlingOnly = $qty * $breakdown['handling'];
                                     $serviceOnly = $qty * $breakdown['service'];
-
-                                    // Midtrans Fee calculation
-                                    $midtransOnly = $totalPaid > 0 ? max(0, $totalPaid - ($ticketRevenue + $handlingOnly + $serviceOnly)) : 0;
 
                                     $soldAll = $ticket->transactions_sum_quantity_paid ?? 0;
                                     $currentAvailable = max(0, $ticket->quota - $soldAll);
@@ -420,11 +411,8 @@
                                     <td class="px-4 py-3 text-right text-xs text-primary font-black">
                                         Rp {{ number_format($handlingOnly, 0, ',', '.') }}
                                     </td>
-                                    <td class="px-4 py-3 text-right text-xs text-amber-600 font-bold">
-                                        Rp {{ number_format($midtransOnly, 0, ',', '.') }}
-                                    </td>
                                     <td class="px-4 py-3 text-right text-xs text-gray-500 font-black">
-                                        Rp {{ number_format($orgTaxTotal + $handlingOnly + $serviceOnly + $midtransOnly, 0, ',', '.') }}
+                                        Rp {{ number_format($orgTaxTotal + $handlingOnly + $serviceOnly, 0, ',', '.') }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -454,11 +442,8 @@
                                 <td class="px-4 py-4 text-right text-primary font-black">Rp
                                     {{ number_format($oGrandHandling, 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-4 text-right text-amber-600 font-bold">Rp
-                                    {{ number_format($oGrandMidtrans, 0, ',', '.') }}
-                                </td>
                                 <td class="px-4 py-4 text-right text-gray-500 font-black text-sm">Rp
-                                    {{ number_format($oGrandOrgTax + $oGrandHandling + $oGrandService + $oGrandMidtrans, 0, ',', '.') }}
+                                    {{ number_format($oGrandOrgTax + $oGrandHandling + $oGrandService, 0, ',', '.') }}
                                 </td>
                             </tr>
                         </tfoot>
@@ -595,91 +580,6 @@
                         </tfoot>
                     </table>
                 </div>
-            </div>
-        </div>
-        <!-- Financial Performance Dashboard (Professional Redesign) -->
-        <div class="mt-16 max-w-6xl mx-auto w-full px-4 sm:px-0">
-            <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200/40 border border-gray-100 overflow-hidden">
-                <!-- Dashboard Header -->
-                <div class="px-10 py-8 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/30">
-                    <div>
-                        <h3 class="text-2xl font-black text-dark tracking-tight">Financial Performance</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-1">Real-time revenue & settlement analytics</p>
-                    </div>
-                    <div class="flex items-center gap-3 px-4 py-2 bg-emerald-50 rounded-2xl border border-emerald-100">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <span class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Live Updates</span>
-                    </div>
-                </div>
-                               <div class="p-8 sm:p-14">
-                    <!-- Highlight: Settled Balance (Wide) -->
-                    <div class="mb-14 bg-primary/5 rounded-[3rem] p-10 sm:p-12 border border-primary/10 relative overflow-hidden group">
-                        <div class="absolute -right-12 -top-12 w-96 h-96 bg-primary/5 rounded-full blur-3xl transition-all duration-1000 group-hover:scale-110"></div>
-                        <div class="relative flex flex-col xl:flex-row xl:items-center justify-between gap-10">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3 mb-6">
-                                    <div class="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </div>
-                                    <div class="text-[12px] uppercase tracking-[0.4em] text-primary font-black">Settled Balance</div>
-                                </div>
-                                <div class="flex items-baseline gap-3">
-                                    <span class="text-2xl font-black text-primary/30">Rp</span>
-                                    <span class="text-4xl sm:text-6xl lg:text-7xl font-black text-primary tracking-tightest leading-none tabular-nums">{{ number_format($availableSaldo, 0, ',', '.') }}</span>
-                                </div>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-8 flex items-center gap-2">
-                                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Total funds available for immediate withdrawal
-                                </p>
-                            </div>
-                            
-                            <div class="hidden xl:block h-24 w-px bg-primary/10 mx-4"></div>
-                            
-                            <div class="flex flex-col sm:flex-row xl:flex-col gap-6 xl:gap-8 flex-1 xl:max-w-xs">
-                                <div class="flex-1 bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-primary/5">
-                                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Platform Revenue</div>
-                                    <div class="text-xl font-black text-dark tracking-tight">Rp{{ number_format($totalPlatformRevenue, 0, ',', '.') }}</div>
-                                </div>
-                                <div class="flex-1 bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-primary/5">
-                                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Total Withdrawn</div>
-                                    <div class="text-xl font-black text-gray-500 tracking-tight">Rp{{ number_format($totalWithdrawn, 0, ',', '.') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Secondary Row -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16">
-                        <div class="group px-8 border-l-4 border-gray-100 hover:border-primary/30 transition-all">
-                            <div class="text-[10px] uppercase tracking-[0.25em] text-gray-400 font-black mb-4">Gross Revenue</div>
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-sm font-bold text-gray-300">Rp</span>
-                                <span class="text-3xl font-black text-dark leading-none tracking-tight">{{ number_format($totalTicketRevenue, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-
-                        <div class="group px-8 border-l-4 border-red-100 hover:border-red-300 transition-all">
-                            <div class="text-[10px] uppercase tracking-[0.25em] text-red-400 font-black mb-4">Total Fee / Tax</div>
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-sm font-bold text-red-200">- Rp</span>
-                                <span class="text-3xl font-black text-red-500 leading-none tracking-tight">{{ number_format($totalOrgTax, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-
-                        <div class="group px-8 border-l-4 border-emerald-100 hover:border-emerald-300 transition-all">
-                            <div class="text-[10px] uppercase tracking-[0.25em] text-emerald-400 font-black mb-4">Organizer Saldo</div>
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-sm font-bold text-emerald-200">Rp</span>
-                                <span class="text-3xl font-black text-emerald-600 leading-none tracking-tight">{{ number_format($totalSaldo, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
->
             </div>
         </div>
     </div>
