@@ -247,17 +247,31 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-right">
-                                <a href="{{ route('organizer.reports.show', $transaction) }}"
-                                    class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-primary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100"
-                                    title="View Details">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                        </path>
-                                    </svg>
-                                </a>
+                                <div class="flex items-center justify-end gap-2">
+                                    @if($transaction->status === 'paid')
+                                        <button type="button"
+                                            @click="copyToClipboard('{{ route('payment.success', $transaction->code) }}')"
+                                            class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-400 hover:bg-emerald-500 hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100"
+                                            title="Copy Success URL">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    @endif
+                                    <a href="{{ route('organizer.reports.show', $transaction) }}"
+                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-primary hover:bg-dark hover:text-white transition-all active:scale-95 shadow-sm border border-gray-100"
+                                        title="View Details">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -299,6 +313,63 @@
                 const wb = XLSX.utils.table_to_book(table, { sheet: "Transactions" });
                 XLSX.writeFile(wb, "ANNTIX_Organizer_Transactions_" + new Date().toISOString().split('T')[0] + ".xlsx");
             }
+
+            function copyToClipboard(text) {
+                if (!navigator.clipboard) {
+                    var textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed";
+                    textArea.style.top = "0";
+                    textArea.style.left = "0";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        var successful = document.execCommand('copy');
+                        if(successful) window.dispatchEvent(new CustomEvent('notify', { detail: 'Success URL copied to clipboard!' }));
+                    } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                    }
+                    document.body.removeChild(textArea);
+                    return;
+                }
+                navigator.clipboard.writeText(text).then(function() {
+                    window.dispatchEvent(new CustomEvent('notify', { detail: 'Success URL copied to clipboard!' }));
+                }, function(err) {
+                    console.error('Async: Could not copy text: ', err);
+                });
+            }
         </script>
+
+        <!-- Tailwind Notification Toast -->
+        <div x-data="{ show: false, message: '' }"
+             @notify.window="show = true; message = $event.detail; setTimeout(() => show = false, 3000)"
+             class="fixed bottom-6 right-6 z-[150] flex flex-col gap-2"
+             style="display: none;"
+             x-show="show"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-2">
+
+            <div class="bg-dark text-white rounded-2xl shadow-2xl py-4 px-6 flex items-center gap-4 border border-gray-700/50 min-w-[300px]">
+                <div class="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm">Success</h4>
+                    <p class="text-xs text-gray-400" x-text="message"></p>
+                </div>
+                <button @click="show = false" class="ml-auto text-gray-500 hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     @endpush
 </x-layouts.organizer>

@@ -31,6 +31,17 @@
 
         <div class="flex items-center gap-4">
             @if($transaction->status === 'paid')
+                <a href="{{ route('payment.success', $transaction->code) }}" target="_blank"
+                    class="hidden md:flex items-center gap-2 bg-white text-emerald-600 px-5 py-3 rounded-2xl border border-emerald-100 hover:bg-emerald-50 hover:border-emerald-200 transition-all font-bold text-xs shadow-sm group h-14">
+                    <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    <span>View Success Page</span>
+                </a>
+            @endif
+            @if($transaction->status === 'paid')
                 <div
                     class="flex items-center gap-4 bg-white p-2 pr-6 rounded-[2rem] border border-gray-100 shadow-xl shadow-emerald-500/5">
                     <div
