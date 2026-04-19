@@ -136,6 +136,30 @@ class ReportController extends Controller
         return view('organizer.reports.transactions', compact('transactions', 'handlingFeeValue'));
     }
 
+    public function scanner(Request $request)
+    {
+        $organizerEvents = Event::where('organizer_id', Auth::id())->pluck('id');
+
+        $search = $request->input('search');
+
+        $query = Transaction::whereNotNull('redeemed_at')
+            ->whereIn('event_id', $organizerEvents)
+            ->with(['event:id,name', 'ticket:id,name,max_scans', 'scanner:id,name', 'scans'])
+            ->latest('redeemed_at');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $transactions = $query->paginate(20)->withQueryString();
+
+        return view('organizer.reports.scanner', compact('transactions'));
+    }
+
     public function showTransaction(Transaction $transaction)
     {
         // Guard: Ensure transaction belongs to organizer's event

@@ -30,6 +30,7 @@ Route::middleware(['auth', 'organizer'])->group(function () {
         Route::get('/', [ReportController::class, 'index'])->name('index');
         Route::get('transactions', [ReportController::class, 'transactions'])->name('transactions');
         Route::get('transactions/{transaction}', [ReportController::class, 'showTransaction'])->name('show');
+        Route::get('scanner', [ReportController::class, 'scanner'])->name('scanner');
     });
 
     // Resellers
